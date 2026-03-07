@@ -7,35 +7,46 @@
 
   <style>
     :root{
-      --bg:#0b0e12;
-      --panel:#0f1319;
-      --panel2:#0c1016;
-      --txt:#f3f6fb;
+      /* base (will be overridden by themes) */
+      --bg0:#0b0e12;
+      --bg1:#0b0e12;
+      --ink:#f3f6fb;
       --mut:rgba(243,246,251,0.72);
-      --line:rgba(255,255,255,0.12);
-      --line2:rgba(255,255,255,0.18);
+
+      --panel: rgba(10,14,18,0.62);
+      --panel2: rgba(10,14,18,0.52);
+      --line: rgba(255,255,255,0.10);
+      --line2: rgba(255,255,255,0.18);
       --shadow: 0 20px 60px rgba(0,0,0,0.55);
+
       --accent:#1bd3ff;
+      --accent2:#ff4bd8;
+
+      --waveOpacity: 0.16;
+      --vignette: 0.92;
+      --radius: 18px;
     }
+
     *{ box-sizing:border-box; }
     html,body{ height:100%; }
     body{
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      color:var(--txt);
-      background: var(--bg);
+      color:var(--ink);
+      background: radial-gradient(1200px circle at 50% 10%, rgba(255,255,255,0.05), transparent 55%),
+                  linear-gradient(180deg, var(--bg0), var(--bg1));
       overflow-x:hidden;
-      cursor: none; /* custom cursor */
+      cursor: none;
+      transition: background 260ms ease;
     }
 
-    /* ===== TOPO BACKGROUND (soft + fade) ===== */
+    /* ===== TOPO WAVES (always on) ===== */
     .topo{
       position:fixed;
       inset:-10vh -10vw;
       z-index:-3;
       pointer-events:none;
-      opacity:0.16;
-      filter: blur(0.2px);
+      opacity: var(--waveOpacity);
       background-size: 1100px 650px;
       background-repeat: repeat;
       background-image: url("data:image/svg+xml;utf8,\
@@ -65,29 +76,56 @@
       -webkit-mask-image: radial-gradient(circle at 50% 35%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 45%, rgba(0,0,0,0) 78%);
       mask-image: radial-gradient(circle at 50% 35%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 45%, rgba(0,0,0,0) 78%);
       animation: topoDrift 22s ease-in-out infinite alternate;
+      filter: blur(0.2px);
     }
     @keyframes topoDrift{
       0%{ transform: translate3d(-10px,-6px,0); }
       100%{ transform: translate3d(12px,10px,0); }
     }
 
-    /* ===== DARK GLOW to protect eyes ===== */
     .vignette{
       position:fixed;
-      inset:-20vh -20vw;
+      inset:-22vh -22vw;
       z-index:-2;
       pointer-events:none;
+      opacity: var(--vignette);
       background:
-        radial-gradient(900px circle at 50% 10%, rgba(255,255,255,0.06), transparent 55%),
-        radial-gradient(900px circle at 50% 90%, rgba(0,0,0,0.65), transparent 60%),
-        radial-gradient(1100px circle at 50% 50%, rgba(0,0,0,0.25), rgba(0,0,0,0.75) 70%);
-      opacity:1;
+        radial-gradient(900px circle at 50% 15%, rgba(255,255,255,0.08), transparent 55%),
+        radial-gradient(1200px circle at 50% 55%, rgba(0,0,0,0.20), rgba(0,0,0,0.78) 70%);
+    }
+
+    /* ===== Custom cursor (blue ring) ===== */
+    #cursor{
+      position:fixed;
+      width:10px; height:10px;
+      border-radius:50%;
+      background: rgba(255,255,255,0.95);
+      transform: translate(-50%,-50%);
+      z-index:100;
+      pointer-events:none;
+    }
+    #cursorRing{
+      position:fixed;
+      width:44px; height:44px;
+      border-radius:50%;
+      border:2px solid rgba(27,211,255,0.38);
+      background: rgba(27,211,255,0.10);
+      transform: translate(-50%,-50%);
+      z-index:99;
+      pointer-events:none;
+      transition: width .12s ease, height .12s ease, background .12s ease, border-color .12s ease;
+      filter: blur(0.1px);
+    }
+    body.cursorHover #cursorRing{
+      width:56px; height:56px;
+      background: rgba(27,211,255,0.12);
+      border-color: rgba(27,211,255,0.50);
     }
 
     /* ===== Layout ===== */
     .wrap{
       width:min(1240px, 94vw);
-      margin: 22px auto 70px;
+      margin: 18px auto 70px;
     }
 
     .topbar{
@@ -95,19 +133,22 @@
       justify-content:space-between;
       align-items:center;
       gap:14px;
-      padding:14px 14px;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,0.10);
-      background: rgba(10,14,18,0.62);
+      padding:12px 12px;
+      border-radius:var(--radius);
+      border:1px solid var(--line);
+      background: var(--panel);
       backdrop-filter: blur(14px);
       box-shadow: var(--shadow);
+      transition: transform .2s ease, opacity .2s ease;
     }
+
+    body.zen .topbar{ transform: translateY(-14px); opacity:0.0; pointer-events:none; }
 
     .brand{
       display:flex;
       flex-direction:column;
-      gap:4px;
-      min-width: 220px;
+      gap:3px;
+      min-width:220px;
     }
     .brand .title{
       font-weight:900;
@@ -132,8 +173,8 @@
 
     .input, .select{
       background: rgba(255,255,255,0.06);
-      border:2px solid rgba(255,255,255,0.14); /* thick line, not default */
-      color: var(--txt);
+      border:2px solid var(--line2);
+      color: var(--ink);
       padding:10px 12px;
       border-radius:14px;
       outline:none;
@@ -144,33 +185,103 @@
 
     .btn{
       cursor:pointer;
-      border:2px solid rgba(255,255,255,0.18); /* thick line */
+      border:2px solid var(--line2);
       background: rgba(255,255,255,0.06);
-      color: var(--txt);
+      color: var(--ink);
       padding:10px 12px;
       border-radius:14px;
       font-weight:900;
       letter-spacing:0.35px;
       text-transform:uppercase;
       transition: transform .08s ease, background .2s ease, border-color .2s ease;
+      white-space:nowrap;
     }
-    .btn:hover{
-      background: rgba(255,255,255,0.08);
-      border-color: rgba(255,255,255,0.26);
-    }
+    .btn:hover{ background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.30); }
     .btn:active{ transform: scale(0.99); }
+
+    /* ===== Style bar ===== */
+    .styleBar{
+      margin-top:12px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      padding:10px 12px;
+      border-radius: var(--radius);
+      border:1px solid var(--line);
+      background: var(--panel2);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 14px 40px rgba(0,0,0,0.35);
+    }
+
+    body.zen .styleBar{ opacity:0; pointer-events:none; transform: translateY(-8px); transition: .2s ease; }
+
+    .styleLeft{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .styleLabel{
+      font-weight:900;
+      letter-spacing:0.5px;
+      text-transform:uppercase;
+      font-size:12px;
+      color: rgba(243,246,251,0.86);
+    }
+
+    .stylePills{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .pill{
+      cursor:pointer;
+      padding:10px 14px;
+      border-radius:999px;
+      border:2px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.06);
+      color: rgba(243,246,251,0.86);
+      font-weight:900;
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:0.35px;
+      transition: background .2s ease, border-color .2s ease, transform .08s ease;
+      user-select:none;
+    }
+    .pill:hover{ background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.26); }
+    .pill:active{ transform: scale(0.99); }
+    .pill.active{
+      border-color: rgba(27,211,255,0.55);
+      background: rgba(27,211,255,0.10);
+      color: rgba(223,249,255,0.92);
+    }
+
+    .styleRight{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .miniNote{
+      font-size:12px;
+      color: rgba(243,246,251,0.70);
+    }
 
     .note{
       margin-top:12px;
       padding:12px 14px;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,0.10);
-      background: rgba(10,14,18,0.52);
+      border-radius:var(--radius);
+      border:1px solid var(--line);
+      background: var(--panel2);
       color: var(--mut);
       font-size:12px;
       line-height:1.4;
       backdrop-filter: blur(12px);
     }
+    .note b{ color: var(--ink); }
 
     /* ===== Pinterest masonry ===== */
     .masonry{
@@ -194,7 +305,10 @@
       background: rgba(8,10,12,0.55);
       box-shadow: 0 18px 55px rgba(0,0,0,0.35);
       backdrop-filter: blur(10px);
+      transform-style: preserve-3d;
+      transition: transform .18s ease;
     }
+    .pin:hover{ transform: translateY(-2px); }
 
     .pin .imgWrap{
       position:relative;
@@ -213,9 +327,9 @@
       left:12px;
       padding:7px 10px;
       border-radius:999px;
-      border:2px solid rgba(255,255,255,0.22); /* thick outline */
+      border:2px solid rgba(255,255,255,0.22);
       background: rgba(0,0,0,0.40);
-      color: var(--txt);
+      color: var(--ink);
       font-size:11px;
       font-weight:900;
       letter-spacing:0.4px;
@@ -246,11 +360,10 @@
     .chip{
       padding:10px 14px;
       border-radius:999px;
-      border:2px solid rgba(255,255,255,0.16); /* thick line */
+      border:2px solid rgba(255,255,255,0.16);
       background: rgba(255,255,255,0.06);
       color: rgba(243,246,251,0.85);
       font-weight:800;
-      letter-spacing:0.2px;
       font-size:13px;
     }
 
@@ -264,25 +377,20 @@
 
     .viewBtn{
       cursor:pointer;
-      border:0;
+      border:2px solid rgba(27,211,255,0.30);
       border-radius: 18px;
       padding:14px 22px;
-      background: rgba(27,211,255,0.22);
+      background: rgba(27,211,255,0.20);
       color: #dff9ff;
       font-weight:900;
       font-size:18px;
-      letter-spacing:0.2px;
       display:flex;
       align-items:center;
       gap:10px;
       box-shadow: 0 10px 28px rgba(27,211,255,0.10);
-      border:2px solid rgba(27,211,255,0.25);
       transition: transform .08s ease, background .2s ease, border-color .2s ease;
     }
-    .viewBtn:hover{
-      background: rgba(27,211,255,0.26);
-      border-color: rgba(27,211,255,0.35);
-    }
+    .viewBtn:hover{ background: rgba(27,211,255,0.26); border-color: rgba(27,211,255,0.40); }
     .viewBtn:active{ transform: scale(0.99); }
 
     .likeBtn{
@@ -302,7 +410,7 @@
       background: rgba(27,211,255,0.08);
     }
 
-    /* ===== Modal (Add setup + View) ===== */
+    /* ===== Modals ===== */
     .modal{
       position:fixed; inset:0;
       display:none;
@@ -339,7 +447,7 @@
       cursor:pointer;
       border:2px solid rgba(255,255,255,0.16);
       background: rgba(255,255,255,0.06);
-      color: var(--txt);
+      color: var(--ink);
       padding:8px 10px;
       border-radius:14px;
       font-weight:900;
@@ -370,15 +478,10 @@
       border-radius: 14px;
       padding:10px 12px;
       outline:none;
-      color: var(--txt);
+      color: var(--ink);
       font-family: inherit;
     }
-
-    textarea{
-      min-height:130px;
-      resize:vertical;
-      line-height:1.35;
-    }
+    textarea{ min-height:130px; resize:vertical; line-height:1.35; }
 
     .modalFoot{
       padding:14px 16px;
@@ -396,36 +499,26 @@
       line-height:1.35;
       max-width: 520px;
     }
-
     .rightBtns{ display:flex; gap:10px; }
 
-    /* ===== Custom cursor ===== */
-    #cursor{
+    /* ===== Small helper toast ===== */
+    .toast{
       position:fixed;
-      width:10px; height:10px;
-      border-radius:50%;
-      background: rgba(255,255,255,0.9);
-      transform: translate(-50%,-50%);
-      z-index:100;
-      pointer-events:none;
-      box-shadow: 0 0 0 0 rgba(27,211,255,0);
-    }
-    #cursorRing{
-      position:fixed;
-      width:44px; height:44px;
-      border-radius:50%;
-      border:2px solid rgba(27,211,255,0.35);
-      background: rgba(27,211,255,0.08);
-      transform: translate(-50%,-50%);
-      z-index:99;
-      pointer-events:none;
-      transition: width .12s ease, height .12s ease, background .12s ease, border-color .12s ease;
-      filter: blur(0.1px);
-    }
-    .cursorHover #cursorRing{
-      width:56px; height:56px;
-      background: rgba(27,211,255,0.11);
-      border-color: rgba(27,211,255,0.45);
+      bottom:18px;
+      left:50%;
+      transform: translateX(-50%);
+      background: rgba(10,14,18,0.78);
+      border:1px solid rgba(255,255,255,0.12);
+      color: rgba(243,246,251,0.86);
+      padding:10px 12px;
+      border-radius: 14px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 16px 50px rgba(0,0,0,0.45);
+      z-index:80;
+      display:none;
+      font-weight:800;
+      letter-spacing:0.2px;
+      font-size:12px;
     }
   </style>
 </head>
@@ -436,12 +529,13 @@
 
   <div id="cursorRing"></div>
   <div id="cursor"></div>
+  <div class="toast" id="toast"></div>
 
   <div class="wrap">
     <div class="topbar">
       <div class="brand">
         <div class="title">Setup Gallery</div>
-        <div class="sub">Minimal / Calm / Pinterest-style feed. Add your own photos with “Add setup”.</div>
+        <div class="sub">Choose a style below. Waves stay. Eye-friendly colors. (S = styles, Z = Zen)</div>
       </div>
 
       <div class="controls">
@@ -460,13 +554,25 @@
           <option value="az">A → Z</option>
         </select>
         <button id="addBtn" class="btn">Add setup</button>
+        <button id="zenBtn" class="btn" title="Toggle Zen mode">Zen</button>
         <button id="resetBtn" class="btn" title="Clear local posts + likes">Reset</button>
+      </div>
+    </div>
+
+    <!-- STYLE BAR -->
+    <div class="styleBar" id="styleBar">
+      <div class="styleLeft">
+        <div class="styleLabel">Style</div>
+        <div class="stylePills" id="stylePills"></div>
+      </div>
+      <div class="styleRight">
+        <div class="miniNote" id="styleHint">Pick a vibe.</div>
       </div>
     </div>
 
     <div class="note">
       <b>Images:</b> Paste a direct Image URL (https://...jpg/png) or upload a file.
-      Upload is saved locally in your browser for now.
+      Upload saves locally in your browser (for now). Tomorrow we can make it online for everyone.
     </div>
 
     <div id="masonry" class="masonry"></div>
@@ -535,13 +641,85 @@
   </div>
 
   <script>
-    // ===== Local storage keys =====
-    const KEY_POSTS = "setup_gallery_topo_posts_v1";
-    const KEY_LIKES = "setup_gallery_topo_likes_v1";
-    const KEY_LIKED = "setup_gallery_topo_liked_v1";
+    /************ THEME STYLES ************/
+    const THEMES = {
+      black: {
+        name: "Black",
+        vars: { "--bg0":"#0b0e12","--bg1":"#07090c","--ink":"#f3f6fb","--mut":"rgba(243,246,251,0.72)",
+               "--accent":"#1bd3ff","--waveOpacity":"0.16","--vignette":"0.92" }
+      },
+      white: {
+        name: "White",
+        vars: { "--bg0":"#f5f7fa","--bg1":"#eceff4","--ink":"#0e1116","--mut":"rgba(14,17,22,0.62)",
+               "--panel":"rgba(255,255,255,0.72)","--panel2":"rgba(255,255,255,0.62)",
+               "--line":"rgba(14,17,22,0.12)","--line2":"rgba(14,17,22,0.18)",
+               "--shadow":"0 20px 60px rgba(14,17,22,0.12)",
+               "--accent":"#1b8bff","--waveOpacity":"0.12","--vignette":"0.45" }
+      },
+      lightblue: {
+        name: "Light Blue",
+        vars: { "--bg0":"#0b1220","--bg1":"#0a0f18","--accent":"#5fd6ff","--waveOpacity":"0.16","--vignette":"0.92" }
+      },
+      pink: {
+        name: "Pink",
+        vars: { "--bg0":"#1a0d16","--bg1":"#10070f","--accent":"#ff61c7","--accent2":"#ffd1ea",
+               "--waveOpacity":"0.15","--vignette":"0.94" }
+      },
+      cyber: {
+        name: "Cyber",
+        vars: { "--bg0":"#061219","--bg1":"#040a0f","--accent":"#00ffe0","--accent2":"#7b61ff",
+               "--waveOpacity":"0.15","--vignette":"0.92" }
+      },
+      wood: {
+        name: "Wood",
+        vars: { "--bg0":"#1a1410","--bg1":"#0e0b09","--accent":"#ffb86b","--accent2":"#ffe2c2",
+               "--waveOpacity":"0.14","--vignette":"0.95" }
+      },
+      anime: {
+        name: "Anime",
+        vars: { "--bg0":"#0d0f18","--bg1":"#070812","--accent":"#7aa7ff","--accent2":"#ff7ad9",
+               "--waveOpacity":"0.15","--vignette":"0.92" }
+      },
+      meme: {
+        name: "Meme",
+        vars: { "--bg0":"#101115","--bg1":"#090a0d","--accent":"#7dff9a","--accent2":"#ffd166",
+               "--waveOpacity":"0.16","--vignette":"0.92" }
+      }
+    };
 
-    // Start EMPTY (no demo photos)
-    const DEMO = [];
+    const STYLE_KEY = "setup_gallery_style_v1";
+    const currentStyle = localStorage.getItem(STYLE_KEY) || "black";
+
+    function applyTheme(key){
+      const t = THEMES[key] || THEMES.black;
+      for(const [k,v] of Object.entries(t.vars)){
+        document.documentElement.style.setProperty(k, v);
+      }
+      localStorage.setItem(STYLE_KEY, key);
+      setActivePill(key);
+      toast(`Style: ${t.name}`);
+    }
+
+    function setActivePill(key){
+      document.querySelectorAll(".pill[data-style]").forEach(p => {
+        p.classList.toggle("active", p.dataset.style === key);
+      });
+    }
+
+    function toast(msg){
+      const el = document.getElementById("toast");
+      el.textContent = msg;
+      el.style.display = "block";
+      clearTimeout(window.__toastT);
+      window.__toastT = setTimeout(()=> el.style.display="none", 1200);
+    }
+
+    /************ DATA ************/
+    const KEY_POSTS = "setup_gallery_topo_posts_v2";
+    const KEY_LIKES = "setup_gallery_topo_likes_v2";
+    const KEY_LIKED = "setup_gallery_topo_liked_v2";
+
+    const DEMO = []; // keep empty
 
     const $ = (id) => document.getElementById(id);
 
@@ -552,12 +730,8 @@
         return JSON.parse(raw);
       }catch(e){ return fallback; }
     }
-    function saveJSON(key, val){
-      localStorage.setItem(key, JSON.stringify(val));
-    }
-    function uid(){
-      return "p_" + Math.random().toString(16).slice(2) + "_" + Date.now().toString(16);
-    }
+    function saveJSON(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
+    function uid(){ return "p_" + Math.random().toString(16).slice(2) + "_" + Date.now().toString(16); }
     function fmtDate(ts){
       const d = new Date(ts);
       const y = d.getFullYear();
@@ -581,23 +755,14 @@
         r.readAsDataURL(file);
       });
     }
-
-    function normTag(t){
-      return String(t||"").trim().toLowerCase().replace(/\s+/g," ");
-    }
+    function normTag(t){ return String(t||"").trim().toLowerCase().replace(/\s+/g," "); }
     function parseTags(s){
-      return (s||"")
-        .split(",")
-        .map(x => normTag(x))
-        .filter(Boolean)
-        .slice(0, 8);
+      return (s||"").split(",").map(x=>normTag(x)).filter(Boolean).slice(0, 8);
     }
     function prettyTag(t){
-      // title case-ish
       return t.split(" ").map(w => w ? (w[0].toUpperCase()+w.slice(1)) : "").join(" ");
     }
 
-    // ===== State =====
     let posts = loadJSON(KEY_POSTS, []);
     let likes = loadJSON(KEY_LIKES, {});
     let liked = loadJSON(KEY_LIKED, {});
@@ -608,7 +773,6 @@
       for(const x of posts) m.set(x.id, x);
       return Array.from(m.values());
     }
-
     function getLikes(id){ return Number(likes[id] || 0); }
     function isLiked(id){ return !!liked[id]; }
 
@@ -643,7 +807,6 @@
           (x.tags||[]).some(t => t.includes(q))
         );
       }
-
       if(sort === "new"){
         out = [...out].sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
       } else if(sort === "likes"){
@@ -651,7 +814,6 @@
       } else if(sort === "az"){
         out = [...out].sort((a,b) => (a.title||"").localeCompare(b.title||""));
       }
-
       return out;
     }
 
@@ -670,62 +832,46 @@
       }
 
       for(const p of list){
+        const tags = (p.tags||[]).slice(0,3);
         const pin = document.createElement("div");
         pin.className = "pin";
-        const tags = (p.tags||[]).slice(0,3);
         pin.innerHTML = `
           <div class="imgWrap">
             <img src="${esc(p.img||"")}" alt="${esc(p.title||"setup")}" loading="lazy"/>
             <div class="tag">${esc((tags[0]||"Setup").toUpperCase())}</div>
           </div>
-
           <div class="body">
             <div class="title">${esc(p.title||"Untitled")}</div>
-
             <div class="chips">
               ${tags.map(t => `<div class="chip">${esc(prettyTag(t))}</div>`).join("")}
             </div>
-
             <div class="metaRow">
               <button class="likeBtn ${isLiked(p.id) ? "liked" : ""}" data-like="${esc(p.id)}">
                 ${isLiked(p.id) ? "♥" : "♡"} <span>${getLikes(p.id)}</span>
               </button>
-
-              <button class="viewBtn" data-view="${esc(p.id)}">
-                👁 View
-              </button>
+              <button class="viewBtn" data-view="${esc(p.id)}">👁 View</button>
             </div>
           </div>
         `;
         root.appendChild(pin);
       }
 
-      root.querySelectorAll("[data-like]").forEach(b => {
-        b.addEventListener("click", () => toggleLike(b.getAttribute("data-like")));
-      });
-      root.querySelectorAll("[data-view]").forEach(b => {
-        b.addEventListener("click", () => openView(b.getAttribute("data-view")));
-      });
+      root.querySelectorAll("[data-like]").forEach(b => b.addEventListener("click", () => toggleLike(b.dataset.like)));
+      root.querySelectorAll("[data-view]").forEach(b => b.addEventListener("click", () => openView(b.dataset.view)));
 
-      // hover cursor ring on interactive
+      // hover cursor ring
       root.querySelectorAll("button, a").forEach(el => {
         el.addEventListener("mouseenter", () => document.body.classList.add("cursorHover"));
         el.addEventListener("mouseleave", () => document.body.classList.remove("cursorHover"));
       });
     }
 
-    // ===== Add modal =====
-    function openAdd(){
-      $("addModal").style.display = "flex";
-      $("addStatus").textContent = "Ready.";
-    }
+    /* ===== Add modal ===== */
+    function openAdd(){ $("addModal").style.display = "flex"; $("addStatus").textContent = "Ready."; }
     function closeAdd(){
       $("addModal").style.display = "none";
-      $("fTitle").value = "";
-      $("fDesc").value = "";
-      $("fUrl").value = "";
-      $("fFile").value = "";
-      $("fTags").value = "";
+      $("fTitle").value = ""; $("fDesc").value = ""; $("fUrl").value = "";
+      $("fFile").value = ""; $("fTags").value = "";
     }
 
     async function saveAdd(){
@@ -740,9 +886,8 @@
       if(tags.length === 0){ $("addStatus").textContent = "Add at least 1 tag (e.g. Minimal, Workspace)."; return; }
 
       let img = "";
-      if(url){
-        img = url;
-      } else if(file){
+      if(url) img = url;
+      else if(file){
         $("addStatus").textContent = "Saving image locally...";
         img = await fileToDataURL(file);
       } else {
@@ -750,34 +895,15 @@
         return;
       }
 
-      const post = {
-        id: uid(),
-        title,
-        desc,
-        tags,
-        img,
-        createdAt: Date.now()
-      };
-
+      const post = { id: uid(), title, desc, tags, img, createdAt: Date.now() };
       posts = [post, ...posts];
       saveJSON(KEY_POSTS, posts);
-
       closeAdd();
       render();
+      toast("Added!");
     }
 
-    function resetAll(){
-      if(!confirm("Reset local posts + likes on this device?")) return;
-      posts = [];
-      likes = {};
-      liked = {};
-      localStorage.removeItem(KEY_POSTS);
-      localStorage.removeItem(KEY_LIKES);
-      localStorage.removeItem(KEY_LIKED);
-      render();
-    }
-
-    // ===== View modal =====
+    /* ===== View modal ===== */
     function openView(id){
       const p = allPosts().find(x => x.id === id);
       if(!p) return;
@@ -786,29 +912,55 @@
       $("viewDesc").textContent = p.desc || "";
       $("viewModal").style.display = "flex";
     }
-    function closeView(){
-      $("viewModal").style.display = "none";
+    function closeView(){ $("viewModal").style.display = "none"; }
+
+    function resetAll(){
+      if(!confirm("Reset local posts + likes on this device?")) return;
+      posts = []; likes = {}; liked = {};
+      localStorage.removeItem(KEY_POSTS);
+      localStorage.removeItem(KEY_LIKES);
+      localStorage.removeItem(KEY_LIKED);
+      render();
+      toast("Reset");
     }
 
-    // ===== Events =====
-    $("addBtn").addEventListener("click", openAdd);
-    $("closeAdd").addEventListener("click", closeAdd);
-    $("cancelAdd").addEventListener("click", closeAdd);
-    $("saveAdd").addEventListener("click", saveAdd);
+    /* ===== Build style pills ===== */
+    function buildStyleBar(){
+      const host = document.getElementById("stylePills");
+      host.innerHTML = "";
+      const order = ["wood","cyber","pink","black","white","anime","meme","lightblue"];
+      for(const key of order){
+        const btn = document.createElement("div");
+        btn.className = "pill";
+        btn.dataset.style = key;
+        btn.textContent = THEMES[key].name;
+        btn.addEventListener("click", () => applyTheme(key));
+        host.appendChild(btn);
+      }
+      setActivePill(localStorage.getItem(STYLE_KEY) || "black");
+    }
 
-    $("resetBtn").addEventListener("click", resetAll);
+    /* ===== Zen mode ===== */
+    function toggleZen(){
+      document.body.classList.toggle("zen");
+      toast(document.body.classList.contains("zen") ? "Zen: ON" : "Zen: OFF");
+    }
 
-    $("q").addEventListener("input", render);
-    $("cat").addEventListener("change", render);
-    $("sort").addEventListener("change", render);
+    /* ===== Keyboard shortcuts ===== */
+    document.addEventListener("keydown", (e) => {
+      if(e.key.toLowerCase() === "z") toggleZen();
+      if(e.key.toLowerCase() === "s"){
+        toast("Pick a style ↑");
+        document.getElementById("styleBar").scrollIntoView({ behavior:"smooth", block:"start" });
+      }
+      if(e.key === "Escape"){
+        closeAdd(); closeView();
+      }
+    });
 
-    $("addModal").addEventListener("click", (e) => { if(e.target === $("addModal")) closeAdd(); });
-    $("viewModal").addEventListener("click", (e) => { if(e.target === $("viewModal")) closeView(); });
-    $("closeView").addEventListener("click", closeView);
-
-    // ===== Custom cursor =====
-    const cur = $("cursor");
-    const ring = $("cursorRing");
+    /* ===== Cursor ===== */
+    const cur = document.getElementById("cursor");
+    const ring = document.getElementById("cursorRing");
     let cx=0, cy=0, rx=0, ry=0;
 
     window.addEventListener("mousemove", (e) => {
@@ -816,9 +968,7 @@
       cur.style.left = cx + "px";
       cur.style.top  = cy + "px";
     });
-
     function animateRing(){
-      // smooth follow
       rx += (cx - rx) * 0.18;
       ry += (cy - ry) * 0.18;
       ring.style.left = rx + "px";
@@ -827,13 +977,31 @@
     }
     animateRing();
 
-    // hover detection (topbar too)
-    document.querySelectorAll("button, input, select, textarea").forEach(el => {
+    document.querySelectorAll("button, input, select, textarea, .pill").forEach(el => {
       el.addEventListener("mouseenter", () => document.body.classList.add("cursorHover"));
       el.addEventListener("mouseleave", () => document.body.classList.remove("cursorHover"));
     });
 
-    // ===== Init =====
+    /* ===== Wire events ===== */
+    document.getElementById("addBtn").addEventListener("click", openAdd);
+    document.getElementById("closeAdd").addEventListener("click", closeAdd);
+    document.getElementById("cancelAdd").addEventListener("click", closeAdd);
+    document.getElementById("saveAdd").addEventListener("click", saveAdd);
+
+    document.getElementById("resetBtn").addEventListener("click", resetAll);
+    document.getElementById("zenBtn").addEventListener("click", toggleZen);
+
+    document.getElementById("q").addEventListener("input", render);
+    document.getElementById("cat").addEventListener("change", render);
+    document.getElementById("sort").addEventListener("change", render);
+
+    document.getElementById("addModal").addEventListener("click", (e) => { if(e.target.id === "addModal") closeAdd(); });
+    document.getElementById("viewModal").addEventListener("click", (e) => { if(e.target.id === "viewModal") closeView(); });
+    document.getElementById("closeView").addEventListener("click", closeView);
+
+    /* ===== Init ===== */
+    buildStyleBar();
+    applyTheme(currentStyle);
     render();
   </script>
 </body>
