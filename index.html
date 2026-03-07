@@ -24,20 +24,24 @@
 
       --accent: #1b8bff;
       --accent2:#ff3fb6;
+
+      --btnBg: rgba(255,255,255,0.92);
+      --btnBd: rgba(14,17,22,0.18);
     }
 
     *{ box-sizing:border-box; }
     html,body{ height:100%; }
-
     body{
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
       color:var(--ink);
       background: linear-gradient(180deg, var(--bg0), var(--bg1));
       overflow-x:hidden;
+      cursor: none; /* for custom cursor */
+      transition: background 260ms ease;
     }
 
-    /* topo waves */
+    /* ===== topo waves ===== */
     .topo{
       position:fixed;
       inset:-10vh -10vw;
@@ -72,7 +76,6 @@
       0%{ transform: translate3d(-10px,-6px,0); }
       100%{ transform: translate3d(12px,10px,0); }
     }
-
     .vignette{
       position:fixed;
       inset:-22vh -22vw;
@@ -84,10 +87,34 @@
         radial-gradient(1200px circle at 50% 60%, rgba(0,0,0,0.06), transparent 70%);
     }
 
-    .wrap{
-      width:min(1240px, 94vw);
-      margin: 18px auto 70px;
+    /* ===== custom cursor ===== */
+    #cursorDot{
+      position:fixed;
+      width:9px;height:9px;
+      border-radius:50%;
+      background: rgba(0,0,0,0.78);
+      transform: translate(-50%,-50%);
+      z-index:200;
+      pointer-events:none;
     }
+    #cursorRing{
+      position:fixed;
+      width:44px;height:44px;
+      border-radius:50%;
+      border:2px solid rgba(27,139,255,0.36);
+      background: rgba(27,139,255,0.10);
+      transform: translate(-50%,-50%);
+      z-index:199;
+      pointer-events:none;
+      transition: width .12s ease, height .12s ease, background .12s ease, border-color .12s ease;
+    }
+    body.cursorHover #cursorRing{
+      width:58px;height:58px;
+      background: rgba(27,139,255,0.14);
+      border-color: rgba(27,139,255,0.50);
+    }
+
+    .wrap{ width:min(1240px, 94vw); margin: 18px auto 70px; }
 
     .topbar{
       display:flex;
@@ -102,12 +129,7 @@
       box-shadow: var(--shadow);
     }
 
-    .brand{
-      display:flex;
-      flex-direction:column;
-      gap:3px;
-      min-width:220px;
-    }
+    .brand{ display:flex; flex-direction:column; gap:3px; min-width:220px; }
     .brand .title{
       font-weight:900;
       letter-spacing:0.7px;
@@ -129,31 +151,105 @@
       gap:10px;
     }
 
-    .input, .select{
-      background: rgba(255,255,255,0.92);
-      border:2px solid var(--line2);
-      color: var(--ink);
-      padding:10px 12px;
-      border-radius:14px;
-      outline:none;
-    }
-    .input{ width:min(320px, 62vw); }
-    .select{ cursor:pointer; }
-    option{ color:#000; }
-
     .btn{
       cursor:pointer;
-      border:2px solid var(--line2);
-      background: rgba(255,255,255,0.92);
+      border:2px solid var(--btnBd);
+      background: var(--btnBg);
       color: var(--ink);
-      padding:10px 12px;
-      border-radius:14px;
+      padding:10px 14px;
+      border-radius:16px;
       font-weight:900;
       letter-spacing:0.35px;
       text-transform:uppercase;
       white-space:nowrap;
+      transition: transform .08s ease, background .2s ease, border-color .2s ease;
     }
-    .btn:hover{ background: rgba(255,255,255,0.98); }
+    .btn:hover{ background: rgba(255,255,255,0.98); border-color: rgba(14,17,22,0.26); }
+    .btn:active{ transform: scale(0.99); }
+
+    /* nicer select */
+    .select, .input{
+      background: rgba(255,255,255,0.92);
+      border:2px solid rgba(14,17,22,0.18);
+      color: var(--ink);
+      padding:10px 14px;
+      border-radius:16px;
+      outline:none;
+      font-weight:800;
+    }
+    .input{ width:min(320px, 62vw); }
+    .select{
+      cursor:pointer;
+      appearance:none;
+      -webkit-appearance:none;
+      padding-right:42px;
+      background-image:
+        linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.92)),
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 24 24'><path fill='%230e1116' d='M7 10l5 5 5-5z'/></svg>");
+      background-repeat:no-repeat,no-repeat;
+      background-position: 0 0, calc(100% - 14px) 50%;
+      background-size: 100% 100%, 18px 18px;
+    }
+
+    /* menu button */
+    .menuWrap{ position:relative; }
+    .menuBtn{
+      display:flex; align-items:center; gap:10px;
+      cursor:pointer;
+      border:2px solid var(--btnBd);
+      background: var(--btnBg);
+      padding:10px 14px;
+      border-radius:16px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:0.35px;
+    }
+    .burger{
+      width:16px; height:12px; position:relative;
+    }
+    .burger:before,.burger:after,.burger div{
+      content:"";
+      position:absolute; left:0; right:0;
+      height:2px;
+      background: rgba(14,17,22,0.80);
+      border-radius:999px;
+    }
+    .burger:before{ top:0; }
+    .burger div{ top:5px; }
+    .burger:after{ bottom:0; }
+
+    .menu{
+      position:absolute;
+      right:0; top:48px;
+      width:260px;
+      border-radius:16px;
+      border:1px solid rgba(14,17,22,0.12);
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 18px 55px rgba(14,17,22,0.12);
+      padding:10px;
+      display:none;
+      z-index:50;
+    }
+    .menu.open{ display:block; }
+    .menu .row{ display:flex; flex-direction:column; gap:8px; }
+    .menu .mLabel{
+      font-weight:900; font-size:11px;
+      letter-spacing:0.45px;
+      text-transform:uppercase;
+      color: rgba(14,17,22,0.60);
+      margin:4px 6px 2px;
+    }
+    .menu .mItem{
+      border:2px solid rgba(14,17,22,0.14);
+      background: rgba(255,255,255,0.92);
+      padding:10px 12px;
+      border-radius:14px;
+      font-weight:900;
+      cursor:pointer;
+      user-select:none;
+    }
+    .menu .mItem:hover{ border-color: rgba(14,17,22,0.22); }
 
     .note{
       margin-top:12px;
@@ -188,7 +284,9 @@
       border:1px solid rgba(14,17,22,0.12);
       background: rgba(255,255,255,0.82);
       box-shadow: 0 18px 55px rgba(14,17,22,0.10);
+      transition: transform .18s ease;
     }
+    .pin:hover{ transform: translateY(-2px); }
 
     .imgWrap{ position:relative; width:100%; background: rgba(0,0,0,0.04); }
     .pin img{ width:100%; height:auto; display:block; }
@@ -209,12 +307,7 @@
       gap:8px;
       backdrop-filter: blur(10px);
     }
-    .dot{
-      width:10px; height:10px;
-      border-radius:50%;
-      background: var(--accent);
-      box-shadow: 0 0 0 3px rgba(255,255,255,0.55);
-    }
+    .dot{ width:10px; height:10px; border-radius:50%; background: var(--accent); box-shadow: 0 0 0 3px rgba(255,255,255,0.55); }
 
     .body{
       padding:14px 14px 14px;
@@ -223,13 +316,7 @@
       flex-direction:column;
       gap:10px;
     }
-    .ptitle{
-      font-weight:900;
-      font-size:20px;
-      letter-spacing:0.2px;
-      line-height:1.1;
-      color: var(--ink);
-    }
+    .ptitle{ font-weight:900; font-size:20px; letter-spacing:0.2px; line-height:1.1; }
     .chips{ display:flex; gap:10px; flex-wrap:wrap; }
     .chip{
       padding:10px 14px;
@@ -240,13 +327,15 @@
       font-weight:800;
       font-size:13px;
     }
+
     .metaRow{
       margin-top:6px;
       display:flex;
-      justify-content:flex-end;
+      justify-content:space-between;
       align-items:center;
       gap:12px;
     }
+
     .viewBtn{
       cursor:pointer;
       border:2px solid rgba(27,211,255,0.35);
@@ -258,6 +347,26 @@
       font-size:14px;
     }
 
+    /* likes */
+    .likeBtn{
+      cursor:pointer;
+      border:2px solid rgba(14,17,22,0.16);
+      border-radius: 16px;
+      padding:10px 14px;
+      background: rgba(255,255,255,0.80);
+      color: rgba(14,17,22,0.82);
+      font-weight:900;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      user-select:none;
+    }
+    .likeBtn.liked{
+      border-color: rgba(255,63,182,0.35);
+      background: rgba(255,63,182,0.12);
+      color: rgba(130,0,78,0.86);
+    }
+
     /* Modal */
     .modal{
       position:fixed; inset:0;
@@ -266,7 +375,7 @@
       justify-content:center;
       background: rgba(14,17,22,0.42);
       backdrop-filter: blur(6px);
-      z-index:50;
+      z-index:90;
       padding:18px;
     }
     .modalBox{
@@ -278,24 +387,14 @@
       overflow:hidden;
     }
     .modalTop{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      padding:14px 16px;
-      border-bottom:1px solid rgba(14,17,22,0.10);
+      display:flex; justify-content:space-between; align-items:center;
+      padding:14px 16px; border-bottom:1px solid rgba(14,17,22,0.10);
     }
-    .mtitle{
-      font-weight:900;
-      text-transform:uppercase;
-      letter-spacing:0.6px;
-      font-size:13px;
-      color: var(--ink);
-    }
+    .mtitle{ font-weight:900; text-transform:uppercase; letter-spacing:0.6px; font-size:13px; }
     .xbtn{
       cursor:pointer;
       border:2px solid rgba(14,17,22,0.14);
       background: rgba(255,255,255,0.85);
-      color: var(--ink);
       padding:8px 10px;
       border-radius:14px;
       font-weight:900;
@@ -344,23 +443,11 @@
       min-height: 92px;
     }
     .drop.drag{
-      border-color: rgba(27,211,255,0.55);
-      background: rgba(27,211,255,0.10);
+      border-color: rgba(27,139,255,0.55);
+      background: rgba(27,139,255,0.10);
     }
-    .dropLeft{
-      display:flex;
-      flex-direction:column;
-      gap:4px;
-    }
-    .dropTitle{
-      font-weight:900;
-      letter-spacing:0.2px;
-    }
-    .dropSub{
-      font-size:12px;
-      color: rgba(14,17,22,0.62);
-      line-height:1.3;
-    }
+    .dropTitle{ font-weight:900; }
+    .dropSub{ font-size:12px; color: rgba(14,17,22,0.62); line-height:1.3; }
     .dropBtn{
       border:2px solid rgba(14,17,22,0.16);
       background: rgba(255,255,255,0.92);
@@ -372,23 +459,16 @@
     }
 
     .previewRow{
-      display:flex;
-      gap:12px;
-      align-items:center;
-      margin-top:10px;
+      display:flex; gap:12px; align-items:center; margin-top:10px;
     }
     .preview{
-      width:110px;
-      height:78px;
+      width:110px; height:78px;
       border-radius:14px;
       border:1px solid rgba(14,17,22,0.12);
       background: rgba(0,0,0,0.04);
       overflow:hidden;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:12px;
-      color: rgba(14,17,22,0.55);
+      display:flex; align-items:center; justify-content:center;
+      font-size:12px; color: rgba(14,17,22,0.55);
     }
     .preview img{ width:100%; height:100%; object-fit:cover; display:block; }
     .progress{
@@ -402,7 +482,7 @@
     .bar{
       height:100%;
       width:0%;
-      background: linear-gradient(90deg, rgba(27,211,255,0.85), rgba(255,63,182,0.75));
+      background: linear-gradient(90deg, rgba(27,139,255,0.85), rgba(255,63,182,0.75));
       transition: width .15s ease;
     }
 
@@ -415,12 +495,7 @@
       gap:10px;
       flex-wrap:wrap;
     }
-    .status{
-      font-size:12px;
-      color: rgba(14,17,22,0.62);
-      line-height:1.35;
-      max-width: 520px;
-    }
+    .status{ font-size:12px; color: rgba(14,17,22,0.62); line-height:1.35; max-width: 520px; }
     .rightBtns{ display:flex; gap:10px; }
 
     .toast{
@@ -435,7 +510,7 @@
       border-radius: 14px;
       backdrop-filter: blur(12px);
       box-shadow: 0 16px 50px rgba(14,17,22,0.12);
-      z-index:80;
+      z-index:120;
       display:none;
       font-weight:800;
       font-size:12px;
@@ -446,17 +521,23 @@
 <body>
   <div class="topo"></div>
   <div class="vignette"></div>
+
+  <!-- cursor -->
+  <div id="cursorRing"></div>
+  <div id="cursorDot"></div>
+
   <div class="toast" id="toast"></div>
 
   <div class="wrap">
     <div class="topbar">
       <div class="brand">
-        <div class="title">Setup Gallery (ONLINE)</div>
-        <div class="sub">Drop image → uploads to Supabase Storage → post saved for everyone.</div>
+        <div class="title">Setup Gallery</div>
+        <div class="sub">Drop image → upload → post. Themes change the whole background.</div>
       </div>
 
       <div class="controls">
         <input id="q" class="input" type="search" placeholder="Search..." />
+
         <select id="styleFilter" class="select">
           <option value="all">All styles</option>
           <option value="wood">Wood</option>
@@ -468,17 +549,46 @@
           <option value="meme">Meme</option>
           <option value="lightblue">Light Blue</option>
         </select>
+
         <select id="sort" class="select">
           <option value="new">Newest</option>
           <option value="az">A → Z</option>
         </select>
+
         <button id="addBtn" class="btn">Add setup</button>
         <button id="reloadBtn" class="btn">Reload</button>
+
+        <div class="menuWrap">
+          <div class="menuBtn" id="menuBtn" title="Menu">
+            <span class="burger"><div></div></span>
+            Menu
+          </div>
+
+          <div class="menu" id="menu">
+            <div class="row">
+              <div class="mLabel">Theme</div>
+              <select id="themeSelect" class="select" style="width:100%">
+                <option value="white">White</option>
+                <option value="pink">Pink</option>
+                <option value="wood">Wood</option>
+                <option value="cyber">Cyber</option>
+                <option value="black">Black</option>
+                <option value="anime">Anime</option>
+                <option value="meme">Meme</option>
+                <option value="lightblue">Light Blue</option>
+              </select>
+
+              <div class="mLabel">Quick</div>
+              <div class="mItem" id="scrollTopBtn">Scroll to top</div>
+              <div class="mItem" id="aboutBtn">About</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
     <div class="note">
-      <b>Online upload:</b> drag & drop an image in the form. It uploads to Supabase Storage bucket <b>setup-images</b>.
+      <b>Likes:</b> now enabled (local per browser). Next step: make likes online for everyone.
     </div>
 
     <div id="masonry" class="masonry"></div>
@@ -521,7 +631,7 @@
           <label>Image</label>
 
           <div class="drop" id="drop">
-            <div class="dropLeft">
+            <div>
               <div class="dropTitle">Drop your image here</div>
               <div class="dropSub">Or click “Choose file”. (jpg / png / webp)</div>
             </div>
@@ -532,9 +642,7 @@
 
           <div class="previewRow">
             <div class="preview" id="preview">No image</div>
-            <div class="progress" aria-label="upload progress">
-              <div class="bar" id="bar"></div>
-            </div>
+            <div class="progress"><div class="bar" id="bar"></div></div>
           </div>
         </div>
 
@@ -574,7 +682,20 @@
     // ===== SUPABASE =====
     const SUPABASE_URL = "https://wnbyvospvvnyqfkjyzhp.supabase.co";
     const SUPABASE_KEY = "sb_publishable_Z_xU69R3fsnQrpfPSgkAWw_DZL_glCr";
-    const BUCKET = "Setup-images";
+    const BUCKET = "Setup-images"; // IMPORTANT: exact bucket name (case sensitive)
+
+    // ===== THEMES (changes WHOLE background) =====
+    const THEMES = {
+      white:    { name:"White",     bg0:"#f6f7fb", bg1:"#edf0f6", ink:"#0e1116", wave:"0.16", vignette:"0.35" },
+      pink:     { name:"Pink",      bg0:"#ffd6ea", bg1:"#ffc3e0", ink:"#0e1116", wave:"0.14", vignette:"0.18" },
+      wood:     { name:"Wood",      bg0:"#efe6dc", bg1:"#e4d3c2", ink:"#0e1116", wave:"0.14", vignette:"0.20" },
+      cyber:    { name:"Cyber",     bg0:"#eafcff", bg1:"#d7f6ff", ink:"#0e1116", wave:"0.14", vignette:"0.20" },
+      black:    { name:"Black",     bg0:"#101216", bg1:"#0b0e12", ink:"#f3f6fb", wave:"0.18", vignette:"0.92" },
+      anime:    { name:"Anime",     bg0:"#e9eaff", bg1:"#dde0ff", ink:"#0e1116", wave:"0.14", vignette:"0.20" },
+      meme:     { name:"Meme",      bg0:"#f0ffe8", bg1:"#e2ffd6", ink:"#0e1116", wave:"0.14", vignette:"0.20" },
+      lightblue:{ name:"Light Blue",bg0:"#d7f1ff", bg1:"#c5e8ff", ink:"#0e1116", wave:"0.14", vignette:"0.22" },
+    };
+    const THEME_KEY = "setup_gallery_theme_v1";
 
     const STYLE_COLORS = {
       wood: "#b67a3c",
@@ -587,6 +708,29 @@
       lightblue: "#1b8bff",
     };
 
+    // ===== Likes (local for now) =====
+    const LIKES_KEY = "setup_gallery_likes_counts_v1";
+    const LIKED_KEY = "setup_gallery_likes_liked_v1";
+    let likesCounts = JSON.parse(localStorage.getItem(LIKES_KEY) || "{}");
+    let likedFlags  = JSON.parse(localStorage.getItem(LIKED_KEY) || "{}");
+
+    function getLikes(id){ return Number(likesCounts[id] || 0); }
+    function isLiked(id){ return !!likedFlags[id]; }
+    function toggleLike(id){
+      if(isLiked(id)){
+        likedFlags[id] = false;
+        likesCounts[id] = Math.max(0, getLikes(id)-1);
+      } else {
+        likedFlags[id] = true;
+        likesCounts[id] = getLikes(id)+1;
+      }
+      localStorage.setItem(LIKES_KEY, JSON.stringify(likesCounts));
+      localStorage.setItem(LIKED_KEY, JSON.stringify(likedFlags));
+      toast("Liked!");
+      render();
+    }
+
+    // ===== Helpers =====
     const $ = (id) => document.getElementById(id);
 
     function uid(){ return "p_" + Math.random().toString(16).slice(2) + "_" + Date.now().toString(16); }
@@ -606,6 +750,36 @@
       window.__toastT = setTimeout(()=> el.style.display="none", 1200);
     }
 
+    function applyTheme(key){
+      const t = THEMES[key] || THEMES.white;
+      document.documentElement.style.setProperty("--bg0", t.bg0);
+      document.documentElement.style.setProperty("--bg1", t.bg1);
+      document.documentElement.style.setProperty("--ink", t.ink);
+      document.documentElement.style.setProperty("--waveOpacity", t.wave);
+      document.documentElement.style.setProperty("--vignette", t.vignette);
+
+      // adjust panels/buttons for black theme
+      if(key === "black"){
+        document.documentElement.style.setProperty("--panel", "rgba(10,14,18,0.62)");
+        document.documentElement.style.setProperty("--panel2", "rgba(10,14,18,0.52)");
+        document.documentElement.style.setProperty("--line", "rgba(255,255,255,0.10)");
+        document.documentElement.style.setProperty("--line2", "rgba(255,255,255,0.18)");
+        document.documentElement.style.setProperty("--btnBg", "rgba(10,14,18,0.72)");
+        document.documentElement.style.setProperty("--btnBd", "rgba(255,255,255,0.18)");
+      } else {
+        document.documentElement.style.setProperty("--panel", "rgba(255,255,255,0.82)");
+        document.documentElement.style.setProperty("--panel2", "rgba(255,255,255,0.70)");
+        document.documentElement.style.setProperty("--line", "rgba(14,17,22,0.12)");
+        document.documentElement.style.setProperty("--line2", "rgba(14,17,22,0.18)");
+        document.documentElement.style.setProperty("--btnBg", "rgba(255,255,255,0.92)");
+        document.documentElement.style.setProperty("--btnBd", "rgba(14,17,22,0.18)");
+      }
+
+      localStorage.setItem(THEME_KEY, key);
+      $("themeSelect").value = key;
+      toast(`Theme: ${t.name}`);
+    }
+
     async function sbFetch(path, opts = {}) {
       const url = `${SUPABASE_URL}${path}`;
       const headers = {
@@ -621,13 +795,12 @@
       return res;
     }
 
-    // Upload image to Supabase Storage and return PUBLIC URL
+    // Upload to Storage
     async function uploadToStorage(file){
       const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
       const safeExt = ["jpg","jpeg","png","webp","gif"].includes(ext) ? ext : "jpg";
       const path = `setup_${Date.now()}_${Math.random().toString(16).slice(2)}.${safeExt}`;
 
-      // simple fake progress animation (looks good)
       const bar = $("bar");
       bar.style.width = "12%";
       const t1 = setInterval(() => {
@@ -658,11 +831,10 @@
       bar.style.width = "100%";
       setTimeout(()=> bar.style.width = "0%", 600);
 
-      // public URL (bucket must be public)
       return `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${path}`;
     }
 
-    async function loadOnlinePosts() {
+    async function loadPosts() {
       const res = await sbFetch(`/rest/v1/setups?select=*`, { method: "GET" });
       const rows = await res.json();
       return rows.map(r => ({
@@ -676,7 +848,7 @@
       }));
     }
 
-    async function addOnlinePost(post) {
+    async function addPost(post) {
       await sbFetch(`/rest/v1/setups`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -692,7 +864,9 @@
       });
     }
 
+    // state
     let posts = [];
+    let selectedFile = null;
 
     function applyFilters(list){
       const q = $("q").value.trim().toLowerCase();
@@ -746,6 +920,9 @@
               ${tags.map(t => `<div class="chip">${esc(prettyTag(t))}</div>`).join("")}
             </div>
             <div class="metaRow">
+              <button class="likeBtn ${isLiked(p.id) ? "liked" : ""}" data-like="${esc(p.id)}">
+                ${isLiked(p.id) ? "♥" : "♡"} <span>${getLikes(p.id)}</span>
+              </button>
               <button class="viewBtn" data-view="${esc(p.id)}">View</button>
             </div>
           </div>
@@ -756,14 +933,28 @@
       root.querySelectorAll("[data-view]").forEach(btn => {
         btn.addEventListener("click", () => openView(btn.dataset.view));
       });
+      root.querySelectorAll("[data-like]").forEach(btn => {
+        btn.addEventListener("click", () => toggleLike(btn.dataset.like));
+      });
+
+      wireHover();
     }
 
+    function wireHover(){
+      document.querySelectorAll("button, a, input, select, textarea, .menuBtn, .mItem").forEach(el => {
+        el.addEventListener("mouseenter", () => document.body.classList.add("cursorHover"));
+        el.addEventListener("mouseleave", () => document.body.classList.remove("cursorHover"));
+      });
+    }
+
+    // modal functions
     function openAdd(){
       $("addModal").style.display = "flex";
       $("addStatus").textContent = "Ready.";
       $("preview").innerHTML = "No image";
       $("bar").style.width = "0%";
       selectedFile = null;
+      wireHover();
     }
     function closeAdd(){
       $("addModal").style.display = "none";
@@ -803,9 +994,9 @@
           createdAt: Date.now()
         };
 
-        await addOnlinePost(post);
+        await addPost(post);
         closeAdd();
-        posts = await loadOnlinePosts();
+        posts = await loadPosts();
         render();
         toast("Posted!");
       } catch(e){
@@ -822,18 +1013,17 @@
       $("viewImg").src = p.img || "";
       $("viewDesc").textContent = p.desc || "";
       $("viewModal").style.display = "flex";
+      wireHover();
     }
     function closeView(){ $("viewModal").style.display = "none"; }
 
     async function reload(){
-      posts = await loadOnlinePosts();
+      posts = await loadPosts();
       render();
       toast("Reloaded");
     }
 
-    // ----- Dropzone logic -----
-    let selectedFile = null;
-
+    // dropzone
     function setFile(file){
       if(!file) return;
       if(!file.type.startsWith("image/")){
@@ -847,10 +1037,7 @@
     }
 
     const drop = $("drop");
-    drop.addEventListener("dragover", (e) => {
-      e.preventDefault();
-      drop.classList.add("drag");
-    });
+    drop.addEventListener("dragover", (e) => { e.preventDefault(); drop.classList.add("drag"); });
     drop.addEventListener("dragleave", () => drop.classList.remove("drag"));
     drop.addEventListener("drop", (e) => {
       e.preventDefault();
@@ -865,13 +1052,38 @@
       setFile(file);
     });
 
-    // ----- Events -----
+    // menu
+    function toggleMenu(force){
+      const m = $("menu");
+      if(typeof force === "boolean") m.classList.toggle("open", force);
+      else m.classList.toggle("open");
+    }
+
+    // cursor animation
+    const dot = $("cursorDot");
+    const ring = $("cursorRing");
+    let cx=0, cy=0, rx=0, ry=0;
+    window.addEventListener("mousemove", (e) => {
+      cx = e.clientX; cy = e.clientY;
+      dot.style.left = cx + "px";
+      dot.style.top  = cy + "px";
+    });
+    (function animateRing(){
+      rx += (cx - rx) * 0.18;
+      ry += (cy - ry) * 0.18;
+      ring.style.left = rx + "px";
+      ring.style.top  = ry + "px";
+      requestAnimationFrame(animateRing);
+    })();
+
+    // events
     $("addBtn").addEventListener("click", openAdd);
     $("closeAdd").addEventListener("click", closeAdd);
     $("cancelAdd").addEventListener("click", closeAdd);
     $("saveAdd").addEventListener("click", saveAdd);
 
-    $("reloadBtn").addEventListener("click", () => reload());
+    $("reloadBtn").addEventListener("click", reload);
+
     $("q").addEventListener("input", render);
     $("styleFilter").addEventListener("change", render);
     $("sort").addEventListener("change", render);
@@ -880,15 +1092,36 @@
     $("viewModal").addEventListener("click", (e) => { if(e.target.id === "viewModal") closeView(); });
     $("closeView").addEventListener("click", closeView);
 
-    // Init
+    // menu wiring
+    $("menuBtn").addEventListener("click", () => toggleMenu());
+    document.addEventListener("click", (e) => {
+      const menu = $("menu");
+      const btn = $("menuBtn");
+      if(menu.classList.contains("open") && !menu.contains(e.target) && !btn.contains(e.target)){
+        toggleMenu(false);
+      }
+    });
+    $("scrollTopBtn").addEventListener("click", () => { window.scrollTo({top:0,behavior:"smooth"}); toggleMenu(false); });
+    $("aboutBtn").addEventListener("click", () => {
+      toggleMenu(false);
+      alert("Setup Gallery\n\n- Upload: Supabase Storage\n- Posts: Supabase DB\n- Likes: local (next: online)\n\nMade by Klim");
+    });
+    $("themeSelect").addEventListener("change", (e) => applyTheme(e.target.value));
+
+    // init
     (async function init(){
+      // theme
+      const saved = localStorage.getItem(THEME_KEY) || "white";
+      applyTheme(saved);
+
       try{
-        posts = await loadOnlinePosts();
+        posts = await loadPosts();
         render();
       } catch(e){
         console.log(e);
-        alert("Cannot load from Supabase. Check table 'setups', column 'style', and policies.");
+        alert("Cannot load posts from Supabase. Check table policies.");
       }
+      wireHover();
     })();
   </script>
 </body>
