@@ -7,23 +7,23 @@
 
   <style>
     :root{
-      /* base (will be overridden by themes) */
-      --bg0:#0b0e12;
-      --bg1:#0b0e12;
-      --ink:#f3f6fb;
-      --mut:rgba(243,246,251,0.72);
+      /* base (light-normal UI) */
+      --bg0:#f6f7fb;
+      --bg1:#edf0f6;
+      --ink:#0e1116;
+      --mut:rgba(14,17,22,0.62);
 
-      --panel: rgba(10,14,18,0.62);
-      --panel2: rgba(10,14,18,0.52);
-      --line: rgba(255,255,255,0.10);
-      --line2: rgba(255,255,255,0.18);
-      --shadow: 0 20px 60px rgba(0,0,0,0.55);
+      --panel: rgba(255,255,255,0.78);
+      --panel2: rgba(255,255,255,0.68);
+      --line: rgba(14,17,22,0.12);
+      --line2: rgba(14,17,22,0.18);
+      --shadow: 0 18px 55px rgba(14,17,22,0.12);
 
-      --accent:#1bd3ff;
+      --accent:#1b8bff;
       --accent2:#ff4bd8;
 
       --waveOpacity: 0.16;
-      --vignette: 0.92;
+      --vignette: 0.35;
       --radius: 18px;
     }
 
@@ -33,10 +33,9 @@
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
       color:var(--ink);
-      background: radial-gradient(1200px circle at 50% 10%, rgba(255,255,255,0.05), transparent 55%),
-                  linear-gradient(180deg, var(--bg0), var(--bg1));
+      background: linear-gradient(180deg, var(--bg0), var(--bg1));
       overflow-x:hidden;
-      cursor: none;
+      cursor:none;
       transition: background 260ms ease;
     }
 
@@ -52,7 +51,7 @@
       background-image: url("data:image/svg+xml;utf8,\
 <svg xmlns='http://www.w3.org/2000/svg' width='1100' height='650' viewBox='0 0 1100 650'>\
   <rect width='1100' height='650' fill='none'/>\
-  <g fill='none' stroke='%23ffffff' stroke-opacity='0.55' stroke-width='1'>\
+  <g fill='none' stroke='%230e1116' stroke-opacity='0.28' stroke-width='1'>\
     <path d='M-60 70 C 160 10, 320 140, 560 80 S 900 10, 1200 110'/>\
     <path d='M-60 110 C 150 70, 330 180, 560 130 S 920 70, 1200 160'/>\
     <path d='M-60 150 C 120 130, 330 230, 600 180 S 920 130, 1200 220'/>\
@@ -65,7 +64,7 @@
     <path d='M-60 430 C 150 490, 350 540, 620 520 S 920 490, 1200 580'/>\
     <path d='M-60 470 C 120 540, 350 590, 610 570 S 920 540, 1200 620'/>\
   </g>\
-  <g fill='none' stroke='%23ffffff' stroke-opacity='0.35' stroke-width='1' stroke-dasharray='5 6'>\
+  <g fill='none' stroke='%230e1116' stroke-opacity='0.16' stroke-width='1' stroke-dasharray='5 6'>\
     <path d='M-60 95 C 180 25, 330 160, 590 100 S 920 25, 1200 125'/>\
     <path d='M-60 175 C 140 155, 350 260, 630 205 S 920 165, 1200 255'/>\
     <path d='M-60 255 C 150 260, 350 340, 630 295 S 920 265, 1200 355'/>\
@@ -90,36 +89,35 @@
       pointer-events:none;
       opacity: var(--vignette);
       background:
-        radial-gradient(900px circle at 50% 15%, rgba(255,255,255,0.08), transparent 55%),
-        radial-gradient(1200px circle at 50% 55%, rgba(0,0,0,0.20), rgba(0,0,0,0.78) 70%);
+        radial-gradient(900px circle at 50% 10%, rgba(255,255,255,0.55), transparent 55%),
+        radial-gradient(1200px circle at 50% 60%, rgba(0,0,0,0.06), transparent 70%);
     }
 
-    /* ===== Custom cursor (blue ring) ===== */
+    /* ===== Cursor ===== */
     #cursor{
       position:fixed;
       width:10px; height:10px;
       border-radius:50%;
-      background: rgba(255,255,255,0.95);
+      background: rgba(0,0,0,0.75);
       transform: translate(-50%,-50%);
       z-index:100;
       pointer-events:none;
     }
     #cursorRing{
       position:fixed;
-      width:44px; height:44px;
+      width:46px; height:46px;
       border-radius:50%;
-      border:2px solid rgba(27,211,255,0.38);
+      border:2px solid rgba(27,211,255,0.35);
       background: rgba(27,211,255,0.10);
       transform: translate(-50%,-50%);
       z-index:99;
       pointer-events:none;
       transition: width .12s ease, height .12s ease, background .12s ease, border-color .12s ease;
-      filter: blur(0.1px);
     }
     body.cursorHover #cursorRing{
-      width:56px; height:56px;
-      background: rgba(27,211,255,0.12);
-      border-color: rgba(27,211,255,0.50);
+      width:58px; height:58px;
+      background: rgba(27,211,255,0.14);
+      border-color: rgba(27,211,255,0.45);
     }
 
     /* ===== Layout ===== */
@@ -141,7 +139,6 @@
       box-shadow: var(--shadow);
       transition: transform .2s ease, opacity .2s ease;
     }
-
     body.zen .topbar{ transform: translateY(-14px); opacity:0.0; pointer-events:none; }
 
     .brand{
@@ -172,7 +169,7 @@
     }
 
     .input, .select{
-      background: rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.82);
       border:2px solid var(--line2);
       color: var(--ink);
       padding:10px 12px;
@@ -186,7 +183,7 @@
     .btn{
       cursor:pointer;
       border:2px solid var(--line2);
-      background: rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.82);
       color: var(--ink);
       padding:10px 12px;
       border-radius:14px;
@@ -196,7 +193,7 @@
       transition: transform .08s ease, background .2s ease, border-color .2s ease;
       white-space:nowrap;
     }
-    .btn:hover{ background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.30); }
+    .btn:hover{ background: rgba(255,255,255,0.96); border-color: rgba(14,17,22,0.26); }
     .btn:active{ transform: scale(0.99); }
 
     /* ===== Style bar ===== */
@@ -211,9 +208,8 @@
       border:1px solid var(--line);
       background: var(--panel2);
       backdrop-filter: blur(14px);
-      box-shadow: 0 14px 40px rgba(0,0,0,0.35);
+      box-shadow: 0 14px 40px rgba(14,17,22,0.10);
     }
-
     body.zen .styleBar{ opacity:0; pointer-events:none; transform: translateY(-8px); transition: .2s ease; }
 
     .styleLeft{
@@ -227,7 +223,7 @@
       letter-spacing:0.5px;
       text-transform:uppercase;
       font-size:12px;
-      color: rgba(243,246,251,0.86);
+      color: rgba(14,17,22,0.75);
     }
 
     .stylePills{
@@ -240,9 +236,9 @@
       cursor:pointer;
       padding:10px 14px;
       border-radius:999px;
-      border:2px solid rgba(255,255,255,0.16);
-      background: rgba(255,255,255,0.06);
-      color: rgba(243,246,251,0.86);
+      border:2px solid rgba(14,17,22,0.16);
+      background: rgba(255,255,255,0.70);
+      color: rgba(14,17,22,0.80);
       font-weight:900;
       font-size:12px;
       text-transform:uppercase;
@@ -250,24 +246,17 @@
       transition: background .2s ease, border-color .2s ease, transform .08s ease;
       user-select:none;
     }
-    .pill:hover{ background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.26); }
+    .pill:hover{ background: rgba(255,255,255,0.92); border-color: rgba(14,17,22,0.22); }
     .pill:active{ transform: scale(0.99); }
     .pill.active{
       border-color: rgba(27,211,255,0.55);
-      background: rgba(27,211,255,0.10);
-      color: rgba(223,249,255,0.92);
+      background: rgba(27,211,255,0.14);
+      color: rgba(0,60,78,0.85);
     }
 
-    .styleRight{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-    }
     .miniNote{
       font-size:12px;
-      color: rgba(243,246,251,0.70);
+      color: rgba(14,17,22,0.62);
     }
 
     .note{
@@ -301,11 +290,10 @@
       margin: 0 0 14px;
       border-radius: 18px;
       overflow:hidden;
-      border:1px solid rgba(255,255,255,0.10);
-      background: rgba(8,10,12,0.55);
-      box-shadow: 0 18px 55px rgba(0,0,0,0.35);
+      border:1px solid rgba(14,17,22,0.12);
+      background: rgba(255,255,255,0.80);
+      box-shadow: 0 18px 55px rgba(14,17,22,0.10);
       backdrop-filter: blur(10px);
-      transform-style: preserve-3d;
       transition: transform .18s ease;
     }
     .pin:hover{ transform: translateY(-2px); }
@@ -313,7 +301,7 @@
     .pin .imgWrap{
       position:relative;
       width:100%;
-      background: rgba(255,255,255,0.03);
+      background: rgba(0,0,0,0.04);
     }
     .pin img{
       width:100%;
@@ -327,8 +315,8 @@
       left:12px;
       padding:7px 10px;
       border-radius:999px;
-      border:2px solid rgba(255,255,255,0.22);
-      background: rgba(0,0,0,0.40);
+      border:2px solid rgba(14,17,22,0.18);
+      background: rgba(255,255,255,0.78);
       color: var(--ink);
       font-size:11px;
       font-weight:900;
@@ -339,7 +327,7 @@
 
     .pin .body{
       padding:14px 14px 14px;
-      background: linear-gradient(180deg, rgba(0,0,0,0.72), rgba(0,0,0,0.82));
+      background: linear-gradient(180deg, rgba(255,255,255,0.80), rgba(255,255,255,0.70));
       display:flex;
       flex-direction:column;
       gap:10px;
@@ -347,9 +335,10 @@
 
     .pin .title{
       font-weight:900;
-      font-size:22px;
+      font-size:20px;
       letter-spacing:0.2px;
       line-height:1.1;
+      color: var(--ink);
     }
 
     .chips{
@@ -360,9 +349,9 @@
     .chip{
       padding:10px 14px;
       border-radius:999px;
-      border:2px solid rgba(255,255,255,0.16);
-      background: rgba(255,255,255,0.06);
-      color: rgba(243,246,251,0.85);
+      border:2px solid rgba(14,17,22,0.14);
+      background: rgba(255,255,255,0.70);
+      color: rgba(14,17,22,0.72);
       font-weight:800;
       font-size:13px;
     }
@@ -377,27 +366,27 @@
 
     .viewBtn{
       cursor:pointer;
-      border:2px solid rgba(27,211,255,0.30);
+      border:2px solid rgba(27,211,255,0.35);
       border-radius: 18px;
       padding:14px 22px;
-      background: rgba(27,211,255,0.20);
-      color: #dff9ff;
+      background: rgba(27,211,255,0.18);
+      color: rgba(0,60,78,0.88);
       font-weight:900;
-      font-size:18px;
+      font-size:16px;
       display:flex;
       align-items:center;
       gap:10px;
       box-shadow: 0 10px 28px rgba(27,211,255,0.10);
       transition: transform .08s ease, background .2s ease, border-color .2s ease;
     }
-    .viewBtn:hover{ background: rgba(27,211,255,0.26); border-color: rgba(27,211,255,0.40); }
+    .viewBtn:hover{ background: rgba(27,211,255,0.24); border-color: rgba(27,211,255,0.45); }
     .viewBtn:active{ transform: scale(0.99); }
 
     .likeBtn{
       cursor:pointer;
-      border:2px solid rgba(255,255,255,0.16);
-      background: rgba(255,255,255,0.06);
-      color: rgba(243,246,251,0.90);
+      border:2px solid rgba(14,17,22,0.14);
+      background: rgba(255,255,255,0.70);
+      color: rgba(14,17,22,0.80);
       border-radius: 14px;
       padding:10px 12px;
       font-weight:900;
@@ -406,8 +395,9 @@
       gap:8px;
     }
     .likeBtn.liked{
-      border-color: rgba(27,211,255,0.28);
-      background: rgba(27,211,255,0.08);
+      border-color: rgba(27,211,255,0.32);
+      background: rgba(27,211,255,0.12);
+      color: rgba(0,60,78,0.88);
     }
 
     /* ===== Modals ===== */
@@ -416,7 +406,7 @@
       display:none;
       align-items:center;
       justify-content:center;
-      background: rgba(0,0,0,0.62);
+      background: rgba(14,17,22,0.42);
       backdrop-filter: blur(6px);
       z-index:50;
       padding:18px;
@@ -424,9 +414,9 @@
     .modalBox{
       width:min(920px, 96vw);
       border-radius: 18px;
-      border:1px solid rgba(255,255,255,0.12);
-      background: rgba(10,14,18,0.82);
-      box-shadow: 0 24px 70px rgba(0,0,0,0.6);
+      border:1px solid rgba(14,17,22,0.14);
+      background: rgba(255,255,255,0.88);
+      box-shadow: 0 24px 70px rgba(14,17,22,0.18);
       overflow:hidden;
       backdrop-filter: blur(14px);
     }
@@ -435,18 +425,19 @@
       justify-content:space-between;
       align-items:center;
       padding:14px 16px;
-      border-bottom:1px solid rgba(255,255,255,0.10);
+      border-bottom:1px solid rgba(14,17,22,0.10);
     }
     .modalTop .mtitle{
       font-weight:900;
       text-transform:uppercase;
       letter-spacing:0.6px;
       font-size:13px;
+      color: var(--ink);
     }
     .xbtn{
       cursor:pointer;
-      border:2px solid rgba(255,255,255,0.16);
-      background: rgba(255,255,255,0.06);
+      border:2px solid rgba(14,17,22,0.14);
+      background: rgba(255,255,255,0.80);
       color: var(--ink);
       padding:8px 10px;
       border-radius:14px;
@@ -464,17 +455,16 @@
     .field label{
       display:block;
       font-size:11px;
-      color: rgba(243,246,251,0.68);
+      color: rgba(14,17,22,0.65);
       margin: 0 0 6px;
       text-transform:uppercase;
       letter-spacing:0.4px;
       font-weight:900;
     }
-
     .field input, .field textarea, .field select{
       width:100%;
-      background: rgba(255,255,255,0.06);
-      border:2px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.92);
+      border:2px solid rgba(14,17,22,0.14);
       border-radius: 14px;
       padding:10px 12px;
       outline:none;
@@ -485,7 +475,7 @@
 
     .modalFoot{
       padding:14px 16px;
-      border-top:1px solid rgba(255,255,255,0.10);
+      border-top:1px solid rgba(14,17,22,0.10);
       display:flex;
       justify-content:space-between;
       align-items:center;
@@ -495,29 +485,28 @@
 
     .status{
       font-size:12px;
-      color: rgba(243,246,251,0.70);
+      color: rgba(14,17,22,0.62);
       line-height:1.35;
       max-width: 520px;
     }
     .rightBtns{ display:flex; gap:10px; }
 
-    /* ===== Small helper toast ===== */
+    /* Toast */
     .toast{
       position:fixed;
       bottom:18px;
       left:50%;
       transform: translateX(-50%);
-      background: rgba(10,14,18,0.78);
-      border:1px solid rgba(255,255,255,0.12);
-      color: rgba(243,246,251,0.86);
+      background: rgba(255,255,255,0.86);
+      border:1px solid rgba(14,17,22,0.14);
+      color: rgba(14,17,22,0.80);
       padding:10px 12px;
       border-radius: 14px;
       backdrop-filter: blur(12px);
-      box-shadow: 0 16px 50px rgba(0,0,0,0.45);
+      box-shadow: 0 16px 50px rgba(14,17,22,0.12);
       z-index:80;
       display:none;
       font-weight:800;
-      letter-spacing:0.2px;
       font-size:12px;
     }
   </style>
@@ -535,7 +524,7 @@
     <div class="topbar">
       <div class="brand">
         <div class="title">Setup Gallery</div>
-        <div class="sub">Choose a style below. Waves stay. Eye-friendly colors. (S = styles, Z = Zen)</div>
+        <div class="sub">Pick a style below. Waves stay. (Z = Zen, Esc = close)</div>
       </div>
 
       <div class="controls">
@@ -559,20 +548,17 @@
       </div>
     </div>
 
-    <!-- STYLE BAR -->
     <div class="styleBar" id="styleBar">
       <div class="styleLeft">
         <div class="styleLabel">Style</div>
         <div class="stylePills" id="stylePills"></div>
       </div>
-      <div class="styleRight">
-        <div class="miniNote" id="styleHint">Pick a vibe.</div>
-      </div>
+      <div class="miniNote" id="styleHint">Choose a vibe.</div>
     </div>
 
     <div class="note">
       <b>Images:</b> Paste a direct Image URL (https://...jpg/png) or upload a file.
-      Upload saves locally in your browser (for now). Tomorrow we can make it online for everyone.
+      Upload saves locally in your browser (for now).
     </div>
 
     <div id="masonry" class="masonry"></div>
@@ -634,64 +620,63 @@
       <div style="padding:0;">
         <img id="viewImg" src="" alt="setup" style="width:100%;display:block;max-height:72vh;object-fit:cover;">
       </div>
-      <div style="padding:14px 16px;border-top:1px solid rgba(255,255,255,0.10);color:rgba(243,246,251,0.78);">
+      <div style="padding:14px 16px;border-top:1px solid rgba(14,17,22,0.10);color:rgba(14,17,22,0.72);">
         <div id="viewDesc" style="line-height:1.4;"></div>
       </div>
     </div>
   </div>
 
   <script>
-    /************ THEME STYLES ************/
+    // THEMES: "pink" is now REALLY pink (full background), not a tiny tint.
     const THEMES = {
-      black: {
-        name: "Black",
-        vars: { "--bg0":"#0b0e12","--bg1":"#07090c","--ink":"#f3f6fb","--mut":"rgba(243,246,251,0.72)",
-               "--accent":"#1bd3ff","--waveOpacity":"0.16","--vignette":"0.92" }
-      },
-      white: {
-        name: "White",
-        vars: { "--bg0":"#f5f7fa","--bg1":"#eceff4","--ink":"#0e1116","--mut":"rgba(14,17,22,0.62)",
-               "--panel":"rgba(255,255,255,0.72)","--panel2":"rgba(255,255,255,0.62)",
-               "--line":"rgba(14,17,22,0.12)","--line2":"rgba(14,17,22,0.18)",
-               "--shadow":"0 20px 60px rgba(14,17,22,0.12)",
-               "--accent":"#1b8bff","--waveOpacity":"0.12","--vignette":"0.45" }
-      },
-      lightblue: {
-        name: "Light Blue",
-        vars: { "--bg0":"#0b1220","--bg1":"#0a0f18","--accent":"#5fd6ff","--waveOpacity":"0.16","--vignette":"0.92" }
-      },
-      pink: {
-        name: "Pink",
-        vars: { "--bg0":"#1a0d16","--bg1":"#10070f","--accent":"#ff61c7","--accent2":"#ffd1ea",
-               "--waveOpacity":"0.15","--vignette":"0.94" }
+      wood: {
+        name: "Wood",
+        vars: { "--bg0":"#efe6dc","--bg1":"#e4d3c2","--accent":"#ffb86b","--waveOpacity":"0.14","--vignette":"0.25" }
       },
       cyber: {
         name: "Cyber",
-        vars: { "--bg0":"#061219","--bg1":"#040a0f","--accent":"#00ffe0","--accent2":"#7b61ff",
-               "--waveOpacity":"0.15","--vignette":"0.92" }
+        vars: { "--bg0":"#eafcff","--bg1":"#d7f6ff","--accent":"#00c8d6","--waveOpacity":"0.14","--vignette":"0.22" }
       },
-      wood: {
-        name: "Wood",
-        vars: { "--bg0":"#1a1410","--bg1":"#0e0b09","--accent":"#ffb86b","--accent2":"#ffe2c2",
-               "--waveOpacity":"0.14","--vignette":"0.95" }
+      pink: {
+        name: "Pink",
+        vars: { "--bg0":"#ffd6ea","--bg1":"#ffc3e0","--accent":"#ff3fb6","--waveOpacity":"0.14","--vignette":"0.20" }
+      },
+      black: {
+        name: "Black",
+        vars: { "--bg0":"#101216","--bg1":"#0b0e12",
+                "--ink":"#f3f6fb","--mut":"rgba(243,246,251,0.72)",
+                "--panel":"rgba(10,14,18,0.62)","--panel2":"rgba(10,14,18,0.52)",
+                "--line":"rgba(255,255,255,0.10)","--line2":"rgba(255,255,255,0.18)",
+                "--shadow":"0 20px 60px rgba(0,0,0,0.55)",
+                "--waveOpacity":"0.16","--vignette":"0.92" }
+      },
+      white: {
+        name: "White",
+        vars: { "--bg0":"#f6f7fb","--bg1":"#edf0f6","--ink":"#0e1116","--mut":"rgba(14,17,22,0.62)",
+               "--panel":"rgba(255,255,255,0.78)","--panel2":"rgba(255,255,255,0.68)",
+               "--line":"rgba(14,17,22,0.12)","--line2":"rgba(14,17,22,0.18)",
+               "--shadow":"0 18px 55px rgba(14,17,22,0.12)",
+               "--waveOpacity":"0.16","--vignette":"0.35" }
       },
       anime: {
         name: "Anime",
-        vars: { "--bg0":"#0d0f18","--bg1":"#070812","--accent":"#7aa7ff","--accent2":"#ff7ad9",
-               "--waveOpacity":"0.15","--vignette":"0.92" }
+        vars: { "--bg0":"#e9eaff","--bg1":"#dde0ff","--accent":"#7a7dff","--waveOpacity":"0.14","--vignette":"0.22" }
       },
       meme: {
         name: "Meme",
-        vars: { "--bg0":"#101115","--bg1":"#090a0d","--accent":"#7dff9a","--accent2":"#ffd166",
-               "--waveOpacity":"0.16","--vignette":"0.92" }
+        vars: { "--bg0":"#f0ffe8","--bg1":"#e2ffd6","--accent":"#33cc66","--waveOpacity":"0.14","--vignette":"0.22" }
+      },
+      lightblue: {
+        name: "Light Blue",
+        vars: { "--bg0":"#d7f1ff","--bg1":"#c5e8ff","--accent":"#1b8bff","--waveOpacity":"0.14","--vignette":"0.22" }
       }
     };
 
-    const STYLE_KEY = "setup_gallery_style_v1";
-    const currentStyle = localStorage.getItem(STYLE_KEY) || "black";
+    const STYLE_KEY = "setup_gallery_style_v2";
+    const currentStyle = localStorage.getItem(STYLE_KEY) || "white";
 
     function applyTheme(key){
-      const t = THEMES[key] || THEMES.black;
+      const t = THEMES[key] || THEMES.white;
       for(const [k,v] of Object.entries(t.vars)){
         document.documentElement.style.setProperty(k, v);
       }
@@ -699,7 +684,6 @@
       setActivePill(key);
       toast(`Style: ${t.name}`);
     }
-
     function setActivePill(key){
       document.querySelectorAll(".pill[data-style]").forEach(p => {
         p.classList.toggle("active", p.dataset.style === key);
@@ -714,12 +698,12 @@
       window.__toastT = setTimeout(()=> el.style.display="none", 1200);
     }
 
-    /************ DATA ************/
-    const KEY_POSTS = "setup_gallery_topo_posts_v2";
-    const KEY_LIKES = "setup_gallery_topo_likes_v2";
-    const KEY_LIKED = "setup_gallery_topo_liked_v2";
+    // DATA
+    const KEY_POSTS = "setup_gallery_posts_light_v1";
+    const KEY_LIKES = "setup_gallery_likes_light_v1";
+    const KEY_LIKED = "setup_gallery_liked_light_v1";
 
-    const DEMO = []; // keep empty
+    const DEMO = []; // empty
 
     const $ = (id) => document.getElementById(id);
 
@@ -732,20 +716,9 @@
     }
     function saveJSON(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
     function uid(){ return "p_" + Math.random().toString(16).slice(2) + "_" + Date.now().toString(16); }
-    function fmtDate(ts){
-      const d = new Date(ts);
-      const y = d.getFullYear();
-      const m = String(d.getMonth()+1).padStart(2,"0");
-      const day = String(d.getDate()).padStart(2,"0");
-      return `${y}-${m}-${day}`;
-    }
     function esc(s){
-      return String(s)
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
+      return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+                      .replaceAll('"',"&quot;").replaceAll("'","&#039;");
     }
     async function fileToDataURL(file){
       return await new Promise((resolve, reject) => {
@@ -849,7 +822,7 @@
               <button class="likeBtn ${isLiked(p.id) ? "liked" : ""}" data-like="${esc(p.id)}">
                 ${isLiked(p.id) ? "♥" : "♡"} <span>${getLikes(p.id)}</span>
               </button>
-              <button class="viewBtn" data-view="${esc(p.id)}">👁 View</button>
+              <button class="viewBtn" data-view="${esc(p.id)}">View</button>
             </div>
           </div>
         `;
@@ -859,21 +832,19 @@
       root.querySelectorAll("[data-like]").forEach(b => b.addEventListener("click", () => toggleLike(b.dataset.like)));
       root.querySelectorAll("[data-view]").forEach(b => b.addEventListener("click", () => openView(b.dataset.view)));
 
-      // hover cursor ring
       root.querySelectorAll("button, a").forEach(el => {
         el.addEventListener("mouseenter", () => document.body.classList.add("cursorHover"));
         el.addEventListener("mouseleave", () => document.body.classList.remove("cursorHover"));
       });
     }
 
-    /* ===== Add modal ===== */
+    // Add modal
     function openAdd(){ $("addModal").style.display = "flex"; $("addStatus").textContent = "Ready."; }
     function closeAdd(){
       $("addModal").style.display = "none";
       $("fTitle").value = ""; $("fDesc").value = ""; $("fUrl").value = "";
       $("fFile").value = ""; $("fTags").value = "";
     }
-
     async function saveAdd(){
       const title = $("fTitle").value.trim();
       const desc  = $("fDesc").value.trim();
@@ -903,7 +874,7 @@
       toast("Added!");
     }
 
-    /* ===== View modal ===== */
+    // View modal
     function openView(id){
       const p = allPosts().find(x => x.id === id);
       if(!p) return;
@@ -924,9 +895,9 @@
       toast("Reset");
     }
 
-    /* ===== Build style pills ===== */
+    // Build style pills
     function buildStyleBar(){
-      const host = document.getElementById("stylePills");
+      const host = $("stylePills");
       host.innerHTML = "";
       const order = ["wood","cyber","pink","black","white","anime","meme","lightblue"];
       for(const key of order){
@@ -937,32 +908,25 @@
         btn.addEventListener("click", () => applyTheme(key));
         host.appendChild(btn);
       }
-      setActivePill(localStorage.getItem(STYLE_KEY) || "black");
+      setActivePill(localStorage.getItem("setup_gallery_style_v2") || "white");
     }
 
-    /* ===== Zen mode ===== */
+    // Zen mode (Z only)
     function toggleZen(){
       document.body.classList.toggle("zen");
       toast(document.body.classList.contains("zen") ? "Zen: ON" : "Zen: OFF");
     }
 
-    /* ===== Keyboard shortcuts ===== */
+    // Keyboard shortcuts: Z + Esc only (S removed)
     document.addEventListener("keydown", (e) => {
       if(e.key.toLowerCase() === "z") toggleZen();
-      if(e.key.toLowerCase() === "s"){
-        toast("Pick a style ↑");
-        document.getElementById("styleBar").scrollIntoView({ behavior:"smooth", block:"start" });
-      }
-      if(e.key === "Escape"){
-        closeAdd(); closeView();
-      }
+      if(e.key === "Escape"){ closeAdd(); closeView(); }
     });
 
-    /* ===== Cursor ===== */
-    const cur = document.getElementById("cursor");
-    const ring = document.getElementById("cursorRing");
+    // Cursor
+    const cur = $("cursor");
+    const ring = $("cursorRing");
     let cx=0, cy=0, rx=0, ry=0;
-
     window.addEventListener("mousemove", (e) => {
       cx = e.clientX; cy = e.clientY;
       cur.style.left = cx + "px";
@@ -982,24 +946,24 @@
       el.addEventListener("mouseleave", () => document.body.classList.remove("cursorHover"));
     });
 
-    /* ===== Wire events ===== */
-    document.getElementById("addBtn").addEventListener("click", openAdd);
-    document.getElementById("closeAdd").addEventListener("click", closeAdd);
-    document.getElementById("cancelAdd").addEventListener("click", closeAdd);
-    document.getElementById("saveAdd").addEventListener("click", saveAdd);
+    // Wire events
+    $("addBtn").addEventListener("click", openAdd);
+    $("closeAdd").addEventListener("click", closeAdd);
+    $("cancelAdd").addEventListener("click", closeAdd);
+    $("saveAdd").addEventListener("click", saveAdd);
 
-    document.getElementById("resetBtn").addEventListener("click", resetAll);
-    document.getElementById("zenBtn").addEventListener("click", toggleZen);
+    $("resetBtn").addEventListener("click", resetAll);
+    $("zenBtn").addEventListener("click", toggleZen);
 
-    document.getElementById("q").addEventListener("input", render);
-    document.getElementById("cat").addEventListener("change", render);
-    document.getElementById("sort").addEventListener("change", render);
+    $("q").addEventListener("input", render);
+    $("cat").addEventListener("change", render);
+    $("sort").addEventListener("change", render);
 
-    document.getElementById("addModal").addEventListener("click", (e) => { if(e.target.id === "addModal") closeAdd(); });
-    document.getElementById("viewModal").addEventListener("click", (e) => { if(e.target.id === "viewModal") closeView(); });
-    document.getElementById("closeView").addEventListener("click", closeView);
+    $("addModal").addEventListener("click", (e) => { if(e.target.id === "addModal") closeAdd(); });
+    $("viewModal").addEventListener("click", (e) => { if(e.target.id === "viewModal") closeView(); });
+    $("closeView").addEventListener("click", closeView);
 
-    /* ===== Init ===== */
+    // Init
     buildStyleBar();
     applyTheme(currentStyle);
     render();
