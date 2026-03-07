@@ -37,11 +37,10 @@
       color:var(--ink);
       background: linear-gradient(180deg, var(--bg0), var(--bg1));
       overflow-x:hidden;
-      cursor: none; /* for custom cursor */
+      cursor: none;
       transition: background 260ms ease;
     }
 
-    /* ===== topo waves ===== */
     .topo{
       position:fixed;
       inset:-10vh -10vw;
@@ -87,7 +86,7 @@
         radial-gradient(1200px circle at 50% 60%, rgba(0,0,0,0.06), transparent 70%);
     }
 
-    /* ===== custom cursor ===== */
+    /* cursor */
     #cursorDot{
       position:fixed;
       width:9px;height:9px;
@@ -167,7 +166,6 @@
     .btn:hover{ background: rgba(255,255,255,0.98); border-color: rgba(14,17,22,0.26); }
     .btn:active{ transform: scale(0.99); }
 
-    /* nicer select */
     .select, .input{
       background: rgba(255,255,255,0.92);
       border:2px solid rgba(14,17,22,0.18);
@@ -191,7 +189,14 @@
       background-size: 100% 100%, 18px 18px;
     }
 
-    /* menu button */
+    /* language select (fixed width so it never jumps) */
+    .langSelect{
+      min-width: 150px;
+      width: 150px;
+      text-align: left;
+    }
+
+    /* menu */
     .menuWrap{ position:relative; }
     .menuBtn{
       display:flex; align-items:center; gap:10px;
@@ -204,9 +209,7 @@
       text-transform:uppercase;
       letter-spacing:0.35px;
     }
-    .burger{
-      width:16px; height:12px; position:relative;
-    }
+    .burger{ width:16px; height:12px; position:relative; }
     .burger:before,.burger:after,.burger div{
       content:"";
       position:absolute; left:0; right:0;
@@ -347,7 +350,6 @@
       font-size:14px;
     }
 
-    /* likes */
     .likeBtn{
       cursor:pointer;
       border:2px solid rgba(14,17,22,0.16);
@@ -429,7 +431,6 @@
     }
     textarea{ min-height:120px; resize:vertical; line-height:1.35; }
 
-    /* Dropzone */
     .drop{
       border:2px dashed rgba(14,17,22,0.20);
       background: rgba(255,255,255,0.78);
@@ -521,18 +522,15 @@
 <body>
   <div class="topo"></div>
   <div class="vignette"></div>
-
-  <!-- cursor -->
   <div id="cursorRing"></div>
   <div id="cursorDot"></div>
-
   <div class="toast" id="toast"></div>
 
   <div class="wrap">
     <div class="topbar">
       <div class="brand">
-        <div class="title">Setup Gallery</div>
-        <div class="sub">Drop image → upload → post. Themes change the whole background.</div>
+        <div class="title" id="tTitle">Setup Gallery</div>
+        <div class="sub" id="tSub">Select a style — background changes automatically.</div>
       </div>
 
       <div class="controls">
@@ -552,33 +550,28 @@
 
         <select id="sort" class="select">
           <option value="new">Newest</option>
-          <option value="az">A → Z</option>
         </select>
 
         <button id="addBtn" class="btn">Add setup</button>
         <button id="reloadBtn" class="btn">Reload</button>
 
+        <select id="langSelect" class="select langSelect" title="Language">
+          <option value="en">English</option>
+          <option value="ru">Русский</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+          <option value="zh">中文</option>
+        </select>
+
         <div class="menuWrap">
           <div class="menuBtn" id="menuBtn" title="Menu">
             <span class="burger"><div></div></span>
-            Menu
+            <span id="tMenu">Menu</span>
           </div>
 
           <div class="menu" id="menu">
             <div class="row">
-              <div class="mLabel">Theme</div>
-              <select id="themeSelect" class="select" style="width:100%">
-                <option value="white">White</option>
-                <option value="pink">Pink</option>
-                <option value="wood">Wood</option>
-                <option value="cyber">Cyber</option>
-                <option value="black">Black</option>
-                <option value="anime">Anime</option>
-                <option value="meme">Meme</option>
-                <option value="lightblue">Light Blue</option>
-              </select>
-
-              <div class="mLabel">Quick</div>
+              <div class="mLabel" id="tQuick">Quick</div>
               <div class="mItem" id="scrollTopBtn">Scroll to top</div>
               <div class="mItem" id="aboutBtn">About</div>
             </div>
@@ -587,8 +580,8 @@
       </div>
     </div>
 
-    <div class="note">
-      <b>Likes:</b> now enabled (local per browser). Next step: make likes online for everyone.
+    <div class="note" id="tLikesNote">
+      <b>Likes:</b> enabled (local per browser). Next step: make likes online for everyone.
     </div>
 
     <div id="masonry" class="masonry"></div>
@@ -598,18 +591,18 @@
   <div class="modal" id="addModal">
     <div class="modalBox">
       <div class="modalTop">
-        <div class="mtitle">Add setup</div>
+        <div class="mtitle" id="tAddSetup">Add setup</div>
         <button class="xbtn" id="closeAdd">✕</button>
       </div>
 
       <div class="modalBody">
         <div class="field">
-          <label>Title</label>
+          <label id="tTitleLbl">Title</label>
           <input id="fTitle" type="text" placeholder="My setup" />
         </div>
 
         <div class="field">
-          <label>Style</label>
+          <label id="tStyleLbl">Style</label>
           <select id="fStyle">
             <option value="wood">Wood</option>
             <option value="cyber">Cyber</option>
@@ -623,17 +616,17 @@
         </div>
 
         <div class="field" style="grid-column:1 / -1;">
-          <label>Tags (comma separated)</label>
+          <label id="tTagsLbl">Tags (comma separated)</label>
           <input id="fTags" type="text" placeholder="workspace, minimal, dual" />
         </div>
 
         <div class="field" style="grid-column:1 / -1;">
-          <label>Image</label>
+          <label id="tImageLbl">Image</label>
 
           <div class="drop" id="drop">
             <div>
-              <div class="dropTitle">Drop your image here</div>
-              <div class="dropSub">Or click “Choose file”. (jpg / png / webp)</div>
+              <div class="dropTitle" id="tDropTitle">Drop your image here</div>
+              <div class="dropSub" id="tDropSub">Or click “Choose file”. (jpg / png / webp)</div>
             </div>
             <button class="dropBtn" id="chooseBtn" type="button">Choose file</button>
           </div>
@@ -647,7 +640,7 @@
         </div>
 
         <div class="field" style="grid-column:1 / -1;">
-          <label>Description</label>
+          <label id="tDescLbl">Description</label>
           <textarea id="fDesc" placeholder="Short description..."></textarea>
         </div>
       </div>
@@ -682,20 +675,19 @@
     // ===== SUPABASE =====
     const SUPABASE_URL = "https://wnbyvospvvnyqfkjyzhp.supabase.co";
     const SUPABASE_KEY = "sb_publishable_Z_xU69R3fsnQrpfPSgkAWw_DZL_glCr";
-    const BUCKET = "Setup-images"; // IMPORTANT: exact bucket name (case sensitive)
+    const BUCKET = "Setup-images";
 
-    // ===== THEMES (changes WHOLE background) =====
-    const THEMES = {
-      white:    { name:"White",     bg0:"#f6f7fb", bg1:"#edf0f6", ink:"#0e1116", wave:"0.16", vignette:"0.35" },
-      pink:     { name:"Pink",      bg0:"#ffd6ea", bg1:"#ffc3e0", ink:"#0e1116", wave:"0.14", vignette:"0.18" },
-      wood:     { name:"Wood",      bg0:"#efe6dc", bg1:"#e4d3c2", ink:"#0e1116", wave:"0.14", vignette:"0.20" },
-      cyber:    { name:"Cyber",     bg0:"#eafcff", bg1:"#d7f6ff", ink:"#0e1116", wave:"0.14", vignette:"0.20" },
-      black:    { name:"Black",     bg0:"#101216", bg1:"#0b0e12", ink:"#f3f6fb", wave:"0.18", vignette:"0.92" },
-      anime:    { name:"Anime",     bg0:"#e9eaff", bg1:"#dde0ff", ink:"#0e1116", wave:"0.14", vignette:"0.20" },
-      meme:     { name:"Meme",      bg0:"#f0ffe8", bg1:"#e2ffd6", ink:"#0e1116", wave:"0.14", vignette:"0.20" },
-      lightblue:{ name:"Light Blue",bg0:"#d7f1ff", bg1:"#c5e8ff", ink:"#0e1116", wave:"0.14", vignette:"0.22" },
+    // ===== Style -> Background themes (AUTO) =====
+    const STYLE_THEMES = {
+      white:     { bg0:"#f6f7fb", bg1:"#edf0f6", ink:"#0e1116", wave:"0.16", vignette:"0.35", dark:false },
+      pink:      { bg0:"#ffd6ea", bg1:"#ffc3e0", ink:"#0e1116", wave:"0.14", vignette:"0.18", dark:false },
+      wood:      { bg0:"#efe6dc", bg1:"#e4d3c2", ink:"#0e1116", wave:"0.14", vignette:"0.20", dark:false },
+      cyber:     { bg0:"#eafcff", bg1:"#d7f6ff", ink:"#0e1116", wave:"0.14", vignette:"0.20", dark:false },
+      anime:     { bg0:"#e9eaff", bg1:"#dde0ff", ink:"#0e1116", wave:"0.14", vignette:"0.20", dark:false },
+      meme:      { bg0:"#f0ffe8", bg1:"#e2ffd6", ink:"#0e1116", wave:"0.14", vignette:"0.20", dark:false },
+      lightblue: { bg0:"#d7f1ff", bg1:"#c5e8ff", ink:"#0e1116", wave:"0.14", vignette:"0.22", dark:false },
+      black:     { bg0:"#101216", bg1:"#0b0e12", ink:"#f3f6fb", wave:"0.18", vignette:"0.92", dark:true }
     };
-    const THEME_KEY = "setup_gallery_theme_v1";
 
     const STYLE_COLORS = {
       wood: "#b67a3c",
@@ -708,7 +700,229 @@
       lightblue: "#1b8bff",
     };
 
-    // ===== Likes (local for now) =====
+    const AUTO_BG_KEY = "setup_gallery_auto_bg_style_v1";
+
+    function applyStyleBackground(styleKey){
+      const t = STYLE_THEMES[styleKey] || STYLE_THEMES.white;
+
+      document.documentElement.style.setProperty("--bg0", t.bg0);
+      document.documentElement.style.setProperty("--bg1", t.bg1);
+      document.documentElement.style.setProperty("--ink", t.ink);
+      document.documentElement.style.setProperty("--waveOpacity", t.wave);
+      document.documentElement.style.setProperty("--vignette", t.vignette);
+
+      if(t.dark){
+        document.documentElement.style.setProperty("--panel", "rgba(10,14,18,0.62)");
+        document.documentElement.style.setProperty("--panel2", "rgba(10,14,18,0.52)");
+        document.documentElement.style.setProperty("--line", "rgba(255,255,255,0.10)");
+        document.documentElement.style.setProperty("--line2", "rgba(255,255,255,0.18)");
+        document.documentElement.style.setProperty("--btnBg", "rgba(10,14,18,0.72)");
+        document.documentElement.style.setProperty("--btnBd", "rgba(255,255,255,0.18)");
+      } else {
+        document.documentElement.style.setProperty("--panel", "rgba(255,255,255,0.82)");
+        document.documentElement.style.setProperty("--panel2", "rgba(255,255,255,0.70)");
+        document.documentElement.style.setProperty("--line", "rgba(14,17,22,0.12)");
+        document.documentElement.style.setProperty("--line2", "rgba(14,17,22,0.18)");
+        document.documentElement.style.setProperty("--btnBg", "rgba(255,255,255,0.92)");
+        document.documentElement.style.setProperty("--btnBd", "rgba(14,17,22,0.18)");
+      }
+
+      localStorage.setItem(AUTO_BG_KEY, styleKey);
+    }
+
+    // ===== Language =====
+    const LANG_KEY = "setup_gallery_lang_v1";
+    const I18N = {
+      en: {
+        sub: "Select a style — background changes automatically.",
+        search: "Search...",
+        allStyles: "All styles",
+        newest: "Newest",
+        addSetup: "Add setup",
+        reload: "Reload",
+        menu: "Menu",
+        quick: "Quick",
+        scrollTop: "Scroll to top",
+        about: "About",
+        likesNote: "<b>Likes:</b> enabled (local per browser). Next step: make likes online for everyone.",
+        addTitle: "Add setup",
+        titleLbl: "Title",
+        styleLbl: "Style",
+        tagsLbl: "Tags (comma separated)",
+        imageLbl: "Image",
+        dropTitle: "Drop your image here",
+        dropSub: "Or click “Choose file”. (jpg / png / webp)",
+        chooseFile: "Choose file",
+        descLbl: "Description",
+        cancel: "Cancel",
+        post: "Post",
+        ready: "Ready.",
+        noImage: "No image",
+        noPosts: "No posts. Add one or change filters.",
+        view: "View"
+      },
+      ru: {
+        sub: "Выбери стиль — фон меняется автоматически.",
+        search: "Поиск...",
+        allStyles: "Все стили",
+        newest: "Новые",
+        addSetup: "Добавить",
+        reload: "Обновить",
+        menu: "Меню",
+        quick: "Быстро",
+        scrollTop: "Наверх",
+        about: "О проекте",
+        likesNote: "<b>Лайки:</b> работают (пока локально в браузере). Следующий шаг — онлайн лайки для всех.",
+        addTitle: "Добавить сетап",
+        titleLbl: "Название",
+        styleLbl: "Стиль",
+        tagsLbl: "Теги (через запятую)",
+        imageLbl: "Картинка",
+        dropTitle: "Перетащи картинку сюда",
+        dropSub: "Или нажми “Выбрать файл”. (jpg / png / webp)",
+        chooseFile: "Выбрать файл",
+        descLbl: "Описание",
+        cancel: "Отмена",
+        post: "Опубликовать",
+        ready: "Готово.",
+        noImage: "Нет картинки",
+        noPosts: "Постов нет. Добавь или поменяй фильтры.",
+        view: "Открыть"
+      },
+      es: {
+        sub: "Elige un estilo — el fondo cambia automáticamente.",
+        search: "Buscar...",
+        allStyles: "Todos",
+        newest: "Nuevos",
+        addSetup: "Añadir",
+        reload: "Recargar",
+        menu: "Menú",
+        quick: "Rápido",
+        scrollTop: "Ir arriba",
+        about: "Acerca de",
+        likesNote: "<b>Me gusta:</b> activo (local). Próximo: likes online para todos.",
+        addTitle: "Añadir setup",
+        titleLbl: "Título",
+        styleLbl: "Estilo",
+        tagsLbl: "Tags (separados por coma)",
+        imageLbl: "Imagen",
+        dropTitle: "Suelta tu imagen aquí",
+        dropSub: "O haz clic “Elegir archivo”. (jpg / png / webp)",
+        chooseFile: "Elegir archivo",
+        descLbl: "Descripción",
+        cancel: "Cancelar",
+        post: "Publicar",
+        ready: "Listo.",
+        noImage: "Sin imagen",
+        noPosts: "No hay posts. Añade uno o cambia filtros.",
+        view: "Ver"
+      },
+      fr: {
+        sub: "Choisis un style — le fond change automatiquement.",
+        search: "Rechercher...",
+        allStyles: "Tous",
+        newest: "Récents",
+        addSetup: "Ajouter",
+        reload: "Recharger",
+        menu: "Menu",
+        quick: "Rapide",
+        scrollTop: "Haut de page",
+        about: "À propos",
+        likesNote: "<b>Likes :</b> activés (local). Prochain: likes en ligne pour tous.",
+        addTitle: "Ajouter setup",
+        titleLbl: "Titre",
+        styleLbl: "Style",
+        tagsLbl: "Tags (séparés par virgule)",
+        imageLbl: "Image",
+        dropTitle: "Dépose ton image ici",
+        dropSub: "Ou clique “Choisir un fichier”. (jpg / png / webp)",
+        chooseFile: "Choisir",
+        descLbl: "Description",
+        cancel: "Annuler",
+        post: "Publier",
+        ready: "Prêt.",
+        noImage: "Pas d'image",
+        noPosts: "Aucun post. Ajoute-en un ou change les filtres.",
+        view: "Voir"
+      },
+      zh: {
+        sub: "选择风格——背景会自动改变。",
+        search: "搜索...",
+        allStyles: "全部风格",
+        newest: "最新",
+        addSetup: "添加",
+        reload: "刷新",
+        menu: "菜单",
+        quick: "快捷",
+        scrollTop: "回到顶部",
+        about: "关于",
+        likesNote: "<b>点赞：</b>已启用（本地）。下一步：所有人共享在线点赞。",
+        addTitle: "添加桌面",
+        titleLbl: "标题",
+        styleLbl: "风格",
+        tagsLbl: "标签（逗号分隔）",
+        imageLbl: "图片",
+        dropTitle: "把图片拖到这里",
+        dropSub: "或点击“选择文件”。(jpg / png / webp)",
+        chooseFile: "选择文件",
+        descLbl: "描述",
+        cancel: "取消",
+        post: "发布",
+        ready: "就绪。",
+        noImage: "没有图片",
+        noPosts: "还没有内容。添加一个或更改筛选。",
+        view: "查看"
+      }
+    };
+
+    let currentLang = localStorage.getItem(LANG_KEY) || "en";
+    function t(key){ return (I18N[currentLang] && I18N[currentLang][key]) || I18N.en[key] || key; }
+
+    function applyLanguage(){
+      document.getElementById("tSub").textContent = t("sub");
+      document.getElementById("q").placeholder = t("search");
+
+      // options text (styleFilter)
+      const sf = document.getElementById("styleFilter");
+      sf.options[0].text = t("allStyles");
+
+      // sort
+      const sort = document.getElementById("sort");
+      sort.options[0].text = t("newest");
+
+      document.getElementById("addBtn").textContent = t("addSetup");
+      document.getElementById("reloadBtn").textContent = t("reload");
+      document.getElementById("tMenu").textContent = t("menu");
+      document.getElementById("tQuick").textContent = t("quick");
+      document.getElementById("scrollTopBtn").textContent = t("scrollTop");
+      document.getElementById("aboutBtn").textContent = t("about");
+
+      document.getElementById("tLikesNote").innerHTML = t("likesNote");
+
+      document.getElementById("tAddSetup").textContent = t("addTitle");
+      document.getElementById("tTitleLbl").textContent = t("titleLbl");
+      document.getElementById("tStyleLbl").textContent = t("styleLbl");
+      document.getElementById("tTagsLbl").textContent = t("tagsLbl");
+      document.getElementById("tImageLbl").textContent = t("imageLbl");
+      document.getElementById("tDropTitle").textContent = t("dropTitle");
+      document.getElementById("tDropSub").textContent = t("dropSub");
+      document.getElementById("chooseBtn").textContent = t("chooseFile");
+      document.getElementById("tDescLbl").textContent = t("descLbl");
+      document.getElementById("cancelAdd").textContent = t("cancel");
+      document.getElementById("saveAdd").textContent = t("post");
+
+      if(document.getElementById("addStatus").textContent === "Ready." || document.getElementById("addStatus").textContent === "Готово." ){
+        document.getElementById("addStatus").textContent = t("ready");
+      }
+      if(document.getElementById("preview").textContent.trim().toLowerCase().includes("no")){
+        document.getElementById("preview").textContent = t("noImage");
+      }
+
+      // View button text updated in render()
+      render();
+    }
+
+    // ===== Likes (local) =====
     const LIKES_KEY = "setup_gallery_likes_counts_v1";
     const LIKED_KEY = "setup_gallery_likes_liked_v1";
     let likesCounts = JSON.parse(localStorage.getItem(LIKES_KEY) || "{}");
@@ -726,7 +940,7 @@
       }
       localStorage.setItem(LIKES_KEY, JSON.stringify(likesCounts));
       localStorage.setItem(LIKED_KEY, JSON.stringify(likedFlags));
-      toast("Liked!");
+      toast("OK");
       render();
     }
 
@@ -738,46 +952,16 @@
       return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
                       .replaceAll('"',"&quot;").replaceAll("'","&#039;");
     }
-    function normTag(t){ return String(t||"").trim().toLowerCase().replace(/\s+/g," "); }
+    function normTag(tg){ return String(tg||"").trim().toLowerCase().replace(/\s+/g," "); }
     function parseTags(s){ return (s||"").split(",").map(x => normTag(x)).filter(Boolean).slice(0, 8); }
-    function prettyTag(t){ return t.split(" ").map(w => w ? (w[0].toUpperCase()+w.slice(1)) : "").join(" "); }
+    function prettyTag(tg){ return tg.split(" ").map(w => w ? (w[0].toUpperCase()+w.slice(1)) : "").join(" "); }
 
     function toast(msg){
       const el = $("toast");
       el.textContent = msg;
       el.style.display = "block";
       clearTimeout(window.__toastT);
-      window.__toastT = setTimeout(()=> el.style.display="none", 1200);
-    }
-
-    function applyTheme(key){
-      const t = THEMES[key] || THEMES.white;
-      document.documentElement.style.setProperty("--bg0", t.bg0);
-      document.documentElement.style.setProperty("--bg1", t.bg1);
-      document.documentElement.style.setProperty("--ink", t.ink);
-      document.documentElement.style.setProperty("--waveOpacity", t.wave);
-      document.documentElement.style.setProperty("--vignette", t.vignette);
-
-      // adjust panels/buttons for black theme
-      if(key === "black"){
-        document.documentElement.style.setProperty("--panel", "rgba(10,14,18,0.62)");
-        document.documentElement.style.setProperty("--panel2", "rgba(10,14,18,0.52)");
-        document.documentElement.style.setProperty("--line", "rgba(255,255,255,0.10)");
-        document.documentElement.style.setProperty("--line2", "rgba(255,255,255,0.18)");
-        document.documentElement.style.setProperty("--btnBg", "rgba(10,14,18,0.72)");
-        document.documentElement.style.setProperty("--btnBd", "rgba(255,255,255,0.18)");
-      } else {
-        document.documentElement.style.setProperty("--panel", "rgba(255,255,255,0.82)");
-        document.documentElement.style.setProperty("--panel2", "rgba(255,255,255,0.70)");
-        document.documentElement.style.setProperty("--line", "rgba(14,17,22,0.12)");
-        document.documentElement.style.setProperty("--line2", "rgba(14,17,22,0.18)");
-        document.documentElement.style.setProperty("--btnBg", "rgba(255,255,255,0.92)");
-        document.documentElement.style.setProperty("--btnBd", "rgba(14,17,22,0.18)");
-      }
-
-      localStorage.setItem(THEME_KEY, key);
-      $("themeSelect").value = key;
-      toast(`Theme: ${t.name}`);
+      window.__toastT = setTimeout(()=> el.style.display="none", 900);
     }
 
     async function sbFetch(path, opts = {}) {
@@ -795,7 +979,6 @@
       return res;
     }
 
-    // Upload to Storage
     async function uploadToStorage(file){
       const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
       const safeExt = ["jpg","jpeg","png","webp","gif"].includes(ext) ? ext : "jpg";
@@ -881,11 +1064,10 @@
         out = out.filter(p =>
           (p.title||"").toLowerCase().includes(q) ||
           (p.desc||"").toLowerCase().includes(q) ||
-          (p.tags||[]).some(t => t.includes(q))
+          (p.tags||[]).some(tg => tg.includes(q))
         );
       }
       if(sort === "new") out = [...out].sort((a,b) => (b.createdAt||0)-(a.createdAt||0));
-      if(sort === "az")  out = [...out].sort((a,b) => (a.title||"").localeCompare(b.title||""));
       return out;
     }
 
@@ -895,7 +1077,7 @@
       root.innerHTML = "";
 
       if(list.length === 0){
-        root.innerHTML = `<div class="note" style="margin-top:18px;">No posts. Add one or change filters.</div>`;
+        root.innerHTML = `<div class="note" style="margin-top:18px;">${t("noPosts")}</div>`;
         return;
       }
 
@@ -917,25 +1099,21 @@
           <div class="body">
             <div class="ptitle">${esc(p.title||"Untitled")}</div>
             <div class="chips">
-              ${tags.map(t => `<div class="chip">${esc(prettyTag(t))}</div>`).join("")}
+              ${tags.map(tg => `<div class="chip">${esc(prettyTag(tg))}</div>`).join("")}
             </div>
             <div class="metaRow">
               <button class="likeBtn ${isLiked(p.id) ? "liked" : ""}" data-like="${esc(p.id)}">
                 ${isLiked(p.id) ? "♥" : "♡"} <span>${getLikes(p.id)}</span>
               </button>
-              <button class="viewBtn" data-view="${esc(p.id)}">View</button>
+              <button class="viewBtn" data-view="${esc(p.id)}">${t("view")}</button>
             </div>
           </div>
         `;
         root.appendChild(card);
       }
 
-      root.querySelectorAll("[data-view]").forEach(btn => {
-        btn.addEventListener("click", () => openView(btn.dataset.view));
-      });
-      root.querySelectorAll("[data-like]").forEach(btn => {
-        btn.addEventListener("click", () => toggleLike(btn.dataset.like));
-      });
+      root.querySelectorAll("[data-view]").forEach(btn => btn.addEventListener("click", () => openView(btn.dataset.view)));
+      root.querySelectorAll("[data-like]").forEach(btn => btn.addEventListener("click", () => toggleLike(btn.dataset.like)));
 
       wireHover();
     }
@@ -947,11 +1125,11 @@
       });
     }
 
-    // modal functions
+    // modal
     function openAdd(){
       $("addModal").style.display = "flex";
-      $("addStatus").textContent = "Ready.";
-      $("preview").innerHTML = "No image";
+      $("addStatus").textContent = t("ready");
+      $("preview").textContent = t("noImage");
       $("bar").style.width = "0%";
       selectedFile = null;
       wireHover();
@@ -963,7 +1141,7 @@
       $("fDesc").value = "";
       $("fStyle").value = "white";
       $("fileInput").value = "";
-      $("preview").innerHTML = "No image";
+      $("preview").textContent = t("noImage");
       $("bar").style.width = "0%";
       selectedFile = null;
     }
@@ -980,15 +1158,13 @@
       if(!selectedFile){ $("addStatus").textContent = "Drop an image first."; return; }
 
       try{
-        $("addStatus").textContent = "Uploading image...";
+        $("addStatus").textContent = "Uploading...";
         const imageUrl = await uploadToStorage(selectedFile);
 
         $("addStatus").textContent = "Posting...";
         const post = {
           id: uid(),
-          title,
-          desc,
-          tags,
+          title, desc, tags,
           img: imageUrl,
           style,
           createdAt: Date.now()
@@ -1001,7 +1177,7 @@
         toast("Posted!");
       } catch(e){
         console.log(e);
-        $("addStatus").textContent = "Upload/post failed. Check bucket + policies.";
+        $("addStatus").textContent = "Upload/post failed.";
         alert(String(e));
       }
     }
@@ -1023,7 +1199,7 @@
       toast("Reloaded");
     }
 
-    // dropzone
+    // drop
     function setFile(file){
       if(!file) return;
       if(!file.type.startsWith("image/")){
@@ -1059,7 +1235,7 @@
       else m.classList.toggle("open");
     }
 
-    // cursor animation
+    // cursor
     const dot = $("cursorDot");
     const ring = $("cursorRing");
     let cx=0, cy=0, rx=0, ry=0;
@@ -1085,14 +1261,37 @@
     $("reloadBtn").addEventListener("click", reload);
 
     $("q").addEventListener("input", render);
-    $("styleFilter").addEventListener("change", render);
     $("sort").addEventListener("change", render);
+
+    // AUTO background when selecting style filter
+    $("styleFilter").addEventListener("change", (e) => {
+      const v = e.target.value;
+      // if "all" -> keep last saved or white
+      if(v === "all"){
+        const saved = localStorage.getItem(AUTO_BG_KEY) || "white";
+        applyStyleBackground(saved);
+      } else {
+        applyStyleBackground(v);
+      }
+      render();
+    });
+
+    // AUTO background when selecting style inside Add setup
+    $("fStyle").addEventListener("change", (e) => {
+      applyStyleBackground(e.target.value);
+    });
+
+    // language
+    $("langSelect").addEventListener("change", (e) => {
+      currentLang = e.target.value;
+      localStorage.setItem(LANG_KEY, currentLang);
+      applyLanguage();
+    });
 
     $("addModal").addEventListener("click", (e) => { if(e.target.id === "addModal") closeAdd(); });
     $("viewModal").addEventListener("click", (e) => { if(e.target.id === "viewModal") closeView(); });
     $("closeView").addEventListener("click", closeView);
 
-    // menu wiring
     $("menuBtn").addEventListener("click", () => toggleMenu());
     document.addEventListener("click", (e) => {
       const menu = $("menu");
@@ -1104,15 +1303,20 @@
     $("scrollTopBtn").addEventListener("click", () => { window.scrollTo({top:0,behavior:"smooth"}); toggleMenu(false); });
     $("aboutBtn").addEventListener("click", () => {
       toggleMenu(false);
-      alert("Setup Gallery\n\n- Upload: Supabase Storage\n- Posts: Supabase DB\n- Likes: local (next: online)\n\nMade by Klim");
+      alert("Setup Gallery\n\n- Upload: Supabase Storage\n- Posts: Supabase DB\n- Likes: local (next: online)");
     });
-    $("themeSelect").addEventListener("change", (e) => applyTheme(e.target.value));
 
     // init
     (async function init(){
-      // theme
-      const saved = localStorage.getItem(THEME_KEY) || "white";
-      applyTheme(saved);
+      // restore language
+      $("langSelect").value = currentLang;
+
+      // restore background style
+      const savedStyle = localStorage.getItem(AUTO_BG_KEY) || "white";
+      applyStyleBackground(savedStyle);
+
+      // UI strings
+      applyLanguage();
 
       try{
         posts = await loadPosts();
