@@ -7,406 +7,436 @@
 
   <style>
     :root{
-      --bg:#07090c;
-      --panel:rgba(255,255,255,0.06);
-      --panel2:rgba(0,0,0,0.38);
-      --line:rgba(255,255,255,0.12);
-      --txt:#e9eef7;
-      --mut:rgba(233,238,247,0.72);
-      --blue:#00b7ff;
-      --orange:#ff7a18;
-      --good:#7dff9a;
-      --bad:#ff6b6b;
+      --bg: #f5f6f8;
+      --paper: rgba(255,255,255,0.72);
+      --paper2: rgba(255,255,255,0.58);
+      --ink: #0e1116;
+      --mut: rgba(14,17,22,0.62);
+      --line: rgba(14,17,22,0.12);
+      --shadow: 0 18px 55px rgba(14,17,22,0.12);
+      --radius: 16px;
     }
     *{ box-sizing:border-box; }
+    html, body{ height:100%; }
     body{
       margin:0;
-      min-height:100vh;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      color:var(--txt);
+      color: var(--ink);
       background: var(--bg);
       overflow-x:hidden;
     }
 
-    .bg{
-      position:fixed; inset:-10vh -10vw;
+    /* ====== SOFT LINES WAVES (with fade) ====== */
+    .waves{
+      position:fixed;
+      inset:-8vh -8vw;
       pointer-events:none;
-      background:
-        radial-gradient(520px circle at 18% 20%, rgba(255,122,24,0.58), transparent 62%),
-        radial-gradient(620px circle at 78% 58%, rgba(0,183,255,0.48), transparent 64%),
-        radial-gradient(260px circle at 68% 16%, rgba(255,122,24,0.20), transparent 62%),
-        radial-gradient(260px circle at 28% 72%, rgba(0,183,255,0.18), transparent 64%);
-      filter: blur(2px);
-      opacity:0.95;
-      z-index:-1;
+      z-index:-2;
+      opacity: 1;
+      filter: blur(0.15px);
+      /* fade to edges */
+      -webkit-mask-image: radial-gradient(circle at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 45%, rgba(0,0,0,0) 78%);
+      mask-image: radial-gradient(circle at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 45%, rgba(0,0,0,0) 78%);
     }
 
+    .waves::before,
+    .waves::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background-repeat: repeat;
+      background-size: 1200px 700px;
+      opacity: 0.55;
+      filter: blur(0.0px);
+      animation: drift 18s ease-in-out infinite alternate;
+    }
+
+    /* layer 1 (darker thin lines) */
+    .waves::before{
+      opacity: 0.22;
+      background-image: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='700' viewBox='0 0 1200 700'>\
+  <rect width='1200' height='700' fill='none'/>\
+  <g fill='none' stroke='%230e1116' stroke-opacity='0.22' stroke-width='1'>\
+    <path d='M-80 70 C 160 20, 360 120, 620 70 S 980 20, 1280 90'/>\
+    <path d='M-80 110 C 170 60, 360 160, 610 120 S 980 70, 1280 140'/>\
+    <path d='M-80 150 C 140 120, 360 210, 640 160 S 980 120, 1280 170'/>\
+    <path d='M-80 190 C 140 170, 360 240, 640 210 S 980 170, 1280 230'/>\
+    <path d='M-80 230 C 160 220, 360 290, 620 250 S 980 220, 1280 280'/>\
+    <path d='M-80 270 C 170 270, 380 340, 650 300 S 980 270, 1280 330'/>\
+    <path d='M-80 310 C 140 320, 360 380, 640 340 S 980 320, 1280 380'/>\
+    <path d='M-80 350 C 140 370, 360 420, 620 390 S 980 370, 1280 430'/>\
+    <path d='M-80 390 C 160 420, 380 460, 650 440 S 980 420, 1280 470'/>\
+    <path d='M-80 430 C 170 470, 360 510, 640 490 S 980 470, 1280 520'/>\
+    <path d='M-80 470 C 140 520, 360 560, 620 540 S 980 520, 1280 570'/>\
+    <path d='M-80 510 C 160 560, 380 600, 650 590 S 980 560, 1280 620'/>\
+    <path d='M-80 550 C 170 610, 360 640, 640 640 S 980 610, 1280 670'/>\
+    <path d='M-80 590 C 140 660, 360 680, 620 690 S 980 660, 1280 700'/>\
+  </g>\
+</svg>");
+    }
+
+    /* layer 2 (lighter offset lines) */
+    .waves::after{
+      opacity: 0.16;
+      background-size: 1050px 620px;
+      background-position: 120px 60px;
+      animation-duration: 26s;
+      background-image: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' width='1050' height='620' viewBox='0 0 1050 620'>\
+  <rect width='1050' height='620' fill='none'/>\
+  <g fill='none' stroke='%230e1116' stroke-opacity='0.16' stroke-width='1'>\
+    <path d='M-80 60 C 120 10, 330 120, 560 70 S 870 20, 1180 90'/>\
+    <path d='M-80 100 C 140 70, 330 160, 560 120 S 870 70, 1180 140'/>\
+    <path d='M-80 140 C 120 120, 330 210, 560 170 S 870 120, 1180 190'/>\
+    <path d='M-80 180 C 140 170, 350 250, 590 220 S 870 170, 1180 240'/>\
+    <path d='M-80 220 C 160 220, 350 300, 590 260 S 870 220, 1180 280'/>\
+    <path d='M-80 260 C 140 270, 330 340, 560 310 S 870 270, 1180 340'/>\
+    <path d='M-80 300 C 120 320, 330 390, 560 360 S 870 320, 1180 390'/>\
+    <path d='M-80 340 C 140 370, 350 430, 590 410 S 870 370, 1180 440'/>\
+    <path d='M-80 380 C 160 420, 350 470, 590 460 S 870 420, 1180 490'/>\
+    <path d='M-80 420 C 140 470, 330 520, 560 510 S 870 470, 1180 540'/>\
+    <path d='M-80 460 C 120 520, 330 560, 560 560 S 870 520, 1180 600'/>\
+    <path d='M-80 500 C 140 570, 350 600, 590 610 S 870 570, 1180 650'/>\
+  </g>\
+</svg>");
+    }
+
+    @keyframes drift{
+      0%   { transform: translate3d(-10px, -6px, 0); }
+      50%  { transform: translate3d(10px, 6px, 0); }
+      100% { transform: translate3d(-6px, 10px, 0); }
+    }
+
+    /* ====== Layout ====== */
     .wrap{
-      width:min(1200px, 96vw);
-      margin: 26px auto 50px;
+      width:min(1280px, 94vw);
+      margin: 22px auto 60px;
     }
 
-    header{
+    .topbar{
       display:flex;
-      align-items:flex-start;
       justify-content:space-between;
+      align-items:flex-start;
       gap:16px;
-      padding:16px;
-      border:1px solid var(--line);
-      border-radius:16px;
-      background: rgba(0,0,0,0.28);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 24px 70px rgba(0,0,0,0.45);
+      padding:16px 16px;
+      border-radius: var(--radius);
+      background: var(--paper);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
     }
 
     .brand{
       display:flex;
       flex-direction:column;
       gap:6px;
-      min-width: 240px;
       max-width: 520px;
     }
     .brand .title{
       font-weight:900;
-      letter-spacing:0.8px;
+      letter-spacing:0.6px;
       text-transform:uppercase;
       font-size:16px;
     }
     .brand .sub{
-      color:var(--mut);
       font-size:12px;
-      line-height:1.25;
+      color: var(--mut);
+      line-height:1.35;
     }
 
-    .actions{
+    .controls{
       display:flex;
-      gap:10px;
-      align-items:center;
       flex-wrap:wrap;
+      gap:10px;
       justify-content:flex-end;
+      align-items:center;
       max-width: 620px;
     }
 
-    input[type="search"], select{
-      background: rgba(255,255,255,0.06);
-      border:1px solid rgba(255,255,255,0.14);
-      color: var(--txt);
+    .input, .select{
+      background: rgba(255,255,255,0.72);
+      border:1px solid rgba(14,17,22,0.14);
+      border-radius: 12px;
       padding:10px 12px;
-      border-radius:12px;
       outline:none;
+      color: var(--ink);
     }
-    input[type="search"]{ width:min(320px, 62vw); }
-    select{ cursor:pointer; }
+    .input{ width:min(320px, 62vw); }
+    .select{ cursor:pointer; }
     option{ color:#000; }
 
     .btn{
       cursor:pointer;
-      border:1px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.08);
-      color: var(--txt);
+      border:1px solid rgba(14,17,22,0.16);
+      background: rgba(255,255,255,0.72);
+      border-radius: 12px;
       padding:10px 12px;
-      border-radius:12px;
       font-weight:900;
-      letter-spacing:0.3px;
       text-transform:uppercase;
+      letter-spacing:0.35px;
+      color: var(--ink);
+      transition: transform .06s ease, background .2s ease;
     }
-    .btn.blue{
-      border-color: rgba(0,183,255,0.35);
-      box-shadow: 0 0 0 1px rgba(0,183,255,0.12) inset;
-    }
-    .btn.orange{
-      border-color: rgba(255,122,24,0.35);
-      box-shadow: 0 0 0 1px rgba(255,122,24,0.12) inset;
-    }
+    .btn:hover{ background: rgba(255,255,255,0.88); }
     .btn:active{ transform: scale(0.99); }
 
-    .pill{
-      display:flex;
-      gap:8px;
-      align-items:center;
-      padding:9px 10px;
-      border-radius:999px;
-      background: rgba(255,255,255,0.06);
-      border:1px solid rgba(255,255,255,0.12);
-      color: var(--txt);
-      font-size:12px;
-      white-space:nowrap;
-    }
-    .dot{
-      width:10px; height:10px; border-radius:3px;
-      background: linear-gradient(135deg, rgba(255,122,24,0.9), rgba(0,183,255,0.9));
-      opacity:0.85;
-    }
-    .pill.good{ border-color: rgba(125,255,154,0.22); }
-    .pill.bad{ border-color: rgba(255,107,107,0.22); }
-
-    .hintBox{
-      margin-top:14px;
-      padding:14px 16px;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.04);
+    .note{
+      margin-top:12px;
+      padding:12px 14px;
+      border-radius: var(--radius);
+      background: var(--paper2);
+      border: 1px solid rgba(14,17,22,0.10);
       color: var(--mut);
-      font-size:13px;
-      line-height:1.35;
+      font-size:12px;
+      line-height:1.4;
+      backdrop-filter: blur(12px);
     }
-    .hintBox b{ color: var(--txt); }
+    .note b{ color: var(--ink); }
 
-    /* grid */
-    .grid{
-      margin-top:18px;
-      display:grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap:14px;
+    /* ====== Pinterest masonry ====== */
+    .masonry{
+      margin-top:16px;
+      column-count: 5;
+      column-gap: 14px;
     }
+    @media (max-width: 1280px){ .masonry{ column-count: 4; } }
+    @media (max-width: 980px){  .masonry{ column-count: 3; } }
+    @media (max-width: 720px){  .masonry{ column-count: 2; } }
+    @media (max-width: 480px){  .masonry{ column-count: 1; } }
 
-    .card{
-      grid-column: span 4;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,0.10);
-      background: rgba(0,0,0,0.30);
-      backdrop-filter: blur(10px);
-      overflow:hidden;
-      box-shadow: 0 18px 55px rgba(0,0,0,0.38);
-      display:flex;
-      flex-direction:column;
-      min-height: 340px;
-    }
-
-    .thumb{
-      position:relative;
-      aspect-ratio: 16/10;
-      background: rgba(255,255,255,0.05);
-      overflow:hidden;
-    }
-    .thumb img{
+    .pin{
+      break-inside: avoid;
+      display:inline-block;
       width:100%;
-      height:100%;
-      object-fit: cover;
-      display:block;
-      transform: scale(1.01);
+      margin: 0 0 14px;
+      border-radius: 18px;
+      overflow:hidden;
+      background: rgba(255,255,255,0.68);
+      border: 1px solid rgba(14,17,22,0.12);
+      box-shadow: 0 14px 40px rgba(14,17,22,0.10);
+      backdrop-filter: blur(12px);
     }
-    .badge{
+
+    .pin .imgWrap{
+      position:relative;
+      width:100%;
+      background: rgba(0,0,0,0.04);
+    }
+    .pin img{
+      width:100%;
+      height:auto;
+      display:block;
+    }
+
+    .tag{
       position:absolute;
       top:12px; left:12px;
-      background: rgba(0,0,0,0.45);
-      border:1px solid rgba(255,255,255,0.14);
       padding:6px 10px;
       border-radius:999px;
-      font-size:12px;
-      color: var(--txt);
-      backdrop-filter: blur(10px);
-      text-transform:uppercase;
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(14,17,22,0.14);
+      font-size:11px;
+      font-weight:900;
       letter-spacing:0.4px;
+      text-transform:uppercase;
+      color: var(--ink);
     }
-    .badge.cat-pc{ border-color: rgba(0,183,255,0.35); }
-    .badge.cat-phone{ border-color: rgba(255,122,24,0.35); }
-    .badge.cat-console{ border-color: rgba(255,255,255,0.18); }
-    .badge.cat-desk{ border-color: rgba(125,255,154,0.25); }
 
-    .content{
-      padding:14px 14px 12px;
+    .pin .body{
+      padding:12px 12px 10px;
       display:flex;
       flex-direction:column;
       gap:8px;
-      flex:1;
     }
-    .hline{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:12px;
-    }
-    .name{
+
+    .pin .title{
       font-weight:900;
-      letter-spacing:0.2px;
-      line-height:1.1;
-    }
-    .desc{
-      color: var(--mut);
       font-size:13px;
-      line-height:1.3;
+      letter-spacing:0.2px;
+      line-height:1.15;
+    }
+    .pin .desc{
+      font-size:12px;
+      color: var(--mut);
+      line-height:1.35;
       display:-webkit-box;
       -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
       overflow:hidden;
-      min-height: 3.9em;
+      min-height: 3.6em;
     }
 
-    .meta{
+    .pin .meta{
       display:flex;
       justify-content:space-between;
       align-items:center;
       gap:10px;
-      margin-top:auto;
       padding-top:10px;
-      border-top:1px solid rgba(255,255,255,0.08);
+      border-top: 1px solid rgba(14,17,22,0.08);
+      margin-top:4px;
     }
-    .meta .date{
-      font-size:12px;
-      color: rgba(233,238,247,0.55);
+    .pin .date{
+      font-size:11px;
+      color: rgba(14,17,22,0.48);
     }
 
     .likeBtn{
       cursor:pointer;
-      border:1px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.06);
-      color: var(--txt);
-      padding:8px 10px;
-      border-radius:12px;
+      border:1px solid rgba(14,17,22,0.16);
+      background: rgba(255,255,255,0.72);
+      color: var(--ink);
+      border-radius: 12px;
+      padding:7px 10px;
+      font-weight:900;
       display:flex;
       align-items:center;
       gap:8px;
-      font-weight:900;
     }
     .likeBtn.liked{
-      border-color: rgba(255,122,24,0.35);
-      box-shadow: 0 0 0 1px rgba(255,122,24,0.12) inset;
+      background: rgba(14,17,22,0.06);
     }
 
-    /* modal */
+    /* ====== Modal ====== */
     .modal{
       position:fixed; inset:0;
       display:none;
       align-items:center;
       justify-content:center;
-      background: rgba(0,0,0,0.55);
+      background: rgba(14,17,22,0.45);
       backdrop-filter: blur(6px);
       z-index:50;
       padding:18px;
     }
     .modalBox{
-      width:min(760px, 96vw);
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,0.12);
-      background: rgba(0,0,0,0.68);
-      box-shadow: 0 24px 70px rgba(0,0,0,0.6);
+      width:min(860px, 96vw);
+      border-radius: 18px;
+      background: rgba(255,255,255,0.80);
+      border:1px solid rgba(14,17,22,0.14);
+      box-shadow: 0 24px 70px rgba(14,17,22,0.22);
       overflow:hidden;
+      backdrop-filter: blur(14px);
     }
     .modalTop{
       display:flex;
       justify-content:space-between;
       align-items:center;
       padding:14px 16px;
-      border-bottom:1px solid rgba(255,255,255,0.10);
+      border-bottom:1px solid rgba(14,17,22,0.10);
     }
     .modalTop .mtitle{
       font-weight:900;
       text-transform:uppercase;
       letter-spacing:0.6px;
-      font-size:14px;
+      font-size:13px;
     }
     .xbtn{
       cursor:pointer;
-      border:1px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.06);
-      color: var(--txt);
+      border:1px solid rgba(14,17,22,0.16);
+      background: rgba(255,255,255,0.70);
+      color: var(--ink);
       padding:8px 10px;
       border-radius:12px;
       font-weight:900;
     }
+
     .modalBody{
       padding:16px;
       display:grid;
       grid-template-columns: 1fr 1fr;
       gap:12px;
     }
+    @media (max-width: 860px){ .modalBody{ grid-template-columns: 1fr; } }
+
     .field label{
       display:block;
-      font-size:12px;
-      color: rgba(233,238,247,0.65);
+      font-size:11px;
+      color: rgba(14,17,22,0.55);
       margin: 0 0 6px;
       text-transform:uppercase;
       letter-spacing:0.4px;
+      font-weight:900;
     }
+
     .field input, .field textarea, .field select{
       width:100%;
-    }
-    textarea{
-      min-height:120px;
-      resize:vertical;
-      background: rgba(255,255,255,0.06);
-      border:1px solid rgba(255,255,255,0.14);
-      color: var(--txt);
+      background: rgba(255,255,255,0.78);
+      border:1px solid rgba(14,17,22,0.14);
+      border-radius: 12px;
       padding:10px 12px;
-      border-radius:12px;
       outline:none;
+      color: var(--ink);
       font-family: inherit;
     }
+
+    textarea{
+      min-height:130px;
+      resize:vertical;
+      line-height:1.35;
+    }
+
     .modalFoot{
       padding:14px 16px;
-      border-top:1px solid rgba(255,255,255,0.10);
+      border-top:1px solid rgba(14,17,22,0.10);
       display:flex;
       justify-content:space-between;
       align-items:center;
       gap:10px;
       flex-wrap:wrap;
     }
-    .note{
-      color: rgba(233,238,247,0.65);
+
+    .status{
       font-size:12px;
-      line-height:1.3;
+      color: rgba(14,17,22,0.62);
+      line-height:1.35;
       max-width: 520px;
     }
-    .warn{ color: rgba(255,107,107,0.9); }
-    .ok{ color: rgba(125,255,154,0.9); }
 
-    @media (max-width: 980px){
-      .card{ grid-column: span 6; }
-      .modalBody{ grid-template-columns: 1fr; }
-    }
-    @media (max-width: 640px){
-      .card{ grid-column: span 12; }
-      input[type="search"]{ width: 100%; }
-      header{ align-items:flex-start; }
-    }
+    .rightBtns{ display:flex; gap:10px; }
   </style>
 </head>
 
 <body>
-  <div class="bg"></div>
+  <div class="waves"></div>
 
   <div class="wrap">
-    <header>
+    <div class="topbar">
       <div class="brand">
-        <div class="title">SETUP GALLERY</div>
+        <div class="title">Setup Gallery</div>
         <div class="sub">
-          Developer: <b>Klim</b> · PC / Phone / Console / Desk.<br/>
-          Works now in <b>LOCAL</b>. If you enable Supabase, it becomes <b>ONLINE</b> (posts + likes for everyone).
+          Minimal monochrome gallery • Pinterest-style feed • add setups + likes (local for now).<br>
+          Tomorrow we can connect online storage so everyone can add.
         </div>
-        <div id="modePill" class="pill"><span class="dot"></span><span>Mode: LOCAL</span></div>
       </div>
 
-      <div class="actions">
-        <input id="q" type="search" placeholder="Search setups..." />
-        <select id="cat">
+      <div class="controls">
+        <input id="q" class="input" type="search" placeholder="Search..." />
+        <select id="cat" class="select">
           <option value="all">All</option>
           <option value="pc">PC</option>
           <option value="phone">Phone</option>
           <option value="console">Console</option>
           <option value="desk">Desk</option>
         </select>
-        <select id="sort">
+        <select id="sort" class="select">
           <option value="new">Newest</option>
           <option value="likes">Most liked</option>
           <option value="az">A → Z</option>
         </select>
-
-        <button class="btn blue" id="addBtn">Add setup</button>
-        <button class="btn" id="refreshBtn" title="Reload list">Refresh</button>
-        <button class="btn" id="resetBtn" title="Clear local data (only LOCAL)">Reset local</button>
+        <button id="addBtn" class="btn">Add setup</button>
+        <button id="resetBtn" class="btn" title="Clear local added posts + likes">Reset</button>
       </div>
-    </header>
-
-    <div class="hintBox" id="hint">
-      <b>Images:</b> Use Image URL (direct .jpg/.png) or upload a file.
-      Upload is local by default. For true online uploads, enable Supabase Storage.
     </div>
 
-    <div class="grid" id="grid"></div>
+    <div class="note">
+      <b>Images:</b> you can use a direct URL (https://...jpg/png) or upload a file.
+      Upload saves locally in your browser (for now). We’ll make it online later.
+    </div>
+
+    <div id="masonry" class="masonry"></div>
   </div>
 
-  <!-- Modal: Add setup -->
+  <!-- Modal -->
   <div class="modal" id="modal">
     <div class="modalBox">
       <div class="modalTop">
@@ -417,7 +447,7 @@
       <div class="modalBody">
         <div class="field">
           <label>Title</label>
-          <input id="fTitle" type="text" placeholder="e.g. Blue Neon Desk" />
+          <input id="fTitle" type="text" placeholder="e.g. Black & White Desk" />
         </div>
 
         <div class="field">
@@ -441,78 +471,65 @@
         </div>
 
         <div class="field">
-          <label>Upload file</label>
+          <label>Upload image</label>
           <input id="fFile" type="file" accept="image/*" />
-          <div class="note" style="margin-top:6px;">
-            LOCAL: saved in your browser. ONLINE: uploads to Supabase Storage (if enabled).
-          </div>
+          <div class="status" style="margin-top:6px;">Tip: If URL is filled, it will be used instead of upload.</div>
         </div>
       </div>
 
       <div class="modalFoot">
-        <div class="note" id="status">
-          <span class="warn">Tip:</span> choose URL or file. If both exist, URL wins.
-        </div>
-        <div style="display:flex; gap:10px;">
+        <div class="status" id="status">Ready.</div>
+        <div class="rightBtns">
           <button class="btn" id="cancel">Cancel</button>
-          <button class="btn orange" id="save">Save</button>
+          <button class="btn" id="save">Save</button>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    /***********************
-     *  ONLINE (OPTIONAL)  *
-     ***********************/
-    // If you fill these 2 fields AND create Supabase tables + storage bucket,
-    // your site becomes ONLINE (everyone can add + like).
-    const SUPABASE_URL = "";          // e.g. https://xxxx.supabase.co
-    const SUPABASE_KEY = "";          // your sb_publishable_... key
-    const SUPABASE_BUCKET = "setup-images"; // storage bucket name (create it)
+    // ===== Local storage keys =====
+    const KEY_POSTS = "setup_gallery_posts_mono_v1";
+    const KEY_LIKES = "setup_gallery_likes_mono_v1";
+    const KEY_LIKED = "setup_gallery_liked_mono_v1";
 
-    const ONLINE = !!(SUPABASE_URL && SUPABASE_KEY);
-
-    /***********************
-     *  LOCAL STORAGE KEYS  *
-     ***********************/
-    const KEY_SETUPS = "setup_gallery_setups_v2";
-    const KEY_LIKES  = "setup_gallery_likes_v2";
-    const KEY_LIKED  = "setup_gallery_liked_v2";
-
-    /***********************
-     *  DEMO DATA           *
-     ***********************/
+    // ===== Demo posts (you can replace with your own later) =====
     const DEMO = [
       {
         id: "demo-1",
-        title: "Orange / Blue PC Desk",
+        title: "Monochrome Desk",
         category: "pc",
-        desc: "Dual monitor, clean cable management, orange-blue mood. Perfect for FPS.",
+        desc: "Black/white theme, clean lines, minimal distractions. Perfect for focus + FPS.",
         img: "https://images.unsplash.com/photo-1527443154391-507e9dc6c5cc?auto=format&fit=crop&w=1400&q=80",
-        createdAt: Date.now() - 1000 * 60 * 60 * 24 * 5
+        createdAt: Date.now() - 1000*60*60*24*6
       },
       {
         id: "demo-2",
-        title: "Nintendo Corner",
+        title: "Console Corner",
         category: "console",
-        desc: "Cozy handheld setup. Simple, comfy, and portable gaming vibes.",
+        desc: "Simple shelf + controllers, calm light, clean wall. Cozy console vibes.",
         img: "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?auto=format&fit=crop&w=1400&q=80",
-        createdAt: Date.now() - 1000 * 60 * 60 * 24 * 3
+        createdAt: Date.now() - 1000*60*60*24*3
       },
       {
         id: "demo-3",
-        title: "Minimal Phone + Stand",
+        title: "Phone Setup",
         category: "phone",
-        desc: "Minimal mobile setup: stand + charger + clean background.",
+        desc: "Minimal mobile corner: stand + charger + clean composition.",
         img: "https://images.unsplash.com/photo-1512499617640-c2f999098c01?auto=format&fit=crop&w=1400&q=80",
-        createdAt: Date.now() - 1000 * 60 * 60 * 24 * 1
+        createdAt: Date.now() - 1000*60*60*24*1
+      },
+      {
+        id: "demo-4",
+        title: "Clean Desk Only",
+        category: "desk",
+        desc: "No RGB. Just a tidy surface and a calm space.",
+        img: "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=1400&q=80",
+        createdAt: Date.now() - 1000*60*60*24*2
       }
     ];
 
-    /***********************
-     *  HELPERS             *
-     ***********************/
+    // ===== Helpers =====
     const $ = (id) => document.getElementById(id);
 
     function loadJSON(key, fallback){
@@ -528,7 +545,7 @@
       localStorage.setItem(key, JSON.stringify(val));
     }
     function uid(){
-      return "s_" + Math.random().toString(16).slice(2) + "_" + Date.now().toString(16);
+      return "p_" + Math.random().toString(16).slice(2) + "_" + Date.now().toString(16);
     }
     function fmtDate(ts){
       const d = new Date(ts);
@@ -552,7 +569,6 @@
       if(cat === "desk") return "DESK";
       return String(cat||"").toUpperCase();
     }
-
     async function fileToDataURL(file){
       return await new Promise((resolve, reject) => {
         const r = new FileReader();
@@ -562,219 +578,33 @@
       });
     }
 
-    /***********************
-     *  SUPABASE REST        *
-     ***********************/
-    async function sbFetch(path, opts={}){
-      const url = `${SUPABASE_URL}${path}`;
-      const headers = {
-        "apikey": SUPABASE_KEY,
-        "Authorization": `Bearer ${SUPABASE_KEY}`,
-        ...(opts.headers || {})
-      };
-      return await fetch(url, { ...opts, headers });
+    // ===== State =====
+    let posts = loadJSON(KEY_POSTS, []);
+    let likes = loadJSON(KEY_LIKES, {});
+    let liked = loadJSON(KEY_LIKED, {});
+
+    function allPosts(){
+      // demo + local
+      const m = new Map();
+      for(const x of DEMO) m.set(x.id, x);
+      for(const x of posts) m.set(x.id, x);
+      return Array.from(m.values());
     }
 
-    // Upload image to Supabase Storage (works only if bucket exists and RLS allows)
-    async function sbUploadImage(file){
-      // For GitHub Pages we need direct REST upload:
-      // POST /storage/v1/object/<bucket>/<path>
-      const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
-      const path = `setup_${Date.now()}_${Math.random().toString(16).slice(2)}.${ext}`;
-      const url = `${SUPABASE_URL}/storage/v1/object/${SUPABASE_BUCKET}/${path}`;
+    function getLikes(id){ return Number(likes[id] || 0); }
+    function isLiked(id){ return !!liked[id]; }
 
-      const res = await fetch(url, {
-        method: "POST",
-        headers: {
-          "apikey": SUPABASE_KEY,
-          "Authorization": `Bearer ${SUPABASE_KEY}`,
-          "Content-Type": file.type || "application/octet-stream",
-          "x-upsert": "true"
-        },
-        body: file
-      });
-
-      if(!res.ok){
-        const t = await res.text().catch(()=> "");
-        throw new Error(`Storage upload failed: ${res.status} ${t}`);
-      }
-
-      // public URL (if bucket is public). If bucket is private, you'd need signed URLs.
-      const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${SUPABASE_BUCKET}/${path}`;
-      return publicUrl;
-    }
-
-    /***********************
-     *  LOCAL STATE          *
-     ***********************/
-    let localSetups = loadJSON(KEY_SETUPS, []);
-    let likesMap = loadJSON(KEY_LIKES, {});
-    let likedSet = loadJSON(KEY_LIKED, {});
-
-    function getLikesLocal(id){ return Number(likesMap[id] || 0); }
-    function isLikedLocal(id){ return !!likedSet[id]; }
-
-    function toggleLikeLocal(id){
-      if(isLikedLocal(id)){
-        likedSet[id] = false;
-        likesMap[id] = Math.max(0, getLikesLocal(id) - 1);
+    function toggleLike(id){
+      const was = isLiked(id);
+      if(was){
+        delete liked[id];
+        likes[id] = Math.max(0, getLikes(id) - 1);
       } else {
-        likedSet[id] = true;
-        likesMap[id] = getLikesLocal(id) + 1;
+        liked[id] = true;
+        likes[id] = getLikes(id) + 1;
       }
-      if(likedSet[id] === false) delete likedSet[id];
-      saveJSON(KEY_LIKES, likesMap);
-      saveJSON(KEY_LIKED, likedSet);
-    }
-
-    /***********************
-     *  ONLINE DATA MODEL    *
-     ***********************/
-    // Tables to create in Supabase (when you want ONLINE):
-    // public.setups: id text primary key, title text, category text, desc text, img text, created_at timestamptz
-    // public.likes: setup_id text primary key, count int, updated_at timestamptz
-    //
-    // RLS policies must allow anon SELECT/INSERT/UPDATE (or you can add auth later).
-
-    async function onlineFetchSetups(){
-      const res = await sbFetch(`/rest/v1/setups?select=*`, { method:"GET" });
-      if(!res.ok) throw new Error("onlineFetchSetups failed");
-      return await res.json();
-    }
-
-    async function onlineUpsertSetup(setup){
-      const res = await sbFetch(`/rest/v1/setups`, {
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json",
-          "Prefer":"resolution=merge-duplicates"
-        },
-        body: JSON.stringify([{
-          id: setup.id,
-          title: setup.title,
-          category: setup.category,
-          desc: setup.desc,
-          img: setup.img,
-          created_at: new Date(setup.createdAt).toISOString()
-        }])
-      });
-      if(!res.ok){
-        const t = await res.text().catch(()=> "");
-        throw new Error("onlineUpsertSetup failed: " + t);
-      }
-    }
-
-    async function onlineFetchLikes(){
-      const res = await sbFetch(`/rest/v1/likes?select=*`, { method:"GET" });
-      if(!res.ok) throw new Error("onlineFetchLikes failed");
-      const rows = await res.json();
-      const map = {};
-      for(const r of rows){
-        map[r.setup_id] = Number(r.count || 0);
-      }
-      return map;
-    }
-
-    // Like model: count only (simple). Client will also keep "likedSet" per-device to prevent spam locally.
-    async function onlineLikeIncrement(setupId, delta){
-      // read current
-      const q = `/rest/v1/likes?select=count&setup_id=eq.${encodeURIComponent(setupId)}&limit=1`;
-      const r1 = await sbFetch(q, { method:"GET" });
-      let cur = 0;
-      if(r1.ok){
-        const arr = await r1.json();
-        if(Array.isArray(arr) && arr.length) cur = Number(arr[0].count || 0);
-      }
-      const next = Math.max(0, cur + delta);
-
-      const r2 = await sbFetch(`/rest/v1/likes`, {
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json",
-          "Prefer":"resolution=merge-duplicates"
-        },
-        body: JSON.stringify([{
-          setup_id: setupId,
-          count: next,
-          updated_at: new Date().toISOString()
-        }])
-      });
-      if(!r2.ok){
-        const t = await r2.text().catch(()=> "");
-        throw new Error("onlineLikeIncrement failed: " + t);
-      }
-      return next;
-    }
-
-    /***********************
-     *  APP RENDER           *
-     ***********************/
-    let onlineSetups = [];
-    let onlineLikes = {};
-
-    function allSetupsMerged(){
-      if(ONLINE){
-        // Online list + demo (demo also shown)
-        const m = new Map();
-        for(const s of DEMO) m.set(s.id, s);
-        for(const s of onlineSetups){
-          m.set(s.id, {
-            id: s.id,
-            title: s.title,
-            category: s.category,
-            desc: s.desc,
-            img: s.img,
-            createdAt: new Date(s.created_at || Date.now()).getTime()
-          });
-        }
-        return Array.from(m.values());
-      } else {
-        // Demo + local
-        const m = new Map();
-        for(const s of DEMO) m.set(s.id, s);
-        for(const s of localSetups) m.set(s.id, s);
-        return Array.from(m.values());
-      }
-    }
-
-    function getLikes(id){
-      if(ONLINE) return Number(onlineLikes[id] || 0);
-      return getLikesLocal(id);
-    }
-
-    function isLiked(id){
-      // always per-device (simple anti spam)
-      return !!likedSet[id];
-    }
-
-    async function toggleLike(id){
-      const currently = isLiked(id);
-      const delta = currently ? -1 : +1;
-
-      // update local "likedSet"
-      if(currently) delete likedSet[id];
-      else likedSet[id] = true;
-      saveJSON(KEY_LIKED, likedSet);
-
-      if(ONLINE){
-        try{
-          const next = await onlineLikeIncrement(id, delta);
-          onlineLikes[id] = next;
-        } catch(e){
-          // rollback local likedSet
-          if(currently) likedSet[id] = true; else delete likedSet[id];
-          saveJSON(KEY_LIKED, likedSet);
-          alert("Online like failed. Check Supabase policies/bucket.");
-        }
-      } else {
-        // local counts
-        if(currently){
-          likesMap[id] = Math.max(0, getLikesLocal(id) - 1);
-        } else {
-          likesMap[id] = getLikesLocal(id) + 1;
-        }
-        saveJSON(KEY_LIKES, likesMap);
-      }
+      saveJSON(KEY_LIKED, liked);
+      saveJSON(KEY_LIKES, likes);
       render();
     }
 
@@ -784,12 +614,14 @@
       const sort = $("sort").value;
 
       let out = list;
-      if(cat !== "all") out = out.filter(x => x.category === cat);
 
+      if(cat !== "all"){
+        out = out.filter(x => x.category === cat);
+      }
       if(q){
         out = out.filter(x =>
-          (x.title || "").toLowerCase().includes(q) ||
-          (x.desc || "").toLowerCase().includes(q)
+          (x.title||"").toLowerCase().includes(q) ||
+          (x.desc||"").toLowerCase().includes(q)
         );
       }
 
@@ -805,60 +637,46 @@
     }
 
     function render(){
-      const grid = $("grid");
-      const list = applyFilters(allSetupsMerged());
-      grid.innerHTML = "";
+      const root = $("masonry");
+      const list = applyFilters(allPosts());
+      root.innerHTML = "";
 
       if(list.length === 0){
-        grid.innerHTML = `<div class="hintBox" style="grid-column: 1 / -1;">Nothing found.</div>`;
+        root.innerHTML = `<div style="padding:14px;color:rgba(14,17,22,.55)">Nothing found.</div>`;
         return;
       }
 
-      for(const s of list){
-        const liked = isLiked(s.id);
-        const likeCount = getLikes(s.id);
-        const badgeClass = `cat-${s.category}`;
-
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `
-          <div class="thumb">
-            <img src="${esc(s.img || "")}" alt="${esc(s.title || "setup")}" loading="lazy" />
-            <div class="badge ${badgeClass}">${catLabel(s.category)}</div>
+      for(const p of list){
+        const pin = document.createElement("div");
+        pin.className = "pin";
+        pin.innerHTML = `
+          <div class="imgWrap">
+            <img src="${esc(p.img||"")}" alt="${esc(p.title||"setup")}" loading="lazy" />
+            <div class="tag">${catLabel(p.category)}</div>
           </div>
-
-          <div class="content">
-            <div class="hline">
-              <div class="name">${esc(s.title || "Untitled")}</div>
-            </div>
-
-            <div class="desc">${esc(s.desc || "")}</div>
-
+          <div class="body">
+            <div class="title">${esc(p.title||"Untitled")}</div>
+            <div class="desc">${esc(p.desc||"")}</div>
             <div class="meta">
-              <div class="date">${fmtDate(s.createdAt || Date.now())}</div>
-              <button class="likeBtn ${liked ? "liked" : ""}" data-like="${esc(s.id)}">
-                ${liked ? "♥" : "♡"} <span>${likeCount}</span>
+              <div class="date">${fmtDate(p.createdAt||Date.now())}</div>
+              <button class="likeBtn ${isLiked(p.id) ? "liked" : ""}" data-like="${esc(p.id)}">
+                ${isLiked(p.id) ? "♥" : "♡"} <span>${getLikes(p.id)}</span>
               </button>
             </div>
           </div>
         `;
-        grid.appendChild(card);
+        root.appendChild(pin);
       }
 
-      grid.querySelectorAll("[data-like]").forEach(btn => {
-        btn.addEventListener("click", async () => {
-          const id = btn.getAttribute("data-like");
-          await toggleLike(id);
-        });
+      root.querySelectorAll("[data-like]").forEach(b => {
+        b.addEventListener("click", () => toggleLike(b.getAttribute("data-like")));
       });
     }
 
-    /***********************
-     *  MODAL (ADD SETUP)   *
-     ***********************/
+    // ===== Modal =====
     function openModal(){
       $("modal").style.display = "flex";
-      $("status").innerHTML = `<span class="warn">Tip:</span> choose URL or file. If both exist, URL wins.`;
+      $("status").textContent = "Ready.";
     }
     function closeModal(){
       $("modal").style.display = "none";
@@ -869,151 +687,69 @@
       $("fCat").value = "pc";
     }
 
-    async function saveSetup(){
+    async function savePost(){
       const title = $("fTitle").value.trim();
-      const desc = $("fDesc").value.trim();
-      const cat = $("fCat").value;
-      const url = $("fUrl").value.trim();
-      const file = $("fFile").files && $("fFile").files[0];
+      const desc  = $("fDesc").value.trim();
+      const cat   = $("fCat").value;
+      const url   = $("fUrl").value.trim();
+      const file  = $("fFile").files && $("fFile").files[0];
 
-      if(!title){ $("status").innerHTML = `<span class="warn">Error:</span> Title required.`; return; }
-      if(!desc){ $("status").innerHTML = `<span class="warn">Error:</span> Description required.`; return; }
+      if(!title){ $("status").textContent = "Title required."; return; }
+      if(!desc){ $("status").textContent = "Description required."; return; }
 
       let img = "";
       if(url){
         img = url;
       } else if(file){
-        if(ONLINE){
-          $("status").innerHTML = `<span class="ok">Uploading ONLINE...</span>`;
-          try{
-            img = await sbUploadImage(file);
-          } catch(e){
-            $("status").innerHTML = `<span class="warn">Upload failed:</span> check bucket/policies.`;
-            return;
-          }
-        } else {
-          $("status").innerHTML = `<span class="ok">Saving LOCAL...</span>`;
-          img = await fileToDataURL(file);
-        }
+        $("status").textContent = "Saving image locally...";
+        img = await fileToDataURL(file);
       } else {
-        $("status").innerHTML = `<span class="warn">Error:</span> Add Image URL or upload a file.`;
+        $("status").textContent = "Add Image URL or upload a file.";
         return;
       }
 
-      const setup = {
+      const post = {
         id: uid(),
-        title, category: cat, desc, img,
+        title, desc,
+        category: cat,
+        img,
         createdAt: Date.now()
       };
 
-      if(ONLINE){
-        try{
-          await onlineUpsertSetup(setup);
-          await refreshOnline();
-        } catch(e){
-          alert("Online save failed. Check Supabase tables/policies.");
-          return;
-        }
-      } else {
-        localSetups = [setup, ...localSetups];
-        saveJSON(KEY_SETUPS, localSetups);
-      }
-
+      posts = [post, ...posts];
+      saveJSON(KEY_POSTS, posts);
       closeModal();
       render();
     }
 
-    /***********************
-     *  ONLINE REFRESH       *
-     ***********************/
-    async function refreshOnline(){
-      if(!ONLINE) return;
-      onlineSetups = await onlineFetchSetups();
-      onlineLikes = await onlineFetchLikes();
-    }
-
-    /***********************
-     *  RESET LOCAL          *
-     ***********************/
-    function resetLocal(){
-      if(ONLINE){
-        alert("Reset local works only in LOCAL mode.");
-        return;
-      }
-      if(!confirm("Reset local setups + likes on this device?")) return;
-      localSetups = [];
-      likesMap = {};
-      likedSet = {};
-      localStorage.removeItem(KEY_SETUPS);
+    function resetAll(){
+      if(!confirm("Reset local added posts + likes on this device?")) return;
+      posts = [];
+      likes = {};
+      liked = {};
+      localStorage.removeItem(KEY_POSTS);
       localStorage.removeItem(KEY_LIKES);
       localStorage.removeItem(KEY_LIKED);
       render();
     }
 
-    /***********************
-     *  INIT UI              *
-     ***********************/
-    function setModeUI(){
-      const pill = $("modePill");
-      if(ONLINE){
-        pill.classList.add("good");
-        pill.innerHTML = `<span class="dot"></span><span>Mode: ONLINE</span>`;
-        $("hint").innerHTML = `<b>ONLINE mode:</b> posts + likes are shared for everyone (Supabase).`;
-      } else {
-        pill.classList.remove("good");
-        pill.classList.add("bad");
-        pill.innerHTML = `<span class="dot"></span><span>Mode: LOCAL</span>`;
-        $("hint").innerHTML = `<b>LOCAL mode:</b> posts + likes are saved in your browser only.`;
-      }
-    }
-
+    // ===== Events =====
     $("addBtn").addEventListener("click", openModal);
     $("closeModal").addEventListener("click", closeModal);
     $("cancel").addEventListener("click", closeModal);
-    $("save").addEventListener("click", () => saveSetup());
-    $("resetBtn").addEventListener("click", resetLocal);
+    $("save").addEventListener("click", savePost);
+    $("resetBtn").addEventListener("click", resetAll);
 
     $("q").addEventListener("input", render);
     $("cat").addEventListener("change", render);
     $("sort").addEventListener("change", render);
 
-    $("refreshBtn").addEventListener("click", async () => {
-      if(ONLINE){
-        try{
-          await refreshOnline();
-        } catch(e){
-          alert("Refresh failed. Check Supabase URL/key/tables/policies.");
-        }
-      }
-      render();
-    });
-
     $("modal").addEventListener("click", (e) => {
       if(e.target === $("modal")) closeModal();
     });
 
-    async function init(){
-      // keep per-device likedSet for both modes
-      likedSet = loadJSON(KEY_LIKED, {});
-      saveJSON(KEY_LIKED, likedSet);
-
-      setModeUI();
-
-      if(ONLINE){
-        try{
-          await refreshOnline();
-        } catch(e){
-          alert("ONLINE enabled but Supabase fetch failed. Switch back to LOCAL or fix Supabase tables/policies.");
-        }
-      } else {
-        localSetups = loadJSON(KEY_SETUPS, []);
-        likesMap = loadJSON(KEY_LIKES, {});
-      }
-
-      render();
-    }
-
-    init();
+    // ===== Init =====
+    render();
   </script>
 </body>
 </html>
