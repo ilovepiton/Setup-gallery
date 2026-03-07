@@ -627,6 +627,54 @@
   </div>
 
   <script>
+    // ===== SUPABASE ONLINE (POSTS) =====
+const SUPABASE_URL = "https://wnbyvospvvnyqfkjyzhp.supabase.co";
+const SUPABASE_KEY = "sb_publishable_Z_xU69R3fsnQrpfPSgkAWw_DZL_glCr";
+
+async function sbFetch(path, opts = {}) {
+  const url = `${SUPABASE_URL}${path}`;
+  const headers = {
+    apikey: SUPABASE_KEY,
+    Authorization: `Bearer ${SUPABASE_KEY}`,
+    ...(opts.headers || {}),
+  };
+  const res = await fetch(url, { ...opts, headers });
+  if (!res.ok) {
+    const t = await res.text().catch(() => "");
+    throw new Error(`${res.status} ${t}`);
+  }
+  return res;
+}
+
+// load posts for everyone
+async function loadOnlinePosts() {
+  const res = await sbFetch(`/rest/v1/setups?select=*`, { method: "GET" });
+  const rows = await res.json();
+  return rows.map(r => ({
+    id: r.id,
+    title: r.title,
+    desc: r.description,
+    tags: r.tags || [],
+    img: r.image_url,
+    createdAt: new Date(r.created_at).getTime(),
+  }));
+}
+
+// insert post (visible to everyone)
+async function addOnlinePost(post) {
+  await sbFetch(`/rest/v1/setups`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify([{
+      id: post.id,
+      title: post.title,
+      tags: post.tags,
+      description: post.desc,
+      image_url: post.img,
+      created_at: new Date(post.createdAt).toISOString(),
+    }]),
+  });
+}
     // THEMES: "pink" is now REALLY pink (full background), not a tiny tint.
     const THEMES = {
       wood: {
