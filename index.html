@@ -23,8 +23,6 @@
       --radius: 18px;
 
       --accent: #1b8bff;
-      --accent2:#ff3fb6;
-
       --btnBg: rgba(255,255,255,0.92);
       --btnBd: rgba(14,17,22,0.18);
     }
@@ -114,7 +112,6 @@
     }
 
     .wrap{ width:min(1240px, 94vw); margin: 18px auto 70px; }
-
     .topbar{
       display:flex;
       justify-content:space-between;
@@ -188,13 +185,7 @@
       background-position: 0 0, calc(100% - 14px) 50%;
       background-size: 100% 100%, 18px 18px;
     }
-
-    /* language select (fixed width so it never jumps) */
-    .langSelect{
-      min-width: 150px;
-      width: 150px;
-      text-align: left;
-    }
+    .langSelect{ min-width: 150px; width: 150px; }
 
     /* menu */
     .menuWrap{ position:relative; }
@@ -224,7 +215,7 @@
     .menu{
       position:absolute;
       right:0; top:48px;
-      width:260px;
+      width:280px;
       border-radius:16px;
       border:1px solid rgba(14,17,22,0.12);
       background: rgba(255,255,255,0.92);
@@ -368,6 +359,21 @@
       background: rgba(255,63,182,0.12);
       color: rgba(130,0,78,0.86);
     }
+
+    /* delete (admin only) */
+    .delBtn{
+      cursor:pointer;
+      border:2px solid rgba(255,0,80,0.22);
+      border-radius: 16px;
+      padding:10px 14px;
+      background: rgba(255,0,80,0.06);
+      color: rgba(120,0,40,0.88);
+      font-weight:900;
+      display:none;
+      user-select:none;
+      white-space:nowrap;
+    }
+    body.admin .delBtn{ display:flex; align-items:center; gap:8px; }
 
     /* Modal */
     .modal{
@@ -548,9 +554,10 @@
           <option value="lightblue">Light Blue</option>
         </select>
 
-        <select id="sort" class="select">
-          <option value="new">Newest</option>
-        </select>
+        <button id="shuffleBtn" class="btn">Shuffle</button>
+        <button id="surpriseBtn" class="btn">Surprise</button>
+
+        <button id="musicBtn" class="btn">Music: Off</button>
 
         <button id="addBtn" class="btn">Add setup</button>
         <button id="reloadBtn" class="btn">Reload</button>
@@ -574,6 +581,9 @@
               <div class="mLabel" id="tQuick">Quick</div>
               <div class="mItem" id="scrollTopBtn">Scroll to top</div>
               <div class="mItem" id="aboutBtn">About</div>
+              <div class="mLabel">Admin</div>
+              <div class="mItem" id="adminBtn">Admin mode</div>
+              <div class="mItem" id="adminOffBtn">Admin off</div>
             </div>
           </div>
         </div>
@@ -677,7 +687,10 @@
     const SUPABASE_KEY = "sb_publishable_Z_xU69R3fsnQrpfPSgkAWw_DZL_glCr";
     const BUCKET = "Setup-images";
 
-    // ===== Style -> Background themes (AUTO) =====
+    // Edge function delete endpoint:
+    const ADMIN_DELETE_FN = `${SUPABASE_URL}/functions/v1/admin-delete`;
+
+    // ===== styles -> background =====
     const STYLE_THEMES = {
       white:     { bg0:"#f6f7fb", bg1:"#edf0f6", ink:"#0e1116", wave:"0.16", vignette:"0.35", dark:false },
       pink:      { bg0:"#ffd6ea", bg1:"#ffc3e0", ink:"#0e1116", wave:"0.14", vignette:"0.18", dark:false },
@@ -688,7 +701,6 @@
       lightblue: { bg0:"#d7f1ff", bg1:"#c5e8ff", ink:"#0e1116", wave:"0.14", vignette:"0.22", dark:false },
       black:     { bg0:"#101216", bg1:"#0b0e12", ink:"#f3f6fb", wave:"0.18", vignette:"0.92", dark:true }
     };
-
     const STYLE_COLORS = {
       wood: "#b67a3c",
       cyber: "#00c8d6",
@@ -699,12 +711,10 @@
       meme: "#33cc66",
       lightblue: "#1b8bff",
     };
-
     const AUTO_BG_KEY = "setup_gallery_auto_bg_style_v1";
 
     function applyStyleBackground(styleKey){
       const t = STYLE_THEMES[styleKey] || STYLE_THEMES.white;
-
       document.documentElement.style.setProperty("--bg0", t.bg0);
       document.documentElement.style.setProperty("--bg1", t.bg1);
       document.documentElement.style.setProperty("--ink", t.ink);
@@ -730,172 +740,91 @@
       localStorage.setItem(AUTO_BG_KEY, styleKey);
     }
 
-    // ===== Language =====
+    // ===== Language (UI only; post text stays as user wrote it) =====
     const LANG_KEY = "setup_gallery_lang_v1";
     const I18N = {
-      en: {
-        sub: "Select a style — background changes automatically.",
-        search: "Search...",
-        allStyles: "All styles",
-        newest: "Newest",
-        addSetup: "Add setup",
-        reload: "Reload",
-        menu: "Menu",
-        quick: "Quick",
-        scrollTop: "Scroll to top",
-        about: "About",
-        likesNote: "<b>Likes:</b> enabled (local per browser). Next step: make likes online for everyone.",
-        addTitle: "Add setup",
-        titleLbl: "Title",
-        styleLbl: "Style",
-        tagsLbl: "Tags (comma separated)",
-        imageLbl: "Image",
-        dropTitle: "Drop your image here",
-        dropSub: "Or click “Choose file”. (jpg / png / webp)",
-        chooseFile: "Choose file",
-        descLbl: "Description",
-        cancel: "Cancel",
-        post: "Post",
-        ready: "Ready.",
-        noImage: "No image",
-        noPosts: "No posts. Add one or change filters.",
-        view: "View"
+      en: { sub:"Select a style — background changes automatically.",
+            search:"Search...", allStyles:"All styles", addSetup:"Add setup", reload:"Reload",
+            shuffle:"Shuffle", surprise:"Surprise", musicOff:"Music: Off", musicOn:"Music: On",
+            menu:"Menu", quick:"Quick", scrollTop:"Scroll to top", about:"About",
+            admin:"Admin mode", adminOff:"Admin off",
+            likesNote:"<b>Likes:</b> enabled (local per browser). Next step: make likes online for everyone.",
+            addTitle:"Add setup", titleLbl:"Title", styleLbl:"Style", tagsLbl:"Tags (comma separated)",
+            imageLbl:"Image", dropTitle:"Drop your image here", dropSub:"Or click “Choose file”. (jpg / png / webp)",
+            chooseFile:"Choose file", descLbl:"Description", cancel:"Cancel", post:"Post", ready:"Ready.",
+            noImage:"No image", noPosts:"No posts. Add one or change filters.", view:"View",
+            del:"Delete", delAsk:"Delete this post for everyone?"
       },
-      ru: {
-        sub: "Выбери стиль — фон меняется автоматически.",
-        search: "Поиск...",
-        allStyles: "Все стили",
-        newest: "Новые",
-        addSetup: "Добавить",
-        reload: "Обновить",
-        menu: "Меню",
-        quick: "Быстро",
-        scrollTop: "Наверх",
-        about: "О проекте",
-        likesNote: "<b>Лайки:</b> работают (пока локально в браузере). Следующий шаг — онлайн лайки для всех.",
-        addTitle: "Добавить сетап",
-        titleLbl: "Название",
-        styleLbl: "Стиль",
-        tagsLbl: "Теги (через запятую)",
-        imageLbl: "Картинка",
-        dropTitle: "Перетащи картинку сюда",
-        dropSub: "Или нажми “Выбрать файл”. (jpg / png / webp)",
-        chooseFile: "Выбрать файл",
-        descLbl: "Описание",
-        cancel: "Отмена",
-        post: "Опубликовать",
-        ready: "Готово.",
-        noImage: "Нет картинки",
-        noPosts: "Постов нет. Добавь или поменяй фильтры.",
-        view: "Открыть"
+      ru: { sub:"Выбери стиль — фон меняется автоматически.",
+            search:"Поиск...", allStyles:"Все стили", addSetup:"Добавить", reload:"Обновить",
+            shuffle:"Перемешать", surprise:"Сюрприз", musicOff:"Музыка: выкл", musicOn:"Музыка: вкл",
+            menu:"Меню", quick:"Быстро", scrollTop:"Наверх", about:"О проекте",
+            admin:"Админ режим", adminOff:"Админ выкл",
+            likesNote:"<b>Лайки:</b> работают (локально). Следующий шаг — онлайн лайки для всех.",
+            addTitle:"Добавить сетап", titleLbl:"Название", styleLbl:"Стиль", tagsLbl:"Теги (через запятую)",
+            imageLbl:"Картинка", dropTitle:"Перетащи картинку сюда", dropSub:"Или нажми “Выбрать файл”. (jpg / png / webp)",
+            chooseFile:"Выбрать файл", descLbl:"Описание", cancel:"Отмена", post:"Опубликовать", ready:"Готово.",
+            noImage:"Нет картинки", noPosts:"Постов нет. Добавь или поменяй фильтры.", view:"Открыть",
+            del:"Удалить", delAsk:"Удалить этот пост для всех?"
       },
-      es: {
-        sub: "Elige un estilo — el fondo cambia automáticamente.",
-        search: "Buscar...",
-        allStyles: "Todos",
-        newest: "Nuevos",
-        addSetup: "Añadir",
-        reload: "Recargar",
-        menu: "Menú",
-        quick: "Rápido",
-        scrollTop: "Ir arriba",
-        about: "Acerca de",
-        likesNote: "<b>Me gusta:</b> activo (local). Próximo: likes online para todos.",
-        addTitle: "Añadir setup",
-        titleLbl: "Título",
-        styleLbl: "Estilo",
-        tagsLbl: "Tags (separados por coma)",
-        imageLbl: "Imagen",
-        dropTitle: "Suelta tu imagen aquí",
-        dropSub: "O haz clic “Elegir archivo”. (jpg / png / webp)",
-        chooseFile: "Elegir archivo",
-        descLbl: "Descripción",
-        cancel: "Cancelar",
-        post: "Publicar",
-        ready: "Listo.",
-        noImage: "Sin imagen",
-        noPosts: "No hay posts. Añade uno o cambia filtros.",
-        view: "Ver"
+      es: { sub:"Elige un estilo — el fondo cambia automáticamente.",
+            search:"Buscar...", allStyles:"Todos", addSetup:"Añadir", reload:"Recargar",
+            shuffle:"Mezclar", surprise:"Sorpresa", musicOff:"Música: Off", musicOn:"Música: On",
+            menu:"Menú", quick:"Rápido", scrollTop:"Arriba", about:"Acerca de",
+            admin:"Admin", adminOff:"Admin off",
+            likesNote:"<b>Me gusta:</b> activo (local). Próximo: likes online para todos.",
+            addTitle:"Añadir setup", titleLbl:"Título", styleLbl:"Estilo", tagsLbl:"Tags (coma)",
+            imageLbl:"Imagen", dropTitle:"Suelta tu imagen aquí", dropSub:"O “Elegir archivo”. (jpg / png / webp)",
+            chooseFile:"Elegir archivo", descLbl:"Descripción", cancel:"Cancelar", post:"Publicar", ready:"Listo.",
+            noImage:"Sin imagen", noPosts:"No hay posts. Añade uno o cambia filtros.", view:"Ver",
+            del:"Borrar", delAsk:"¿Borrar este post para todos?"
       },
-      fr: {
-        sub: "Choisis un style — le fond change automatiquement.",
-        search: "Rechercher...",
-        allStyles: "Tous",
-        newest: "Récents",
-        addSetup: "Ajouter",
-        reload: "Recharger",
-        menu: "Menu",
-        quick: "Rapide",
-        scrollTop: "Haut de page",
-        about: "À propos",
-        likesNote: "<b>Likes :</b> activés (local). Prochain: likes en ligne pour tous.",
-        addTitle: "Ajouter setup",
-        titleLbl: "Titre",
-        styleLbl: "Style",
-        tagsLbl: "Tags (séparés par virgule)",
-        imageLbl: "Image",
-        dropTitle: "Dépose ton image ici",
-        dropSub: "Ou clique “Choisir un fichier”. (jpg / png / webp)",
-        chooseFile: "Choisir",
-        descLbl: "Description",
-        cancel: "Annuler",
-        post: "Publier",
-        ready: "Prêt.",
-        noImage: "Pas d'image",
-        noPosts: "Aucun post. Ajoute-en un ou change les filtres.",
-        view: "Voir"
+      fr: { sub:"Choisis un style — le fond change automatiquement.",
+            search:"Rechercher...", allStyles:"Tous", addSetup:"Ajouter", reload:"Recharger",
+            shuffle:"Mélanger", surprise:"Surprise", musicOff:"Musique: Off", musicOn:"Musique: On",
+            menu:"Menu", quick:"Rapide", scrollTop:"Haut", about:"À propos",
+            admin:"Admin", adminOff:"Admin off",
+            likesNote:"<b>Likes :</b> activés (local). Prochain: likes en ligne pour tous.",
+            addTitle:"Ajouter setup", titleLbl:"Titre", styleLbl:"Style", tagsLbl:"Tags (virgule)",
+            imageLbl:"Image", dropTitle:"Dépose ton image ici", dropSub:"Ou “Choisir”. (jpg / png / webp)",
+            chooseFile:"Choisir", descLbl:"Description", cancel:"Annuler", post:"Publier", ready:"Prêt.",
+            noImage:"Pas d'image", noPosts:"Aucun post. Ajoute-en un ou change les filtres.", view:"Voir",
+            del:"Supprimer", delAsk:"Supprimer ce post pour tout le monde ?"
       },
-      zh: {
-        sub: "选择风格——背景会自动改变。",
-        search: "搜索...",
-        allStyles: "全部风格",
-        newest: "最新",
-        addSetup: "添加",
-        reload: "刷新",
-        menu: "菜单",
-        quick: "快捷",
-        scrollTop: "回到顶部",
-        about: "关于",
-        likesNote: "<b>点赞：</b>已启用（本地）。下一步：所有人共享在线点赞。",
-        addTitle: "添加桌面",
-        titleLbl: "标题",
-        styleLbl: "风格",
-        tagsLbl: "标签（逗号分隔）",
-        imageLbl: "图片",
-        dropTitle: "把图片拖到这里",
-        dropSub: "或点击“选择文件”。(jpg / png / webp)",
-        chooseFile: "选择文件",
-        descLbl: "描述",
-        cancel: "取消",
-        post: "发布",
-        ready: "就绪。",
-        noImage: "没有图片",
-        noPosts: "还没有内容。添加一个或更改筛选。",
-        view: "查看"
+      zh: { sub:"选择风格——背景会自动改变。",
+            search:"搜索...", allStyles:"全部风格", addSetup:"添加", reload:"刷新",
+            shuffle:"打乱", surprise:"惊喜", musicOff:"音乐：关", musicOn:"音乐：开",
+            menu:"菜单", quick:"快捷", scrollTop:"回到顶部", about:"关于",
+            admin:"管理员", adminOff:"关闭管理员",
+            likesNote:"<b>点赞：</b>已启用（本地）。下一步：所有人共享在线点赞。",
+            addTitle:"添加桌面", titleLbl:"标题", styleLbl:"风格", tagsLbl:"标签（逗号）",
+            imageLbl:"图片", dropTitle:"把图片拖到这里", dropSub:"或点“选择文件”。(jpg / png / webp)",
+            chooseFile:"选择文件", descLbl:"描述", cancel:"取消", post:"发布", ready:"就绪。",
+            noImage:"没有图片", noPosts:"还没有内容。添加一个或更改筛选。", view:"查看",
+            del:"删除", delAsk:"要为所有人删除这个帖子吗？"
       }
     };
-
     let currentLang = localStorage.getItem(LANG_KEY) || "en";
-    function t(key){ return (I18N[currentLang] && I18N[currentLang][key]) || I18N.en[key] || key; }
+    const t = (k) => (I18N[currentLang] && I18N[currentLang][k]) || I18N.en[k] || k;
 
     function applyLanguage(){
       document.getElementById("tSub").textContent = t("sub");
       document.getElementById("q").placeholder = t("search");
+      document.getElementById("styleFilter").options[0].text = t("allStyles");
 
-      // options text (styleFilter)
-      const sf = document.getElementById("styleFilter");
-      sf.options[0].text = t("allStyles");
-
-      // sort
-      const sort = document.getElementById("sort");
-      sort.options[0].text = t("newest");
+      document.getElementById("shuffleBtn").textContent = t("shuffle");
+      document.getElementById("surpriseBtn").textContent = t("surprise");
+      updateMusicBtnText();
 
       document.getElementById("addBtn").textContent = t("addSetup");
       document.getElementById("reloadBtn").textContent = t("reload");
+
       document.getElementById("tMenu").textContent = t("menu");
       document.getElementById("tQuick").textContent = t("quick");
       document.getElementById("scrollTopBtn").textContent = t("scrollTop");
       document.getElementById("aboutBtn").textContent = t("about");
+      document.getElementById("adminBtn").textContent = t("admin");
+      document.getElementById("adminOffBtn").textContent = t("adminOff");
 
       document.getElementById("tLikesNote").innerHTML = t("likesNote");
 
@@ -911,16 +840,20 @@
       document.getElementById("cancelAdd").textContent = t("cancel");
       document.getElementById("saveAdd").textContent = t("post");
 
-      if(document.getElementById("addStatus").textContent === "Ready." || document.getElementById("addStatus").textContent === "Готово." ){
-        document.getElementById("addStatus").textContent = t("ready");
-      }
-      if(document.getElementById("preview").textContent.trim().toLowerCase().includes("no")){
-        document.getElementById("preview").textContent = t("noImage");
-      }
-
-      // View button text updated in render()
+      // rerender to update card buttons text
       render();
     }
+
+    // ===== admin mode (only UI + Edge Function delete) =====
+    const ADMIN_MODE_KEY = "setup_gallery_admin_mode_v1";
+    const ADMIN_PASS_KEY = "setup_gallery_admin_pass_v1";
+    function setAdminMode(on){
+      localStorage.setItem(ADMIN_MODE_KEY, on ? "1" : "0");
+      document.body.classList.toggle("admin", on);
+      toast(on ? "Admin ON" : "Admin OFF");
+      render();
+    }
+    function isAdmin(){ return localStorage.getItem(ADMIN_MODE_KEY) === "1"; }
 
     // ===== Likes (local) =====
     const LIKES_KEY = "setup_gallery_likes_counts_v1";
@@ -940,21 +873,19 @@
       }
       localStorage.setItem(LIKES_KEY, JSON.stringify(likesCounts));
       localStorage.setItem(LIKED_KEY, JSON.stringify(likedFlags));
-      toast("OK");
       render();
     }
 
-    // ===== Helpers =====
+    // ===== helpers =====
     const $ = (id) => document.getElementById(id);
-
     function uid(){ return "p_" + Math.random().toString(16).slice(2) + "_" + Date.now().toString(16); }
     function esc(s){
       return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
                       .replaceAll('"',"&quot;").replaceAll("'","&#039;");
     }
-    function normTag(tg){ return String(tg||"").trim().toLowerCase().replace(/\s+/g," "); }
+    function normTag(x){ return String(x||"").trim().toLowerCase().replace(/\s+/g," "); }
     function parseTags(s){ return (s||"").split(",").map(x => normTag(x)).filter(Boolean).slice(0, 8); }
-    function prettyTag(tg){ return tg.split(" ").map(w => w ? (w[0].toUpperCase()+w.slice(1)) : "").join(" "); }
+    function prettyTag(x){ return x.split(" ").map(w => w ? (w[0].toUpperCase()+w.slice(1)) : "").join(" "); }
 
     function toast(msg){
       const el = $("toast");
@@ -964,6 +895,7 @@
       window.__toastT = setTimeout(()=> el.style.display="none", 900);
     }
 
+    // ===== supabase calls =====
     async function sbFetch(path, opts = {}) {
       const url = `${SUPABASE_URL}${path}`;
       const headers = {
@@ -1014,7 +946,10 @@
       bar.style.width = "100%";
       setTimeout(()=> bar.style.width = "0%", 600);
 
-      return `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${path}`;
+      return {
+        publicUrl: `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${path}`,
+        storageFile: path
+      };
     }
 
     async function loadPosts() {
@@ -1028,6 +963,7 @@
         img: r.image_url,
         style: r.style || "white",
         createdAt: new Date(r.created_at).getTime(),
+        storage_file: r.storage_file || null
       }));
     }
 
@@ -1042,19 +978,130 @@
           description: post.desc,
           image_url: post.img,
           style: post.style,
+          storage_file: post.storage_file,
           created_at: new Date(post.createdAt).toISOString(),
         }]),
       });
     }
 
-    // state
+    // ===== delete post (admin only) =====
+    async function adminDeletePost(post){
+      if(!isAdmin()){
+        toast("Admin only");
+        return;
+      }
+      if(!confirm(t("delAsk"))) return;
+
+      const pass = localStorage.getItem(ADMIN_PASS_KEY) || prompt("Admin pass:");
+      if(!pass) return;
+      localStorage.setItem(ADMIN_PASS_KEY, pass);
+
+      const payload = { pass, id: post.id, storagePath: post.storage_file || "" };
+
+      const res = await fetch(ADMIN_DELETE_FN, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if(!res.ok){
+        const txt = await res.text().catch(()=> "");
+        alert("Delete failed:\n" + txt);
+        return;
+      }
+
+      toast("Deleted");
+      posts = await loadPosts();
+      render();
+    }
+
+    // ===== music (relaxing) =====
+    const MUSIC_KEY = "setup_gallery_music_v1";
+    let musicOn = localStorage.getItem(MUSIC_KEY) === "1";
+
+    let audioCtx = null;
+    let master = null;
+    let oscA=null, oscB=null, lfo=null, lfoGain=null, filter=null;
+
+    function initMusic(){
+      if(audioCtx) return;
+
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      master = audioCtx.createGain();
+      master.gain.value = 0.0; // start muted
+      master.connect(audioCtx.destination);
+
+      // soft pad
+      filter = audioCtx.createBiquadFilter();
+      filter.type = "lowpass";
+      filter.frequency.value = 520;
+      filter.Q.value = 0.8;
+      filter.connect(master);
+
+      oscA = audioCtx.createOscillator();
+      oscB = audioCtx.createOscillator();
+
+      oscA.type = "sine";
+      oscB.type = "triangle";
+
+      oscA.frequency.value = 196; // G3
+      oscB.frequency.value = 246.94; // B3-ish
+
+      const gainA = audioCtx.createGain();
+      const gainB = audioCtx.createGain();
+      gainA.gain.value = 0.07;
+      gainB.gain.value = 0.05;
+
+      oscA.connect(gainA).connect(filter);
+      oscB.connect(gainB).connect(filter);
+
+      // slow LFO to filter
+      lfo = audioCtx.createOscillator();
+      lfo.type = "sine";
+      lfo.frequency.value = 0.06;
+
+      lfoGain = audioCtx.createGain();
+      lfoGain.gain.value = 160;
+
+      lfo.connect(lfoGain);
+      lfoGain.connect(filter.frequency);
+
+      oscA.start();
+      oscB.start();
+      lfo.start();
+    }
+
+    function setMusic(on){
+      initMusic();
+      if(audioCtx.state === "suspended") audioCtx.resume();
+
+      musicOn = on;
+      localStorage.setItem(MUSIC_KEY, on ? "1" : "0");
+
+      const now = audioCtx.currentTime;
+      master.gain.cancelScheduledValues(now);
+      master.gain.setValueAtTime(master.gain.value, now);
+      master.gain.linearRampToValueAtTime(on ? 0.12 : 0.0, now + 0.7);
+
+      updateMusicBtnText();
+      toast(on ? t("musicOn") : t("musicOff"));
+    }
+
+    function updateMusicBtnText(){
+      $("musicBtn").textContent = musicOn ? t("musicOn") : t("musicOff");
+    }
+
+    // ===== UI =====
     let posts = [];
     let selectedFile = null;
 
     function applyFilters(list){
       const q = $("q").value.trim().toLowerCase();
       const styleF = $("styleFilter").value;
-      const sort = $("sort").value;
 
       let out = list;
       if(styleF !== "all"){
@@ -1067,7 +1114,7 @@
           (p.tags||[]).some(tg => tg.includes(q))
         );
       }
-      if(sort === "new") out = [...out].sort((a,b) => (b.createdAt||0)-(a.createdAt||0));
+      out = [...out].sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
       return out;
     }
 
@@ -1078,6 +1125,7 @@
 
       if(list.length === 0){
         root.innerHTML = `<div class="note" style="margin-top:18px;">${t("noPosts")}</div>`;
+        wireHover();
         return;
       }
 
@@ -1105,7 +1153,10 @@
               <button class="likeBtn ${isLiked(p.id) ? "liked" : ""}" data-like="${esc(p.id)}">
                 ${isLiked(p.id) ? "♥" : "♡"} <span>${getLikes(p.id)}</span>
               </button>
+
               <button class="viewBtn" data-view="${esc(p.id)}">${t("view")}</button>
+
+              <button class="delBtn" data-del="${esc(p.id)}">🗑 ${t("del")}</button>
             </div>
           </div>
         `;
@@ -1114,6 +1165,12 @@
 
       root.querySelectorAll("[data-view]").forEach(btn => btn.addEventListener("click", () => openView(btn.dataset.view)));
       root.querySelectorAll("[data-like]").forEach(btn => btn.addEventListener("click", () => toggleLike(btn.dataset.like)));
+      root.querySelectorAll("[data-del]").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const p = posts.find(x => x.id === btn.dataset.del);
+          if(p) await adminDeletePost(p);
+        });
+      });
 
       wireHover();
     }
@@ -1125,7 +1182,7 @@
       });
     }
 
-    // modal
+    // modals
     function openAdd(){
       $("addModal").style.display = "flex";
       $("addStatus").textContent = t("ready");
@@ -1159,13 +1216,14 @@
 
       try{
         $("addStatus").textContent = "Uploading...";
-        const imageUrl = await uploadToStorage(selectedFile);
+        const up = await uploadToStorage(selectedFile);
 
         $("addStatus").textContent = "Posting...";
         const post = {
           id: uid(),
           title, desc, tags,
-          img: imageUrl,
+          img: up.publicUrl,
+          storage_file: up.storageFile,
           style,
           createdAt: Date.now()
         };
@@ -1252,21 +1310,38 @@
       requestAnimationFrame(animateRing);
     })();
 
-    // events
+    // cool: shuffle & surprise
+    function shuffleFeed(){
+      posts = [...posts].sort(() => Math.random() - 0.5);
+      render();
+      toast("Shuffle!");
+    }
+    function surpriseVibe(){
+      const keys = ["white","pink","wood","cyber","anime","meme","lightblue","black"];
+      const k = keys[Math.floor(Math.random()*keys.length)];
+      $("styleFilter").value = k;
+      applyStyleBackground(k);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      render();
+      toast("Surprise!");
+    }
+
+    // ===== events =====
     $("addBtn").addEventListener("click", openAdd);
     $("closeAdd").addEventListener("click", closeAdd);
     $("cancelAdd").addEventListener("click", closeAdd);
     $("saveAdd").addEventListener("click", saveAdd);
 
     $("reloadBtn").addEventListener("click", reload);
+    $("shuffleBtn").addEventListener("click", shuffleFeed);
+    $("surpriseBtn").addEventListener("click", surpriseVibe);
+
+    $("musicBtn").addEventListener("click", () => setMusic(!musicOn));
 
     $("q").addEventListener("input", render);
-    $("sort").addEventListener("change", render);
 
-    // AUTO background when selecting style filter
     $("styleFilter").addEventListener("change", (e) => {
       const v = e.target.value;
-      // if "all" -> keep last saved or white
       if(v === "all"){
         const saved = localStorage.getItem(AUTO_BG_KEY) || "white";
         applyStyleBackground(saved);
@@ -1276,12 +1351,8 @@
       render();
     });
 
-    // AUTO background when selecting style inside Add setup
-    $("fStyle").addEventListener("change", (e) => {
-      applyStyleBackground(e.target.value);
-    });
+    $("fStyle").addEventListener("change", (e) => applyStyleBackground(e.target.value));
 
-    // language
     $("langSelect").addEventListener("change", (e) => {
       currentLang = e.target.value;
       localStorage.setItem(LANG_KEY, currentLang);
@@ -1300,22 +1371,36 @@
         toggleMenu(false);
       }
     });
+
     $("scrollTopBtn").addEventListener("click", () => { window.scrollTo({top:0,behavior:"smooth"}); toggleMenu(false); });
     $("aboutBtn").addEventListener("click", () => {
       toggleMenu(false);
-      alert("Setup Gallery\n\n- Upload: Supabase Storage\n- Posts: Supabase DB\n- Likes: local (next: online)");
+      alert("Setup Gallery\n\n- Upload: Supabase Storage\n- Posts: Supabase DB\n- Likes: local (next: online)\n- Admin delete: Edge Function");
     });
 
-    // init
+    $("adminBtn").addEventListener("click", () => {
+      toggleMenu(false);
+      const pass = prompt("Enter admin pass:");
+      if(!pass) return;
+      localStorage.setItem(ADMIN_PASS_KEY, pass);
+      setAdminMode(true);
+    });
+
+    $("adminOffBtn").addEventListener("click", () => {
+      toggleMenu(false);
+      localStorage.removeItem(ADMIN_PASS_KEY);
+      setAdminMode(false);
+    });
+
+    // ===== init =====
     (async function init(){
-      // restore language
       $("langSelect").value = currentLang;
 
-      // restore background style
       const savedStyle = localStorage.getItem(AUTO_BG_KEY) || "white";
       applyStyleBackground(savedStyle);
 
-      // UI strings
+      setAdminMode(isAdmin());
+
       applyLanguage();
 
       try{
@@ -1326,6 +1411,12 @@
         alert("Cannot load posts from Supabase. Check table policies.");
       }
       wireHover();
+
+      // restore music state
+      updateMusicBtnText();
+      if(musicOn){
+        // only start after user interaction in many browsers, but keep state
+      }
     })();
   </script>
 </body>
