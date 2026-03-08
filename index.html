@@ -29,6 +29,7 @@
 
     *{ box-sizing:border-box; }
     html,body{ height:100%; }
+
     body{
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
@@ -37,6 +38,18 @@
       overflow-x:hidden;
       cursor:none;
       transition: background 260ms ease;
+    }
+
+    /* Mandarin: make text less thick */
+    body.lang-zh{
+      font-weight: 500;
+    }
+    body.lang-zh .btn,
+    body.lang-zh .select,
+    body.lang-zh .input,
+    body.lang-zh .chip,
+    body.lang-zh .ptitle{
+      font-weight: 700; /* still strong but not “fat” */
     }
 
     /* topo waves */
@@ -74,6 +87,7 @@
       0%{ transform: translate3d(-10px,-6px,0); }
       100%{ transform: translate3d(12px,10px,0); }
     }
+
     .vignette{
       position:fixed;
       inset:-22vh -22vw;
@@ -112,12 +126,14 @@
       border-color: rgba(27,139,255,0.50);
     }
 
-    .wrap{ width:min(1240px, 94vw); margin: 18px auto 70px; }
+    /* tighter vertical spacing */
+    .wrap{ width:min(1240px, 94vw); margin: 14px auto 44px; }
+
     .topbar{
       display:flex;
       justify-content:space-between;
       align-items:center;
-      gap:14px;
+      gap:12px;
       padding:12px 12px;
       border-radius:var(--radius);
       border:1px solid var(--line);
@@ -175,11 +191,13 @@
       font-weight:800;
     }
     .input{ width:min(320px, 62vw); }
+
+    /* prettier select arrow */
     .select{
       cursor:pointer;
       appearance:none;
       -webkit-appearance:none;
-      padding-right:42px;
+      padding-right:44px;
       background-image:
         linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.92)),
         url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 24 24'><path fill='%230e1116' d='M7 10l5 5 5-5z'/></svg>");
@@ -187,11 +205,11 @@
       background-position: 0 0, calc(100% - 14px) 50%;
       background-size: 100% 100%, 18px 18px;
     }
-    .langSelect{ min-width: 150px; width: 150px; }
+    .langSelect{ min-width: 170px; width: 170px; }
 
     .note{
-      margin-top:12px;
-      padding:12px 14px;
+      margin-top:10px;
+      padding:10px 14px;
       border-radius:var(--radius);
       border:1px solid var(--line);
       background: var(--panel2);
@@ -201,17 +219,17 @@
     }
     .note b{ color: var(--ink); }
 
-    /* ===== GRID layout (not columns) ===== */
+    /* GRID - centered when few items */
     .grid{
-      margin-top:16px;
+      margin-top:12px;
       display:grid;
-      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(290px, 290px));
       gap:14px;
+      justify-content:center;   /* center cards */
       align-items:start;
     }
 
     .pin{
-      width:100%;
       border-radius: 18px;
       overflow:hidden;
       border:1px solid rgba(14,17,22,0.12);
@@ -219,7 +237,7 @@
       box-shadow: 0 18px 55px rgba(14,17,22,0.10);
       transition: transform .18s ease;
       position: relative;
-      isolation: isolate; /* important */
+      isolation: isolate;
     }
     .pin:hover{ transform: translateY(-2px); }
 
@@ -272,7 +290,6 @@
       font-weight:800;
       font-size:13px;
     }
-
     .metaRow{
       margin-top:6px;
       display:flex;
@@ -280,7 +297,6 @@
       align-items:center;
       gap:12px;
     }
-
     .viewBtn{
       cursor:pointer;
       border:2px solid rgba(27,211,255,0.35);
@@ -291,7 +307,6 @@
       font-weight:900;
       font-size:14px;
     }
-
     .likeBtn{
       cursor:pointer;
       border:2px solid rgba(14,17,22,0.16);
@@ -310,6 +325,39 @@
       border-color: rgba(255,63,182,0.35);
       background: rgba(255,63,182,0.12);
       color: rgba(130,0,78,0.86);
+    }
+
+    /* DARK MODE fixes (cards + text) */
+    body.dark .note{ background: rgba(10,14,18,0.55); color: rgba(243,246,251,0.72); border-color: rgba(255,255,255,0.10); }
+    body.dark .brand .sub{ color: rgba(243,246,251,0.70); }
+    body.dark .pin{
+      background: rgba(10,14,18,0.68);
+      border-color: rgba(255,255,255,0.10);
+      box-shadow: 0 22px 70px rgba(0,0,0,0.55);
+    }
+    body.dark .body{
+      background: linear-gradient(180deg, rgba(10,14,18,0.62), rgba(10,14,18,0.52));
+    }
+    body.dark .ptitle{ color: rgba(243,246,251,0.92); }
+    body.dark .chip{
+      border-color: rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+      color: rgba(243,246,251,0.72);
+    }
+    body.dark .styleBadge{
+      border-color: rgba(255,255,255,0.16);
+      background: rgba(10,14,18,0.70);
+      color: rgba(243,246,251,0.88);
+    }
+    body.dark .likeBtn{
+      border-color: rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.06);
+      color: rgba(243,246,251,0.82);
+    }
+    body.dark .viewBtn{
+      border-color: rgba(27,211,255,0.40);
+      background: rgba(27,211,255,0.14);
+      color: rgba(210,248,255,0.92);
     }
 
     /* Modal */
@@ -344,7 +392,6 @@
       border-radius:14px;
       font-weight:900;
     }
-
     .modalBody{
       padding:16px;
       display:grid;
@@ -415,6 +462,7 @@
       font-size:12px; color: rgba(14,17,22,0.55);
     }
     .preview img{ width:100%; height:100%; object-fit:cover; display:block; }
+
     .progress{
       flex:1;
       height:10px;
@@ -458,6 +506,11 @@
       display:none;
       font-weight:800;
       font-size:12px;
+    }
+    body.dark .toast{
+      background: rgba(10,14,18,0.78);
+      border-color: rgba(255,255,255,0.12);
+      color: rgba(243,246,251,0.85);
     }
   </style>
 </head>
@@ -508,7 +561,7 @@
           <option value="ru">Русский</option>
           <option value="es">Español</option>
           <option value="fr">Français</option>
-          <option value="zh">中文</option>
+          <option value="zh">普通话</option>
         </select>
       </div>
     </div>
@@ -622,16 +675,12 @@
       black:     { bg0:"#101216", bg1:"#0b0e12", ink:"#f3f6fb", wave:"0.18", vignette:"0.92", dark:true }
     };
     const STYLE_COLORS = {
-      wood: "#b67a3c",
-      cyber: "#00c8d6",
-      pink: "#ff3fb6",
-      black: "#111318",
-      white: "#e9eef6",
-      anime: "#7a7dff",
-      meme: "#33cc66",
-      lightblue: "#1b8bff",
+      wood: "#b67a3c", cyber: "#00c8d6", pink: "#ff3fb6",
+      black: "#111318", white: "#e9eef6", anime: "#7a7dff",
+      meme: "#33cc66", lightblue: "#1b8bff",
     };
-    const AUTO_BG_KEY = "setup_gallery_auto_bg_style_v3";
+
+    const AUTO_BG_KEY = "setup_gallery_auto_bg_style_v4";
     function applyStyleBackground(styleKey){
       const t = STYLE_THEMES[styleKey] || STYLE_THEMES.white;
       document.documentElement.style.setProperty("--bg0", t.bg0);
@@ -639,6 +688,8 @@
       document.documentElement.style.setProperty("--ink", t.ink);
       document.documentElement.style.setProperty("--waveOpacity", t.wave);
       document.documentElement.style.setProperty("--vignette", t.vignette);
+
+      document.body.classList.toggle("dark", !!t.dark);
 
       if(t.dark){
         document.documentElement.style.setProperty("--panel", "rgba(10,14,18,0.62)");
@@ -661,7 +712,7 @@
     }
 
     // language
-    const LANG_KEY = "setup_gallery_lang_v3";
+    const LANG_KEY = "setup_gallery_lang_v4";
     const I18N = {
       en: { sub:"Select a style — background changes automatically.",
             search:"Search...", allStyles:"All styles", addSetup:"Add setup", reload:"Reload",
@@ -709,6 +760,7 @@
             noImage:"没有图片", noPosts:"还没有内容。添加一个或更改筛选。", view:"查看"
       }
     };
+
     let currentLang = localStorage.getItem(LANG_KEY) || "en";
     const t = (k) => (I18N[currentLang] && I18N[currentLang][k]) || I18N.en[k] || k;
 
@@ -778,6 +830,8 @@
     }
 
     function applyLanguage(){
+      document.body.classList.toggle("lang-zh", currentLang === "zh");
+
       $("tSub").textContent = t("sub");
       $("q").placeholder = t("search");
       $("styleFilter").options[0].text = t("allStyles");
@@ -893,6 +947,10 @@
     let posts = [];
     let selectedFile = null;
 
+    // NEW: keep shuffle order without being overwritten by "newest sort"
+    let currentOrder = "new"; // "new" | "shuffle"
+    let lastSurprise = localStorage.getItem("setup_gallery_last_surprise_v1") || "";
+
     function applyFilters(list){
       const q = $("q").value.trim().toLowerCase();
       const styleF = $("styleFilter").value;
@@ -906,7 +964,10 @@
           (p.tags||[]).some(tg => tg.includes(q))
         );
       }
-      out = [...out].sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+      if(currentOrder === "new"){
+        out = [...out].sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+      }
+      // if shuffle: keep current array order
       return out;
     }
 
@@ -1012,6 +1073,7 @@
         await addPost(post);
         closeAdd();
         posts = await loadPosts();
+        currentOrder = "new";
         render();
         toast("Posted!");
       } catch(e){
@@ -1034,6 +1096,7 @@
 
     async function reload(){
       posts = await loadPosts();
+      currentOrder = "new";
       render();
       toast("Reloaded");
     }
@@ -1084,17 +1147,31 @@
       requestAnimationFrame(animateRing);
     })();
 
-    // extras
+    // shuffle (fixed)
     function shuffleFeed(){
+      currentOrder = "shuffle";
       posts = [...posts].sort(() => Math.random() - 0.5);
       render();
       toast("Shuffle!");
     }
+
+    // surprise (no immediate repeat)
     function surpriseVibe(){
       const keys = ["white","pink","wood","cyber","anime","meme","lightblue","black"];
-      const k = keys[Math.floor(Math.random()*keys.length)];
+      let k = keys[Math.floor(Math.random()*keys.length)];
+      if(keys.length > 1){
+        let tries = 0;
+        while(k === lastSurprise && tries < 10){
+          k = keys[Math.floor(Math.random()*keys.length)];
+          tries++;
+        }
+      }
+      lastSurprise = k;
+      localStorage.setItem("setup_gallery_last_surprise_v1", lastSurprise);
+
       $("styleFilter").value = k;
       applyStyleBackground(k);
+      currentOrder = "new";
       window.scrollTo({ top: 0, behavior: "smooth" });
       render();
       toast("Surprise!");
@@ -1121,8 +1198,10 @@
       } else {
         applyStyleBackground(v);
       }
+      currentOrder = "new";
       render();
     });
+
     $("fStyle").addEventListener("change", (e) => applyStyleBackground(e.target.value));
 
     $("langSelect").addEventListener("change", (e) => {
@@ -1138,14 +1217,14 @@
     // init
     (async function init(){
       $("langSelect").value = currentLang;
+      applyLanguage();
 
       const savedStyle = localStorage.getItem(AUTO_BG_KEY) || "white";
       applyStyleBackground(savedStyle);
 
-      applyLanguage();
-
       try{
         posts = await loadPosts();
+        currentOrder = "new";
         render();
       } catch(e){
         console.log(e);
