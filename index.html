@@ -35,7 +35,7 @@
       color:var(--ink);
       background: linear-gradient(180deg, var(--bg0), var(--bg1));
       overflow-x:hidden;
-      cursor: none;
+      cursor:none;
       transition: background 260ms ease;
     }
 
@@ -124,6 +124,7 @@
       background: var(--panel);
       backdrop-filter: blur(14px);
       box-shadow: var(--shadow);
+      flex-wrap:wrap;
     }
 
     .brand{ display:flex; flex-direction:column; gap:3px; min-width:220px; }
@@ -200,30 +201,36 @@
     }
     .note b{ color: var(--ink); }
 
-    /* ===== Pinterest masonry FIX: no weird gaps ===== */
-    .masonry{
+    /* ===== GRID layout (not columns) ===== */
+    .grid{
       margin-top:16px;
-      column-width: 290px;
-      column-gap: 14px;
-      column-count: auto;
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap:14px;
+      align-items:start;
     }
 
     .pin{
-      break-inside: avoid;
       width:100%;
-      display:inline-block;
-      margin: 0 0 14px;
       border-radius: 18px;
       overflow:hidden;
       border:1px solid rgba(14,17,22,0.12);
       background: rgba(255,255,255,0.82);
       box-shadow: 0 18px 55px rgba(14,17,22,0.10);
       transition: transform .18s ease;
+      position: relative;
+      isolation: isolate; /* important */
     }
     .pin:hover{ transform: translateY(-2px); }
 
-    /* FIX: stacking context for badge */
-    .imgWrap{ position:relative; z-index:1; width:100%; background: rgba(0,0,0,0.04); }
+    /* stacking fixes */
+    .imgWrap{
+      position:relative;
+      z-index:1;
+      transform: translateZ(0);
+      width:100%;
+      background: rgba(0,0,0,0.04);
+    }
     .pin img{ width:100%; height:auto; display:block; }
 
     .styleBadge{
@@ -241,9 +248,9 @@
       align-items:center;
       gap:8px;
       backdrop-filter: blur(10px);
-
-      z-index:5;
+      z-index: 10;
       pointer-events:none;
+      transform: translateZ(0);
     }
     .dot{ width:10px; height:10px; border-radius:50%; background: var(--accent); box-shadow: 0 0 0 3px rgba(255,255,255,0.55); }
 
@@ -510,7 +517,7 @@
       <b>Likes:</b> enabled (local per browser).
     </div>
 
-    <div id="masonry" class="masonry"></div>
+    <div id="grid" class="grid"></div>
   </div>
 
   <!-- Add modal -->
@@ -603,6 +610,7 @@
     const SUPABASE_KEY = "sb_publishable_Z_xU69R3fsnQrpfPSgkAWw_DZL_glCr";
     const BUCKET = "Setup-images";
 
+    // styles -> backgrounds
     const STYLE_THEMES = {
       white:     { bg0:"#f6f7fb", bg1:"#edf0f6", ink:"#0e1116", wave:"0.16", vignette:"0.35", dark:false },
       pink:      { bg0:"#ffd6ea", bg1:"#ffc3e0", ink:"#0e1116", wave:"0.14", vignette:"0.18", dark:false },
@@ -623,7 +631,7 @@
       meme: "#33cc66",
       lightblue: "#1b8bff",
     };
-    const AUTO_BG_KEY = "setup_gallery_auto_bg_style_v2";
+    const AUTO_BG_KEY = "setup_gallery_auto_bg_style_v3";
     function applyStyleBackground(styleKey){
       const t = STYLE_THEMES[styleKey] || STYLE_THEMES.white;
       document.documentElement.style.setProperty("--bg0", t.bg0);
@@ -652,7 +660,8 @@
       localStorage.setItem(AUTO_BG_KEY, styleKey);
     }
 
-    const LANG_KEY = "setup_gallery_lang_v2";
+    // language
+    const LANG_KEY = "setup_gallery_lang_v3";
     const I18N = {
       en: { sub:"Select a style — background changes automatically.",
             search:"Search...", allStyles:"All styles", addSetup:"Add setup", reload:"Reload",
@@ -703,35 +712,8 @@
     let currentLang = localStorage.getItem(LANG_KEY) || "en";
     const t = (k) => (I18N[currentLang] && I18N[currentLang][k]) || I18N.en[k] || k;
 
-    function applyLanguage(){
-      document.getElementById("tSub").textContent = t("sub");
-      document.getElementById("q").placeholder = t("search");
-      document.getElementById("styleFilter").options[0].text = t("allStyles");
-
-      document.getElementById("shuffleBtn").textContent = t("shuffle");
-      document.getElementById("surpriseBtn").textContent = t("surprise");
-      updateMusicBtnText();
-
-      document.getElementById("addBtn").textContent = t("addSetup");
-      document.getElementById("reloadBtn").textContent = t("reload");
-
-      document.getElementById("tLikesNote").innerHTML = t("likesNote");
-
-      document.getElementById("tAddSetup").textContent = t("addTitle");
-      document.getElementById("tTitleLbl").textContent = t("titleLbl");
-      document.getElementById("tStyleLbl").textContent = t("styleLbl");
-      document.getElementById("tTagsLbl").textContent = t("tagsLbl");
-      document.getElementById("tImageLbl").textContent = t("imageLbl");
-      document.getElementById("tDropTitle").textContent = t("dropTitle");
-      document.getElementById("tDropSub").textContent = t("dropSub");
-      document.getElementById("chooseBtn").textContent = t("chooseFile");
-      document.getElementById("tDescLbl").textContent = t("descLbl");
-      document.getElementById("cancelAdd").textContent = t("cancel");
-      document.getElementById("saveAdd").textContent = t("post");
-      render();
-    }
-
-    const MUSIC_KEY = "setup_gallery_music_on_v1";
+    // music
+    const MUSIC_KEY = "setup_gallery_music_on_v2";
     const musicEl = document.getElementById("bgMusic");
     let musicOn = localStorage.getItem(MUSIC_KEY) === "1";
     function updateMusicBtnText(){
@@ -756,8 +738,9 @@
       }
     }
 
-    const LIKES_KEY = "setup_gallery_likes_counts_v1";
-    const LIKED_KEY = "setup_gallery_likes_liked_v1";
+    // likes (local)
+    const LIKES_KEY = "setup_gallery_likes_counts_v2";
+    const LIKED_KEY = "setup_gallery_likes_liked_v2";
     let likesCounts = JSON.parse(localStorage.getItem(LIKES_KEY) || "{}");
     let likedFlags  = JSON.parse(localStorage.getItem(LIKED_KEY) || "{}");
     function getLikes(id){ return Number(likesCounts[id] || 0); }
@@ -775,6 +758,7 @@
       render();
     }
 
+    // helpers
     const $ = (id) => document.getElementById(id);
     function uid(){ return "p_" + Math.random().toString(16).slice(2) + "_" + Date.now().toString(16); }
     function esc(s){
@@ -793,17 +777,44 @@
       window.__toastT = setTimeout(()=> el.style.display="none", 900);
     }
 
+    function applyLanguage(){
+      $("tSub").textContent = t("sub");
+      $("q").placeholder = t("search");
+      $("styleFilter").options[0].text = t("allStyles");
+      $("shuffleBtn").textContent = t("shuffle");
+      $("surpriseBtn").textContent = t("surprise");
+      updateMusicBtnText();
+      $("addBtn").textContent = t("addSetup");
+      $("reloadBtn").textContent = t("reload");
+      $("tLikesNote").innerHTML = t("likesNote");
+
+      $("tAddSetup").textContent = t("addTitle");
+      $("tTitleLbl").textContent = t("titleLbl");
+      $("tStyleLbl").textContent = t("styleLbl");
+      $("tTagsLbl").textContent = t("tagsLbl");
+      $("tImageLbl").textContent = t("imageLbl");
+      $("tDropTitle").textContent = t("dropTitle");
+      $("tDropSub").textContent = t("dropSub");
+      $("chooseBtn").textContent = t("chooseFile");
+      $("tDescLbl").textContent = t("descLbl");
+      $("cancelAdd").textContent = t("cancel");
+      $("saveAdd").textContent = t("post");
+      render();
+    }
+
+    // Supabase REST
     async function sbFetch(path, opts = {}) {
       const url = `${SUPABASE_URL}${path}`;
       const headers = { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, ...(opts.headers || {}) };
       const res = await fetch(url, { ...opts, headers });
       if (!res.ok) {
-        const t = await res.text().catch(() => "");
-        throw new Error(`${res.status} ${t}`);
+        const txt = await res.text().catch(() => "");
+        throw new Error(`${res.status} ${txt}`);
       }
       return res;
     }
 
+    // storage upload
     async function uploadToStorage(file){
       const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
       const safeExt = ["jpg","jpeg","png","webp","gif"].includes(ext) ? ext : "jpg";
@@ -811,7 +822,7 @@
 
       const bar = $("bar");
       bar.style.width = "12%";
-      const t1 = setInterval(() => {
+      const tmr = setInterval(() => {
         const w = parseFloat(bar.style.width) || 0;
         if(w < 78) bar.style.width = (w + 6) + "%";
       }, 120);
@@ -828,7 +839,7 @@
         body: file
       });
 
-      clearInterval(t1);
+      clearInterval(tmr);
 
       if(!res.ok){
         const txt = await res.text().catch(()=> "");
@@ -845,6 +856,7 @@
       };
     }
 
+    // posts
     async function loadPosts() {
       const res = await sbFetch(`/rest/v1/setups?select=id,title,description,tags,image_url,style,storage_file,created_at`, { method: "GET" });
       const rows = await res.json();
@@ -855,8 +867,8 @@
         tags: r.tags || [],
         img: r.image_url,
         style: r.style || "white",
+        storage_file: r.storage_file || null,
         createdAt: new Date(r.created_at).getTime(),
-        storage_file: r.storage_file || null
       }));
     }
 
@@ -877,6 +889,7 @@
       });
     }
 
+    // state
     let posts = [];
     let selectedFile = null;
 
@@ -898,12 +911,12 @@
     }
 
     function render(){
-      const root = $("masonry");
+      const root = $("grid");
       const list = applyFilters(posts);
       root.innerHTML = "";
 
       if(list.length === 0){
-        root.innerHTML = `<div class="note" style="margin-top:18px;">${t("noPosts")}</div>`;
+        root.innerHTML = `<div class="note" style="grid-column:1 / -1;">${t("noPosts")}</div>`;
         wireHover();
         return;
       }
@@ -932,7 +945,6 @@
               <button class="likeBtn ${isLiked(p.id) ? "liked" : ""}" data-like="${esc(p.id)}">
                 ${isLiked(p.id) ? "♥" : "♡"} <span>${getLikes(p.id)}</span>
               </button>
-
               <button class="viewBtn" data-view="${esc(p.id)}">${t("view")}</button>
             </div>
           </div>
@@ -952,6 +964,7 @@
       });
     }
 
+    // modal
     function openAdd(){
       $("addModal").style.display = "flex";
       $("addStatus").textContent = t("ready");
@@ -971,7 +984,6 @@
       $("bar").style.width = "0%";
       selectedFile = null;
     }
-
     async function saveAdd(){
       const title = $("fTitle").value.trim();
       const desc  = $("fDesc").value.trim();
@@ -1026,6 +1038,7 @@
       toast("Reloaded");
     }
 
+    // file selection
     function setFile(file){
       if(!file) return;
       if(!file.type.startsWith("image/")){
@@ -1054,6 +1067,7 @@
       setFile(file);
     });
 
+    // cursor follow
     const dot = $("cursorDot");
     const ring = $("cursorRing");
     let cx=0, cy=0, rx=0, ry=0;
@@ -1070,6 +1084,7 @@
       requestAnimationFrame(animateRing);
     })();
 
+    // extras
     function shuffleFeed(){
       posts = [...posts].sort(() => Math.random() - 0.5);
       render();
@@ -1085,6 +1100,7 @@
       toast("Surprise!");
     }
 
+    // events
     $("addBtn").addEventListener("click", openAdd);
     $("closeAdd").addEventListener("click", closeAdd);
     $("cancelAdd").addEventListener("click", closeAdd);
@@ -1107,7 +1123,6 @@
       }
       render();
     });
-
     $("fStyle").addEventListener("change", (e) => applyStyleBackground(e.target.value));
 
     $("langSelect").addEventListener("change", (e) => {
@@ -1120,6 +1135,7 @@
     $("viewModal").addEventListener("click", (e) => { if(e.target.id === "viewModal") closeView(); });
     $("closeView").addEventListener("click", closeView);
 
+    // init
     (async function init(){
       $("langSelect").value = currentLang;
 
@@ -1138,6 +1154,7 @@
 
       wireHover();
       updateMusicBtnText();
+      if(musicOn) setMusic(true);
     })();
   </script>
 </body>
