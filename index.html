@@ -1,4 +1,4 @@
- <!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -7,36 +7,39 @@
 
   <style>
     :root{
-      /* base */
       --bg0:#f6f7fb;
       --bg1:#edf0f6;
 
       --ink:#0e1116;
       --mut:rgba(14,17,22,.62);
 
-      --panel:#ffffff;
-      --panel2:rgba(255,255,255,.90);
+      --panel: rgba(255,255,255,0.88);
+      --panel2: rgba(255,255,255,0.78);
 
-      --line:rgba(14,17,22,.12);
-      --line2:rgba(14,17,22,.18);
+      --line: rgba(14,17,22,0.12);
+      --line2: rgba(14,17,22,0.18);
 
-      --shadow: 0 18px 55px rgba(14,17,22,.12);
+      --shadow: 0 18px 55px rgba(14,17,22,0.12);
 
       --accent:#1b8bff;
 
-      --waveOpacity:.16;
-      --vignette:.22;
+      --waveOpacity: .16;
+      --vignette: .22;
 
-      /* blobs only for some styles */
-      --blobsOpacity: 0;
+      /* circles / blobs */
+      --blobsOpacity: 1;
 
-      /* typography weights (mandarin fix) */
+      --radius:18px;
+      --gap:14px;
+
       --titleWeight: 900;
       --uiWeight: 800;
       --bodyWeight: 600;
 
-      --radius:18px;
-      --gap:14px;
+      --cardBg: rgba(255,255,255,.92);
+      --cardText: #0e1116;
+      --cardSub: rgba(14,17,22,.72);
+      --cardBorder: rgba(14,17,22,.12);
     }
 
     *{ box-sizing:border-box; }
@@ -95,7 +98,7 @@
       100%{ transform: translate3d(12px,10px,0); }
     }
 
-    /* ===== blobs (ONLY for some styles) ===== */
+    /* ===== circles / blobs ===== */
     .blobs{
       position:fixed;
       inset:-12vh -12vw;
@@ -157,13 +160,12 @@
       border-color: rgba(27,211,255,.45);
     }
 
-    /* ===== layout ===== */
     .wrap{
       width:min(1240px, 94vw);
       margin: 18px auto 70px;
     }
 
-    /* topbar ALWAYS clean white (no blobs behind) */
+    /* topbar stays clean (but not removing blobs globally) */
     .topbar{
       display:flex;
       justify-content:space-between;
@@ -172,11 +174,12 @@
       padding:14px 14px;
       border-radius:var(--radius);
       border:1px solid var(--line);
-      background: rgba(255,255,255,.98);
+      background: rgba(255,255,255,.90);
       box-shadow: var(--shadow);
       position:sticky;
       top:14px;
       z-index:10;
+      backdrop-filter: blur(12px);
     }
 
     .brand{
@@ -208,7 +211,7 @@
     }
 
     .input, .select{
-      background: rgba(255,255,255,.98);
+      background: rgba(255,255,255,.92);
       border:2px solid var(--line2);
       color: var(--ink);
       padding:10px 12px;
@@ -223,7 +226,7 @@
     .btn{
       cursor:pointer;
       border:2px solid var(--line2);
-      background: rgba(255,255,255,.98);
+      background: rgba(255,255,255,.92);
       color: var(--ink);
       padding:10px 12px;
       border-radius:14px;
@@ -235,19 +238,10 @@
       position:relative;
       overflow:hidden;
     }
-    .btn:before{
-      content:"";
-      position:absolute; inset:-40% -10%;
-      background: radial-gradient(circle at 30% 20%, rgba(27,139,255,.18), transparent 52%),
-                  radial-gradient(circle at 70% 80%, rgba(255,75,216,.16), transparent 56%);
-      opacity:.0;
-      transition: opacity .2s ease;
-    }
     .btn:hover{
       border-color: rgba(14,17,22,.26);
       box-shadow: 0 14px 32px rgba(14,17,22,.10);
     }
-    .btn:hover:before{ opacity:1; }
     .btn:active{ transform: scale(.99); }
 
     .btn.primary{
@@ -260,15 +254,16 @@
       padding:12px 14px;
       border-radius:var(--radius);
       border:1px solid var(--line);
-      background: rgba(255,255,255,.86);
+      background: rgba(255,255,255,.82);
       color: var(--mut);
       font-size:12px;
       line-height:1.4;
       box-shadow: 0 10px 34px rgba(14,17,22,.08);
+      backdrop-filter: blur(10px);
     }
     .note b{ color: var(--ink); }
 
-    /* ===== pinterest masonry (tight Y spacing) ===== */
+    /* masonry */
     .masonry{
       margin-top: 14px;
       column-count: 4;
@@ -285,8 +280,8 @@
       margin: 0 0 var(--gap);
       border-radius: 18px;
       overflow:hidden;
-      border:1px solid rgba(14,17,22,.12);
-      background: rgba(255,255,255,.92);
+      border:1px solid var(--cardBorder);
+      background: var(--cardBg);
       box-shadow: 0 18px 55px rgba(14,17,22,.10);
       transition: transform .18s ease;
     }
@@ -295,7 +290,7 @@
     .imgWrap{ position:relative; width:100%; background: rgba(0,0,0,.04); }
     .pin img{ width:100%; height:auto; display:block; }
 
-    /* style badge (fix disappearing: no pointer-events + stable layout) */
+    /* style badge - FIX DISAPPEAR */
     .styleBadge{
       position:absolute;
       top:12px; left:12px;
@@ -313,6 +308,7 @@
       text-transform:uppercase;
       backdrop-filter: blur(10px);
       pointer-events:none; /* IMPORTANT */
+      user-select:none;
     }
     .dot{
       width:9px; height:9px;
@@ -327,13 +323,14 @@
       display:flex;
       flex-direction:column;
       gap:10px;
+      color: var(--cardText);
     }
     .pinTitle{
       font-weight: var(--titleWeight);
       font-size:20px;
       letter-spacing:.2px;
       line-height:1.1;
-      color: var(--ink);
+      color: var(--cardText);
     }
 
     .chips{ display:flex; gap:10px; flex-wrap:wrap; }
@@ -393,7 +390,6 @@
       color: rgba(0,60,78,.88);
     }
 
-    /* delete button only for own posts */
     .delBtn{
       cursor:pointer;
       border:2px solid rgba(14,17,22,.14);
@@ -408,7 +404,7 @@
     }
     .pin.own .delBtn{ display:flex; }
 
-    /* ===== modals ===== */
+    /* modals */
     .modal{
       position:fixed; inset:0;
       display:none;
@@ -482,7 +478,6 @@
     }
     textarea{ min-height:120px; resize:vertical; line-height:1.35; }
 
-    /* dropzone */
     .drop{
       border:2px dashed rgba(14,17,22,.20);
       border-radius: 16px;
@@ -493,11 +488,7 @@
       align-items:center;
       justify-content:space-between;
     }
-    .dropLeft{
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-    }
+    .dropLeft{ display:flex; flex-direction:column; gap:6px; }
     .dropTitle{ font-weight:900; letter-spacing:.3px; }
     .dropHint{ color: rgba(14,17,22,.62); font-size:12px; }
     .dropPreview{
@@ -551,7 +542,6 @@
     .status{ font-size:12px; color: rgba(14,17,22,.62); line-height:1.35; max-width: 560px; }
     .rightBtns{ display:flex; gap:10px; }
 
-    /* toast */
     .toast{
       position:fixed;
       bottom:18px;
@@ -570,15 +560,15 @@
       font-size:12px;
     }
 
-    /* language-specific tweaks */
+    /* Mandarin weight fix */
     body.lang-zh{
-      --titleWeight: 820;   /* less thick */
+      --titleWeight: 820;
       --uiWeight: 760;
       --bodyWeight: 520;
       letter-spacing: 0;
     }
 
-    /* menu panel */
+    /* menu panel (no blobs) */
     .menuPanel{
       position:fixed;
       right:18px;
@@ -631,7 +621,6 @@
       <div class="controls">
         <input id="q" class="input" type="search" placeholder="Search..." />
 
-        <!-- STYLE FILTER (this also changes background) -->
         <select id="styleFilter" class="select" title="Style filter">
           <option value="all">All styles</option>
           <option value="wood">Wood</option>
@@ -656,7 +645,7 @@
           <option value="es">Español</option>
           <option value="fr">Français</option>
           <option value="ru">Русский</option>
-          <option value="zh">中文(普通话)</option>
+          <option value="zh">Mandarin (中文)</option>
         </select>
 
         <button id="menuBtn" class="btn">Menu</button>
@@ -668,7 +657,6 @@
     <div id="masonry" class="masonry"></div>
   </div>
 
-  <!-- MENU PANEL -->
   <div class="menuPanel" id="menuPanel">
     <h3 id="menuTitle">Menu</h3>
     <div class="mut" id="menuText">
@@ -680,7 +668,7 @@
     </div>
   </div>
 
-  <!-- ADD modal -->
+  <!-- ADD -->
   <div class="modal" id="addModal">
     <div class="modalBox">
       <div class="modalTop">
@@ -739,7 +727,6 @@
           <textarea id="fDesc" placeholder="Short description (gear, colors, vibes, etc.)"></textarea>
         </div>
 
-        <!-- optional translations -->
         <div class="field" style="grid-column:1 / -1;">
           <label id="lblI18n">Translations (optional)</label>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
@@ -769,7 +756,7 @@
     </div>
   </div>
 
-  <!-- VIEW modal -->
+  <!-- VIEW -->
   <div class="modal" id="viewModal">
     <div class="modalBox">
       <div class="modalTop">
@@ -786,244 +773,16 @@
   </div>
 
   <script>
-    // =======================
-    // SUPABASE CONFIG (yours)
-    // =======================
+    // ====== SUPABASE ======
     const SUPABASE_URL = "https://wnbyvospvvnyqfkjyzhp.supabase.co";
     const SUPABASE_ANON_KEY = "sb_publishable_Z_xU69R3fsnQrpfPSgkAWw_DZL_glCr";
-    const STORAGE_BUCKET = "setup-images"; // must match bucket name
-
-    // =======================
-    // I18N
-    // =======================
-    const LANGS = {
-      en: { name:"English",
-        title:"SETUP GALLERY",
-        sub:"Select a style — background changes automatically.",
-        likes:"Likes: enabled (local per browser).",
-        menu:"Menu",
-        menuText:"Posts are online (Supabase). Likes are local for now.",
-        resetLikes:"Reset likes (local)",
-        close:"Close",
-        shuffle:"Shuffle",
-        surprise:"Surprise",
-        musicOn:"Music: On",
-        musicOff:"Music: Off",
-        add:"Add setup",
-        reload:"Reload",
-        search:"Search...",
-        allStyles:"All styles",
-        addTitle:"ADD SETUP",
-        lblTitle:"Title",
-        lblStyle:"Style",
-        lblTags:"Tags (comma separated)",
-        lblImage:"Image",
-        lblDesc:"Description",
-        lblI18n:"Translations (optional)",
-        dropTitle:"Drop your image here",
-        dropHint:"or click “Choose file” (jpg / png / webp)",
-        choose:"Choose file",
-        clear:"Clear",
-        cancel:"Cancel",
-        post:"Post",
-        view:"View",
-        errTitle:"Title required.",
-        errDesc:"Description required.",
-        errTags:"Add at least 1 tag.",
-        errImg:"Choose an image file.",
-        posting:"Posting...",
-        uploaded:"Uploaded!",
-        loaded:"Loaded",
-        failed:"Something failed. Check console."
-      },
-      es: { name:"Español",
-        title:"GALERÍA DE SETUPS",
-        sub:"Elige un estilo — el fondo cambia automáticamente.",
-        likes:"Likes: activados (local por navegador).",
-        menu:"Menú",
-        menuText:"Los posts son online (Supabase). Likes son locales por ahora.",
-        resetLikes:"Reiniciar likes (local)",
-        close:"Cerrar",
-        shuffle:"Mezclar",
-        surprise:"Sorpresa",
-        musicOn:"Música: On",
-        musicOff:"Música: Off",
-        add:"Añadir setup",
-        reload:"Recargar",
-        search:"Buscar...",
-        allStyles:"Todos los estilos",
-        addTitle:"AÑADIR SETUP",
-        lblTitle:"Título",
-        lblStyle:"Estilo",
-        lblTags:"Tags (separadas por coma)",
-        lblImage:"Imagen",
-        lblDesc:"Descripción",
-        lblI18n:"Traducciones (opcional)",
-        dropTitle:"Suelta tu imagen aquí",
-        dropHint:"o pulsa “Elegir archivo” (jpg / png / webp)",
-        choose:"Elegir archivo",
-        clear:"Borrar",
-        cancel:"Cancelar",
-        post:"Publicar",
-        view:"Ver",
-        errTitle:"Título obligatorio.",
-        errDesc:"Descripción obligatoria.",
-        errTags:"Añade al menos 1 tag.",
-        errImg:"Elige una imagen.",
-        posting:"Publicando...",
-        uploaded:"¡Subido!",
-        loaded:"Cargado",
-        failed:"Falló algo. Mira la consola."
-      },
-      fr: { name:"Français",
-        title:"GALERIE SETUP",
-        sub:"Choisis un style — le fond change automatiquement.",
-        likes:"Likes : activés (local par navigateur).",
-        menu:"Menu",
-        menuText:"Les posts sont en ligne (Supabase). Likes locaux pour l’instant.",
-        resetLikes:"Reset likes (local)",
-        close:"Fermer",
-        shuffle:"Mélanger",
-        surprise:"Surprise",
-        musicOn:"Musique : On",
-        musicOff:"Musique : Off",
-        add:"Ajouter setup",
-        reload:"Recharger",
-        search:"Rechercher...",
-        allStyles:"Tous les styles",
-        addTitle:"AJOUTER SETUP",
-        lblTitle:"Titre",
-        lblStyle:"Style",
-        lblTags:"Tags (séparés par virgule)",
-        lblImage:"Image",
-        lblDesc:"Description",
-        lblI18n:"Traductions (optionnel)",
-        dropTitle:"Dépose ton image ici",
-        dropHint:"ou clique “Choisir fichier” (jpg / png / webp)",
-        choose:"Choisir fichier",
-        clear:"Effacer",
-        cancel:"Annuler",
-        post:"Publier",
-        view:"Voir",
-        errTitle:"Titre requis.",
-        errDesc:"Description requise.",
-        errTags:"Ajoute au moins 1 tag.",
-        errImg:"Choisis une image.",
-        posting:"Publication...",
-        uploaded:"Upload OK !",
-        loaded:"Chargé",
-        failed:"Erreur. Voir console."
-      },
-      ru: { name:"Русский",
-        title:"ГАЛЕРЕЯ СЕТАПОВ",
-        sub:"Выбери стиль — фон меняется автоматически.",
-        likes:"Лайки: включены (локально в браузере).",
-        menu:"Меню",
-        menuText:"Посты онлайн (Supabase). Лайки пока локальные.",
-        resetLikes:"Сброс лайков (локально)",
-        close:"Закрыть",
-        shuffle:"Перемешать",
-        surprise:"Сюрприз",
-        musicOn:"Музыка: Вкл",
-        musicOff:"Музыка: Выкл",
-        add:"Добавить сетап",
-        reload:"Обновить",
-        search:"Поиск...",
-        allStyles:"Все стили",
-        addTitle:"ДОБАВИТЬ СЕТАП",
-        lblTitle:"Название",
-        lblStyle:"Стиль",
-        lblTags:"Теги (через запятую)",
-        lblImage:"Картинка",
-        lblDesc:"Описание",
-        lblI18n:"Переводы (необязательно)",
-        dropTitle:"Перетащи картинку сюда",
-        dropHint:"или нажми “Выбрать файл” (jpg / png / webp)",
-        choose:"Выбрать файл",
-        clear:"Очистить",
-        cancel:"Отмена",
-        post:"Опубликовать",
-        view:"Открыть",
-        errTitle:"Нужно название.",
-        errDesc:"Нужно описание.",
-        errTags:"Добавь хотя бы 1 тег.",
-        errImg:"Выбери картинку.",
-        posting:"Публикую...",
-        uploaded:"Готово!",
-        loaded:"Загружено",
-        failed:"Ошибка. Смотри консоль."
-      },
-      zh: { name:"中文(普通话)",
-        title:"设备桌面图库",
-        sub:"选择风格 — 背景会自动变化。",
-        likes:"点赞：已启用（仅本地浏览器）。",
-        menu:"菜单",
-        menuText:"帖子是在线的（Supabase）。点赞暂时本地。",
-        resetLikes:"重置点赞（本地）",
-        close:"关闭",
-        shuffle:"随机排列",
-        surprise:"惊喜",
-        musicOn:"音乐：开",
-        musicOff:"音乐：关",
-        add:"添加桌面",
-        reload:"刷新",
-        search:"搜索…",
-        allStyles:"全部风格",
-        addTitle:"添加桌面",
-        lblTitle:"标题",
-        lblStyle:"风格",
-        lblTags:"标签（逗号分隔）",
-        lblImage:"图片",
-        lblDesc:"描述",
-        lblI18n:"翻译（可选）",
-        dropTitle:"把图片拖到这里",
-        dropHint:"或点击“选择文件”(jpg / png / webp)",
-        choose:"选择文件",
-        clear:"清除",
-        cancel:"取消",
-        post:"发布",
-        view:"查看",
-        errTitle:"需要标题。",
-        errDesc:"需要描述。",
-        errTags:"至少添加 1 个标签。",
-        errImg:"请选择图片。",
-        posting:"发布中…",
-        uploaded:"已上传！",
-        loaded:"已加载",
-        failed:"失败了，请看控制台。"
-      },
-    };
-
-    // =======================
-    // THEMES (background)
-    // =======================
-    const THEMES = {
-      wood:  { name:"Wood",  vars:{ "--bg0":"#efe6dc","--bg1":"#e4d3c2","--accent":"#ffb86b", "--blobsOpacity":"0" } },
-      cyber: { name:"Cyber", vars:{ "--bg0":"#eafcff","--bg1":"#d7f6ff","--accent":"#00c8d6", "--blobsOpacity":"1" } },
-      pink:  { name:"Pink",  vars:{ "--bg0":"#ffd6ea","--bg1":"#ffc3e0","--accent":"#ff3fb6", "--blobsOpacity":"1" } },
-      black: { name:"Black", vars:{
-        "--bg0":"#0f1218","--bg1":"#0b0e12",
-        "--ink":"#f3f6fb","--mut":"rgba(243,246,251,.72)",
-        "--panel":"rgba(255,255,255,.96)","--panel2":"rgba(255,255,255,.92)", /* keep menu readable */
-        "--line":"rgba(255,255,255,.12)","--line2":"rgba(255,255,255,.22)",
-        "--shadow":"0 22px 70px rgba(0,0,0,.55)",
-        "--waveOpacity":".14","--vignette":".90",
-        "--blobsOpacity":"0"
-      }},
-      white: { name:"White", vars:{ "--bg0":"#f6f7fb","--bg1":"#edf0f6","--ink":"#0e1116","--mut":"rgba(14,17,22,.62)","--panel":"#fff","--panel2":"rgba(255,255,255,.90)","--line":"rgba(14,17,22,.12)","--line2":"rgba(14,17,22,.18)","--shadow":"0 18px 55px rgba(14,17,22,.12)","--waveOpacity":".16","--vignette":".22","--blobsOpacity":"1" } },
-      anime: { name:"Anime", vars:{ "--bg0":"#e9eaff","--bg1":"#dde0ff","--accent":"#7a7dff","--blobsOpacity":"1" } },
-      meme:  { name:"Meme",  vars:{ "--bg0":"#f0ffe8","--bg1":"#e2ffd6","--accent":"#33cc66","--blobsOpacity":"1" } },
-      lightblue:{ name:"Light Blue", vars:{ "--bg0":"#d7f1ff","--bg1":"#c5e8ff","--accent":"#1b8bff","--blobsOpacity":"0" } },
-      all: { name:"All", vars:{ "--bg0":"#f6f7fb","--bg1":"#edf0f6","--blobsOpacity":"0" } } // All styles => white + NO blobs
-    };
-
-    // =======================
-    // Helpers
-    // =======================
+    const STORAGE_BUCKET = "setup-images"; // bucket name (must match)
     const $ = (id) => document.getElementById(id);
-    const esc = (s) => String(s ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+    const esc = (s) => String(s ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;").replaceAll("'","&#039;");
     const uid = () => "p_" + Math.random().toString(16).slice(2) + "_" + Date.now().toString(16);
 
+    // ===== toast =====
     function toast(msg){
       const el = $("toast");
       el.textContent = msg;
@@ -1032,19 +791,176 @@
       window.__toastT = setTimeout(()=> el.style.display="none", 1200);
     }
 
+    // ===== i18n =====
+    const LANGS = {
+      en:{name:"English", title:"SETUP GALLERY", sub:"Select a style — background changes automatically.",
+        likes:"Likes: enabled (local per browser).",
+        menu:"Menu", menuText:"Posts are online (Supabase). Likes are local for now.",
+        resetLikes:"Reset likes (local)", close:"Close",
+        shuffle:"Shuffle", surprise:"Surprise",
+        musicOn:"Music: On", musicOff:"Music: Off",
+        add:"Add setup", reload:"Reload",
+        search:"Search...", all:"All styles",
+        addTitle:"ADD SETUP", lblTitle:"Title", lblStyle:"Style", lblTags:"Tags (comma separated)",
+        lblImage:"Image", lblDesc:"Description", lblI18n:"Translations (optional)",
+        dropTitle:"Drop your image here", dropHint:"or click “Choose file” (jpg / png / webp)",
+        choose:"Choose file", clear:"Clear", cancel:"Cancel", post:"Post", view:"View",
+        errTitle:"Title required.", errDesc:"Description required.", errTags:"Add at least 1 tag.", errImg:"Choose an image file.",
+        posting:"Posting...", uploaded:"Uploaded!", loaded:"Loaded", failed:"Failed. Check console."
+      },
+      ru:{name:"Русский", title:"ГАЛЕРЕЯ СЕТАПОВ", sub:"Выбери стиль — фон меняется автоматически.",
+        likes:"Лайки: включены (локально в браузере).",
+        menu:"Меню", menuText:"Посты онлайн (Supabase). Лайки пока локальные.",
+        resetLikes:"Сброс лайков (локально)", close:"Закрыть",
+        shuffle:"Перемешать", surprise:"Сюрприз",
+        musicOn:"Музыка: Вкл", musicOff:"Музыка: Выкл",
+        add:"Добавить сетап", reload:"Обновить",
+        search:"Поиск...", all:"Все стили",
+        addTitle:"ДОБАВИТЬ СЕТАП", lblTitle:"Название", lblStyle:"Стиль", lblTags:"Теги (через запятую)",
+        lblImage:"Картинка", lblDesc:"Описание", lblI18n:"Переводы (необязательно)",
+        dropTitle:"Перетащи картинку сюда", dropHint:"или нажми “Выбрать файл” (jpg / png / webp)",
+        choose:"Выбрать файл", clear:"Очистить", cancel:"Отмена", post:"Опубликовать", view:"Открыть",
+        errTitle:"Нужно название.", errDesc:"Нужно описание.", errTags:"Добавь хотя бы 1 тег.", errImg:"Выбери картинку.",
+        posting:"Публикую...", uploaded:"Готово!", loaded:"Загружено", failed:"Ошибка. Смотри консоль."
+      },
+      es:{name:"Español", title:"GALERÍA DE SETUPS", sub:"Elige un estilo — el fondo cambia automáticamente.",
+        likes:"Likes: activados (local por navegador).",
+        menu:"Menú", menuText:"Los posts son online (Supabase). Likes locales por ahora.",
+        resetLikes:"Reiniciar likes (local)", close:"Cerrar",
+        shuffle:"Mezclar", surprise:"Sorpresa",
+        musicOn:"Música: On", musicOff:"Música: Off",
+        add:"Añadir setup", reload:"Recargar",
+        search:"Buscar...", all:"Todos los estilos",
+        addTitle:"AÑADIR SETUP", lblTitle:"Título", lblStyle:"Estilo", lblTags:"Tags (coma)",
+        lblImage:"Imagen", lblDesc:"Descripción", lblI18n:"Traducciones (opcional)",
+        dropTitle:"Suelta tu imagen aquí", dropHint:"o pulsa “Elegir archivo” (jpg / png / webp)",
+        choose:"Elegir archivo", clear:"Borrar", cancel:"Cancelar", post:"Publicar", view:"Ver",
+        errTitle:"Título obligatorio.", errDesc:"Descripción obligatoria.", errTags:"Añade 1 tag.", errImg:"Elige una imagen.",
+        posting:"Publicando...", uploaded:"¡Subido!", loaded:"Cargado", failed:"Falló. Mira consola."
+      },
+      fr:{name:"Français", title:"GALERIE SETUP", sub:"Choisis un style — le fond change automatiquement.",
+        likes:"Likes : activés (local).",
+        menu:"Menu", menuText:"Posts en ligne (Supabase). Likes locaux pour l’instant.",
+        resetLikes:"Reset likes (local)", close:"Fermer",
+        shuffle:"Mélanger", surprise:"Surprise",
+        musicOn:"Musique : On", musicOff:"Musique : Off",
+        add:"Ajouter setup", reload:"Recharger",
+        search:"Rechercher...", all:"Tous les styles",
+        addTitle:"AJOUTER SETUP", lblTitle:"Titre", lblStyle:"Style", lblTags:"Tags (virgule)",
+        lblImage:"Image", lblDesc:"Description", lblI18n:"Traductions (optionnel)",
+        dropTitle:"Dépose ton image ici", dropHint:"ou “Choisir fichier” (jpg / png / webp)",
+        choose:"Choisir fichier", clear:"Effacer", cancel:"Annuler", post:"Publier", view:"Voir",
+        errTitle:"Titre requis.", errDesc:"Description requise.", errTags:"Ajoute 1 tag.", errImg:"Choisis une image.",
+        posting:"Publication...", uploaded:"Upload OK !", loaded:"Chargé", failed:"Erreur. Console."
+      },
+      zh:{name:"Mandarin (中文)", title:"设备桌面图库", sub:"选择风格 — 背景会自动变化。",
+        likes:"点赞：已启用（仅本地）。",
+        menu:"菜单", menuText:"帖子在线（Supabase）。点赞暂时本地。",
+        resetLikes:"重置点赞（本地）", close:"关闭",
+        shuffle:"随机排列", surprise:"惊喜",
+        musicOn:"音乐：开", musicOff:"音乐：关",
+        add:"添加桌面", reload:"刷新",
+        search:"搜索…", all:"全部风格",
+        addTitle:"添加桌面", lblTitle:"标题", lblStyle:"风格", lblTags:"标签（逗号）",
+        lblImage:"图片", lblDesc:"描述", lblI18n:"翻译（可选）",
+        dropTitle:"把图片拖到这里", dropHint:"或点击“选择文件”(jpg / png / webp)",
+        choose:"选择文件", clear:"清除", cancel:"取消", post:"发布", view:"查看",
+        errTitle:"需要标题。", errDesc:"需要描述。", errTags:"至少 1 个标签。", errImg:"请选择图片。",
+        posting:"发布中…", uploaded:"已上传！", loaded:"已加载", failed:"失败了。请看控制台。"
+      },
+    };
+
+    function getLang(){ return $("lang").value; }
+    function ui(){ return LANGS[getLang()] || LANGS.en; }
+
+    function applyLang(){
+      const L = ui();
+      document.body.classList.toggle("lang-zh", getLang()==="zh");
+
+      $("uiTitle").textContent = L.title;
+      $("uiSub").textContent = L.sub;
+      $("likesNote").innerHTML = `<b>${esc(L.likes.split(":")[0]+":")}</b> ${esc(L.likes.split(":").slice(1).join(":").trim())}`;
+
+      $("shuffleBtn").textContent = L.shuffle;
+      $("surpriseBtn").textContent = L.surprise;
+      $("addBtn").textContent = L.add;
+      $("reloadBtn").textContent = L.reload;
+      $("musicBtn").textContent = musicOn ? L.musicOn : L.musicOff;
+      $("menuBtn").textContent = L.menu;
+
+      $("q").placeholder = L.search;
+      const allOpt = $("styleFilter").querySelector('option[value="all"]');
+      if(allOpt) allOpt.textContent = L.all;
+
+      $("menuTitle").textContent = L.menu;
+      $("menuText").textContent = L.menuText;
+      $("resetLikesBtn").textContent = L.resetLikes;
+      $("closeMenuBtn").textContent = L.close;
+
+      $("addTitle").textContent = L.addTitle;
+      $("lblTitle").textContent = L.lblTitle;
+      $("lblStyle").textContent = L.lblStyle;
+      $("lblTags").textContent = L.lblTags;
+      $("lblImage").textContent = L.lblImage;
+      $("lblDesc").textContent = L.lblDesc;
+      $("lblI18n").textContent = L.lblI18n;
+
+      $("dropTitle").textContent = L.dropTitle;
+      $("dropHint").textContent = L.dropHint;
+      $("chooseBtn").textContent = L.choose;
+      $("clearImgBtn").textContent = L.clear;
+
+      $("cancelAdd").textContent = L.cancel;
+      $("postAdd").textContent = L.post;
+
+      render();
+    }
+
+    // ===== themes =====
+    const THEMES = {
+      all:{ vars:{ "--bg0":"#f6f7fb","--bg1":"#edf0f6","--ink":"#0e1116","--mut":"rgba(14,17,22,.62)",
+        "--cardBg":"rgba(255,255,255,.92)","--cardText":"#0e1116","--cardSub":"rgba(14,17,22,.72)","--cardBorder":"rgba(14,17,22,.12)",
+        "--blobsOpacity":"0" } },
+      wood:{ vars:{ "--bg0":"#efe6dc","--bg1":"#e4d3c2","--accent":"#ffb86b",
+        "--cardBg":"rgba(255,255,255,.92)","--cardText":"#0e1116","--cardBorder":"rgba(14,17,22,.12)",
+        "--blobsOpacity":"0" } },
+      cyber:{ vars:{ "--bg0":"#eafcff","--bg1":"#d7f6ff","--accent":"#00c8d6",
+        "--blobsOpacity":"1" } },
+      pink:{ vars:{ "--bg0":"#ffd6ea","--bg1":"#ffc3e0","--accent":"#ff3fb6",
+        "--blobsOpacity":"1" } },
+      white:{ vars:{ "--bg0":"#f6f7fb","--bg1":"#edf0f6","--accent":"#1b8bff",
+        "--blobsOpacity":"1" } },
+      anime:{ vars:{ "--bg0":"#e9eaff","--bg1":"#dde0ff","--accent":"#7a7dff",
+        "--blobsOpacity":"1" } },
+      meme:{ vars:{ "--bg0":"#f0ffe8","--bg1":"#e2ffd6","--accent":"#33cc66",
+        "--blobsOpacity":"1" } },
+      lightblue:{ vars:{ "--bg0":"#d7f1ff","--bg1":"#c5e8ff","--accent":"#1b8bff",
+        "--blobsOpacity":"1" } },
+      black:{ vars:{
+        "--bg0":"#0f1218","--bg1":"#0b0e12",
+        "--ink":"#f3f6fb","--mut":"rgba(243,246,251,.72)",
+        /* Keep cards readable (NOT black cards) */
+        "--cardBg":"rgba(255,255,255,.92)","--cardText":"#0e1116","--cardSub":"rgba(14,17,22,.72)","--cardBorder":"rgba(255,255,255,.18)",
+        "--waveOpacity":".14","--vignette":".90",
+        "--blobsOpacity":"0"
+      }},
+    };
+
     function setCSSVars(vars){
       for(const [k,v] of Object.entries(vars)) document.documentElement.style.setProperty(k, v);
     }
-
-    function applyTheme(styleKey){
-      const t = THEMES[styleKey] || THEMES.all;
+    function applyTheme(style){
+      const t = THEMES[style] || THEMES.all;
       setCSSVars(t.vars);
-
-      // ensure menu ALWAYS clean white, regardless of theme:
-      // (we already force .topbar background in CSS)
     }
 
-    // Supabase REST
+    // ===== dot color =====
+    function getDotColor(style){
+      const map = { wood:"#b0793c", cyber:"#00c8d6", pink:"#ff3fb6", black:"#111111", white:"#9aa3b2", anime:"#7a7dff", meme:"#33cc66", lightblue:"#1b8bff" };
+      return map[style] || "#1b8bff";
+    }
+
+    // ===== supabase =====
     async function sbFetch(pathWithQuery, options = {}){
       const url = `${SUPABASE_URL}${pathWithQuery}`;
       const headers = {
@@ -1052,19 +968,16 @@
         "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
         ...(options.headers || {})
       };
-      const res = await fetch(url, { ...options, headers });
-      return res;
+      return await fetch(url, { ...options, headers });
     }
 
-    // Storage upload (public bucket)
     async function uploadToStorage(file, onProgress){
       const ext = (file.name.split(".").pop() || "png").toLowerCase().replace(/[^a-z0-9]/g,"");
       const safe = `${Date.now()}_${Math.random().toString(16).slice(2)}.${ext}`;
-      const path = `public/${safe}`; // keep inside "public/" folder
+      const path = `public/${safe}`;
 
       const url = `${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${path}`;
 
-      // Use fetch PUT. No real progress in fetch; we simulate progress.
       onProgress?.(18);
       const res = await fetch(url, {
         method:"POST",
@@ -1076,7 +989,6 @@
         },
         body: file
       });
-
       onProgress?.(70);
 
       if(!res.ok){
@@ -1085,23 +997,17 @@
       }
 
       onProgress?.(92);
-
       const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${path}`;
       return { publicUrl, storagePath: path };
     }
 
-    // =======================
-    // State (online posts + local likes)
-    // =======================
+    // ===== owner + likes (local) =====
     const OWNER_KEY = "setup_gallery_owner_v1";
-    const LIKES_KEY = "setup_gallery_likes_local_v1";  // { [setupId]: true }
+    const LIKES_KEY = "setup_gallery_likes_local_v1";
 
     const ownerId = localStorage.getItem(OWNER_KEY) || (localStorage.setItem(OWNER_KEY, uid()), localStorage.getItem(OWNER_KEY));
 
-    let localLikes = (() => {
-      try{ return JSON.parse(localStorage.getItem(LIKES_KEY) || "{}"); }catch(e){ return {}; }
-    })();
-
+    let localLikes = (() => { try{ return JSON.parse(localStorage.getItem(LIKES_KEY) || "{}"); }catch(e){ return {}; } })();
     function setLiked(id, val){
       if(val) localLikes[id] = true;
       else delete localLikes[id];
@@ -1109,26 +1015,19 @@
     }
     function isLiked(id){ return !!localLikes[id]; }
 
-    // For UI order
-    let allSetups = [];        // fetched from Supabase
-    let viewOrder = [];        // current render order (ids)
+    // ===== data =====
+    let allSetups = [];
+    let viewOrder = [];
     let lastSurpriseId = null;
 
-    // =======================
-    // Render
-    // =======================
-    function prettyTag(t){
-      return String(t||"").trim().split(/\s+/).map(w => w ? (w[0].toUpperCase()+w.slice(1)) : "").join(" ");
-    }
     function parseTags(s){
       return (s||"").split(",").map(x => x.trim().toLowerCase()).filter(Boolean).slice(0, 6);
     }
-
-    function getLang(){
-      return $("lang").value;
+    function prettyTag(t){
+      return String(t||"").trim().split(/\s+/).map(w => w ? (w[0].toUpperCase()+w.slice(1)) : "").join(" ");
     }
+
     function pickText(obj, key){
-      // obj: { title_i18n: {en,ru..}, desc_i18n: {...}, title, description }
       const lang = getLang();
       const mapKey = key === "title" ? "title_i18n" : "desc_i18n";
       const fallback = key === "title" ? (obj.title || "") : (obj.description || "");
@@ -1141,10 +1040,8 @@
       const style = $("styleFilter").value;
 
       let list = [...allSetups];
+      if(style !== "all") list = list.filter(x => (x.style || "").toLowerCase() === style);
 
-      if(style !== "all"){
-        list = list.filter(x => (x.style || "").toLowerCase() === style);
-      }
       if(q){
         list = list.filter(x => {
           const title = (pickText(x,"title")||"").toLowerCase();
@@ -1153,47 +1050,23 @@
           return title.includes(q) || desc.includes(q) || tags.includes(q);
         });
       }
-      // default sort newest
+
       list.sort((a,b) => new Date(b.created_at||0) - new Date(a.created_at||0));
       return list;
-    }
-
-    function getDotColor(style){
-      const map = {
-        wood:"#b0793c",
-        cyber:"#00c8d6",
-        pink:"#ff3fb6",
-        black:"#111111",
-        white:"#9aa3b2",
-        anime:"#7a7dff",
-        meme:"#33cc66",
-        lightblue:"#1b8bff"
-      };
-      return map[style] || "#1b8bff";
     }
 
     function render(){
       const root = $("masonry");
       const list = currentFiltered();
 
-      // ensure order uses viewOrder if exists
       const idToObj = new Map(list.map(x => [x.id, x]));
       let ordered = [];
-
       if(viewOrder.length){
-        for(const id of viewOrder){
-          if(idToObj.has(id)) ordered.push(idToObj.get(id));
-        }
-        // append any new ones
-        for(const x of list){
-          if(!viewOrder.includes(x.id)) ordered.push(x);
-        }
-      } else {
-        ordered = list;
-      }
+        for(const id of viewOrder) if(idToObj.has(id)) ordered.push(idToObj.get(id));
+        for(const x of list) if(!viewOrder.includes(x.id)) ordered.push(x);
+      } else ordered = list;
 
       root.innerHTML = "";
-
       if(ordered.length === 0){
         root.innerHTML = `<div class="note"><b>No posts yet.</b> Click <b>${esc(ui().add)}</b> and add your first image.</div>`;
         return;
@@ -1204,7 +1077,6 @@
         const desc  = pickText(p,"desc");
         const tags = (p.tags || []).slice(0, 2);
         const style = (p.style || "all").toLowerCase();
-
         const liked = isLiked(p.id);
         const own = (p.owner_id || "") === ownerId;
 
@@ -1242,21 +1114,18 @@
         const id = b.dataset.del;
         const p = allSetups.find(x => x.id === id);
         if(!p) return;
-        if((p.owner_id || "") !== ownerId) return; // only owner
+        if((p.owner_id || "") !== ownerId) return;
         if(!confirm("Delete this post?")) return;
         deleteSetup(id).catch(console.log);
       }));
 
-      // cursor hover
-      root.querySelectorAll("button, a").forEach(el => {
+      root.querySelectorAll("button, a, select, input, textarea").forEach(el => {
         el.addEventListener("mouseenter", () => document.body.classList.add("cursorHover"));
         el.addEventListener("mouseleave", () => document.body.classList.remove("cursorHover"));
       });
     }
 
-    // =======================
-    // View modal
-    // =======================
+    // ===== view =====
     function openView(id){
       const p = allSetups.find(x => x.id === id);
       if(!p) return;
@@ -1267,13 +1136,10 @@
     }
     function closeView(){ $("viewModal").style.display = "none"; }
 
-    // =======================
-    // Shuffle + Surprise (fixed)
-    // =======================
+    // ===== shuffle + surprise =====
     function shuffleNow(){
       const list = currentFiltered();
       const ids = list.map(x => x.id);
-      // Fisher–Yates
       for(let i=ids.length-1;i>0;i--){
         const j = Math.floor(Math.random()*(i+1));
         [ids[i], ids[j]] = [ids[j], ids[i]];
@@ -1286,7 +1152,6 @@
     function surprise(){
       const list = currentFiltered();
       if(list.length === 0) return;
-      // pick random that is not lastSurpriseId if possible
       let pick = null;
       if(list.length === 1) pick = list[0];
       else{
@@ -1300,9 +1165,7 @@
       openView(pick.id);
     }
 
-    // =======================
-    // Add modal + upload
-    // =======================
+    // ===== add modal =====
     let pickedFile = null;
     let pickedPreviewUrl = null;
 
@@ -1317,16 +1180,12 @@
       $("fDesc").value = "";
       $("fStyle").value = "wood";
       pickedFile = null;
+      if(pickedPreviewUrl) URL.revokeObjectURL(pickedPreviewUrl);
       pickedPreviewUrl = null;
       $("dropPreview").innerHTML = `<span style="opacity:.45;font-weight:900;">IMG</span>`;
       $("progress").style.display = "none";
       $("bar").style.width = "0%";
-
-      // translations
-      ["en","ru","es","fr","zh"].forEach(l => {
-        $("t_"+l).value = "";
-        $("d_"+l).value = "";
-      });
+      ["en","ru","es","fr","zh"].forEach(l => { $("t_"+l).value=""; $("d_"+l).value=""; });
     }
 
     function setPreviewFromFile(file){
@@ -1351,47 +1210,31 @@
     }
 
     async function postSetup(){
+      const L = ui();
       const title = $("fTitle").value.trim();
       const desc  = $("fDesc").value.trim();
       const tags  = parseTags($("fTags").value);
       const style = $("fStyle").value;
 
-      if(!title){ $("addStatus").textContent = ui().errTitle; return; }
-      if(!desc){ $("addStatus").textContent = ui().errDesc; return; }
-      if(tags.length === 0){ $("addStatus").textContent = ui().errTags; return; }
-      if(!pickedFile){ $("addStatus").textContent = ui().errImg; return; }
+      if(!title){ $("addStatus").textContent = L.errTitle; return; }
+      if(!desc){ $("addStatus").textContent = L.errDesc; return; }
+      if(tags.length === 0){ $("addStatus").textContent = L.errTags; return; }
+      if(!pickedFile){ $("addStatus").textContent = L.errImg; return; }
 
-      // translations
-      const title_i18n = {
-        en: $("t_en").value.trim(),
-        ru: $("t_ru").value.trim(),
-        es: $("t_es").value.trim(),
-        fr: $("t_fr").value.trim(),
-        zh: $("t_zh").value.trim(),
-      };
-      const desc_i18n = {
-        en: $("d_en").value.trim(),
-        ru: $("d_ru").value.trim(),
-        es: $("d_es").value.trim(),
-        fr: $("d_fr").value.trim(),
-        zh: $("d_zh").value.trim(),
-      };
-      // if empty, don't store noise
+      const title_i18n = { en:$("t_en").value.trim(), ru:$("t_ru").value.trim(), es:$("t_es").value.trim(), fr:$("t_fr").value.trim(), zh:$("t_zh").value.trim() };
+      const desc_i18n  = { en:$("d_en").value.trim(), ru:$("d_ru").value.trim(), es:$("d_es").value.trim(), fr:$("d_fr").value.trim(), zh:$("d_zh").value.trim() };
       for(const k of Object.keys(title_i18n)) if(!title_i18n[k]) delete title_i18n[k];
       for(const k of Object.keys(desc_i18n)) if(!desc_i18n[k]) delete desc_i18n[k];
 
-      $("addStatus").textContent = ui().posting;
+      $("addStatus").textContent = L.posting;
 
       try{
         setProgress(8);
-
         const { publicUrl, storagePath } = await uploadToStorage(pickedFile, setProgress);
-
         setProgress(96);
 
-        const id = uid();
         const payload = {
-          id,
+          id: uid(),
           title,
           description: desc,
           tags,
@@ -1405,60 +1248,53 @@
 
         const res = await sbFetch(`/rest/v1/setups`, {
           method:"POST",
-          headers:{
-            "Content-Type":"application/json",
-            "Prefer":"return=representation"
-          },
+          headers:{ "Content-Type":"application/json", "Prefer":"return=representation" },
           body: JSON.stringify(payload)
         });
 
         if(!res.ok){
           const t = await res.text().catch(()=> "");
           console.log("POST setups error:", res.status, t);
-          $("addStatus").textContent = ui().failed;
+          $("addStatus").textContent = L.failed;
           return;
         }
 
         setProgress(100);
-        toast(ui().uploaded);
-
+        toast(L.uploaded);
         closeAdd();
         await loadSetups();
+        viewOrder = [];
         render();
 
       } catch(e){
         console.log(e);
-        $("addStatus").textContent = ui().failed;
+        $("addStatus").textContent = L.failed;
       }
     }
 
-    // dropzone events
     function wireDropzone(){
       const dz = $("dropzone");
-
-      function prevent(e){ e.preventDefault(); e.stopPropagation(); }
+      const prevent = (e)=>{ e.preventDefault(); e.stopPropagation(); };
 
       dz.addEventListener("dragenter", prevent);
-      dz.addEventListener("dragover", (e) => { prevent(e); dz.style.borderColor = "rgba(27,139,255,.55)"; });
-      dz.addEventListener("dragleave", (e) => { prevent(e); dz.style.borderColor = "rgba(14,17,22,.20)"; });
-      dz.addEventListener("drop", (e) => {
+      dz.addEventListener("dragover", (e)=>{ prevent(e); dz.style.borderColor="rgba(27,139,255,.55)"; });
+      dz.addEventListener("dragleave", (e)=>{ prevent(e); dz.style.borderColor="rgba(14,17,22,.20)"; });
+      dz.addEventListener("drop", (e)=>{
         prevent(e);
-        dz.style.borderColor = "rgba(14,17,22,.20)";
+        dz.style.borderColor="rgba(14,17,22,.20)";
         const file = e.dataTransfer.files && e.dataTransfer.files[0];
         if(file && file.type.startsWith("image/")) setPreviewFromFile(file);
       });
 
-      $("chooseBtn").addEventListener("click", () => $("fFile").click());
-      $("fFile").addEventListener("change", () => {
+      $("chooseBtn").addEventListener("click", ()=> $("fFile").click());
+      $("fFile").addEventListener("change", ()=>{
         const file = $("fFile").files && $("fFile").files[0];
         if(file && file.type.startsWith("image/")) setPreviewFromFile(file);
       });
       $("clearImgBtn").addEventListener("click", clearImage);
     }
 
-    // =======================
-    // Online load + delete
-    // =======================
+    // ===== online load/delete =====
     async function loadSetups(){
       const res = await sbFetch(`/rest/v1/setups?select=id,title,description,tags,style,image_url,storage_file,created_at,owner_id,title_i18n,desc_i18n`, { method:"GET" });
       if(!res.ok){
@@ -1468,22 +1304,16 @@
       }
       const arr = await res.json();
       allSetups = Array.isArray(arr) ? arr : [];
-
-      // Safety: fill defaults
       for(const x of allSetups){
         x.tags = Array.isArray(x.tags) ? x.tags : [];
         x.style = (x.style || "all").toLowerCase();
         x.title_i18n = x.title_i18n || {};
         x.desc_i18n = x.desc_i18n || {};
       }
-
-      // reset viewOrder so new items show properly unless shuffled
-      if(viewOrder.length === 0) viewOrder = [];
       toast(ui().loaded);
     }
 
     async function deleteSetup(id){
-      // delete row
       const res = await sbFetch(`/rest/v1/setups?id=eq.${encodeURIComponent(id)}`, { method:"DELETE" });
       if(!res.ok){
         const t = await res.text().catch(()=> "");
@@ -1491,257 +1321,156 @@
         toast("Delete failed");
         return;
       }
-      // remove local like too
       setLiked(id, false);
-
       await loadSetups();
       render();
       toast("Deleted");
     }
 
-    // =======================
-    // Style filter => background changes immediately
-    // =======================
+    // ===== style filter => background changes =====
     function onStyleFilterChange(){
       const style = $("styleFilter").value;
-      // All styles => white + NO blobs
-      applyTheme(style === "all" ? "all" : style);
-      // clear shuffle order when style changes
+      applyTheme(style);          // <<<<<<<<<< this is what you wanted
       viewOrder = [];
       render();
     }
 
-    // =======================
-    // Music (relaxing, no weird harsh sound)
-    // =======================
-    let audioCtx = null;
-    let musicOn = false;
-    let nodes = [];
-
+    // ===== music (soft) =====
+    let audioCtx=null, musicOn=false, nodes=[];
     function stopMusic(){
-      try{
-        nodes.forEach(n => { try{ n.stop?.(); }catch(e){} try{ n.disconnect?.(); }catch(e){} });
-      }catch(e){}
-      nodes = [];
-      if(audioCtx){
-        try{ audioCtx.close(); }catch(e){}
-        audioCtx = null;
-      }
-      musicOn = false;
+      try{ nodes.forEach(n=>{ try{ n.stop?.(); }catch(e){} try{ n.disconnect?.(); }catch(e){} }); }catch(e){}
+      nodes=[];
+      if(audioCtx){ try{ audioCtx.close(); }catch(e){} audioCtx=null; }
+      musicOn=false;
       $("musicBtn").textContent = ui().musicOff;
     }
-
     function startMusic(){
-      // Simple ambient pad: 3 sines + lowpass + gentle tremolo
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      audioCtx = new (window.AudioContext||window.webkitAudioContext)();
       const now = audioCtx.currentTime;
 
       const master = audioCtx.createGain();
-      master.gain.value = 0.05; // very low volume
+      master.gain.value = 0.045;   // low volume
       master.connect(audioCtx.destination);
 
       const lp = audioCtx.createBiquadFilter();
-      lp.type = "lowpass";
-      lp.frequency.value = 900;
-      lp.Q.value = 0.6;
+      lp.type="lowpass"; lp.frequency.value=900; lp.Q.value=0.6;
       lp.connect(master);
 
       const trem = audioCtx.createOscillator();
-      trem.type = "sine";
-      trem.frequency.value = 0.12; // slow movement
+      trem.type="sine"; trem.frequency.value=0.12;
       const tremGain = audioCtx.createGain();
-      tremGain.gain.value = 0.35;
+      tremGain.gain.value=0.35;
       trem.connect(tremGain);
 
       const gain = audioCtx.createGain();
-      gain.gain.value = 1.0;
+      gain.gain.value=1.0;
       tremGain.connect(gain.gain);
       gain.connect(lp);
 
-      const freqs = [220, 277.18, 329.63]; // A major-ish
-      freqs.forEach((f,i) => {
-        const o = audioCtx.createOscillator();
-        o.type = "sine";
-        o.frequency.value = f;
-        const g = audioCtx.createGain();
-        g.gain.value = 0.30 / (i+1);
-        o.connect(g);
-        g.connect(gain);
+      const freqs=[220,277.18,329.63];
+      freqs.forEach((f,i)=>{
+        const o=audioCtx.createOscillator();
+        o.type="sine"; o.frequency.value=f;
+        const g=audioCtx.createGain();
+        g.gain.value=0.28/(i+1);
+        o.connect(g); g.connect(gain);
         o.start(now);
-        nodes.push(o, g);
+        nodes.push(o,g);
       });
 
       trem.start(now);
-      nodes.push(trem, tremGain, gain, lp, master);
+      nodes.push(trem,tremGain,gain,lp,master);
 
-      musicOn = true;
+      musicOn=true;
       $("musicBtn").textContent = ui().musicOn;
     }
+    function toggleMusic(){ musicOn ? stopMusic() : startMusic(); }
 
-    function toggleMusic(){
-      if(musicOn) stopMusic();
-      else startMusic();
-    }
-
-    // =======================
-    // Menu
-    // =======================
+    // ===== menu =====
     function toggleMenu(){
       const p = $("menuPanel");
-      p.style.display = (p.style.display === "block") ? "none" : "block";
+      p.style.display = (p.style.display==="block") ? "none" : "block";
     }
 
-    // =======================
-    // Language apply (and make UI + posts switch)
-    // =======================
-    function ui(){
-      return LANGS[getLang()] || LANGS.en;
-    }
-
-    function applyLang(){
-      const L = ui();
-
-      document.body.classList.toggle("lang-zh", getLang() === "zh");
-
-      $("uiTitle").textContent = L.title;
-      $("uiSub").textContent = L.sub;
-      $("likesNote").innerHTML = `<b>${esc(L.likes.split(":")[0] + ":")}</b> ${esc(L.likes.split(":").slice(1).join(":").trim() || "")}`;
-
-      // buttons
-      $("shuffleBtn").textContent = L.shuffle;
-      $("surpriseBtn").textContent = L.surprise;
-      $("addBtn").textContent = L.add;
-      $("reloadBtn").textContent = L.reload;
-      $("musicBtn").textContent = musicOn ? L.musicOn : L.musicOff;
-      $("menuBtn").textContent = L.menu;
-
-      // placeholders
-      $("q").placeholder = L.search;
-
-      // select first option label "All styles"
-      const allOpt = $("styleFilter").querySelector('option[value="all"]');
-      if(allOpt) allOpt.textContent = L.allStyles;
-
-      // menu
-      $("menuTitle").textContent = L.menu;
-      $("menuText").textContent = L.menuText;
-      $("resetLikesBtn").textContent = L.resetLikes;
-      $("closeMenuBtn").textContent = L.close;
-
-      // add modal labels
-      $("addTitle").textContent = L.addTitle;
-      $("lblTitle").textContent = L.lblTitle;
-      $("lblStyle").textContent = L.lblStyle;
-      $("lblTags").textContent = L.lblTags;
-      $("lblImage").textContent = L.lblImage;
-      $("lblDesc").textContent = L.lblDesc;
-      $("lblI18n").textContent = L.lblI18n;
-
-      $("dropTitle").textContent = L.dropTitle;
-      $("dropHint").textContent = L.dropHint;
-      $("chooseBtn").textContent = L.choose;
-      $("clearImgBtn").textContent = L.clear;
-
-      $("cancelAdd").textContent = L.cancel;
-      $("postAdd").textContent = L.post;
-
-      // re-render posts in chosen language
-      render();
-    }
-
-    // =======================
-    // Cursor
-    // =======================
+    // ===== cursor =====
     const cur = $("cursor");
     const ring = $("cursorRing");
     let cx=0, cy=0, rx=0, ry=0;
-
-    window.addEventListener("mousemove", (e) => {
-      cx = e.clientX; cy = e.clientY;
-      cur.style.left = cx + "px";
-      cur.style.top  = cy + "px";
+    window.addEventListener("mousemove",(e)=>{
+      cx=e.clientX; cy=e.clientY;
+      cur.style.left=cx+"px";
+      cur.style.top=cy+"px";
     });
     function animateRing(){
-      rx += (cx - rx) * 0.18;
-      ry += (cy - ry) * 0.18;
-      ring.style.left = rx + "px";
-      ring.style.top  = ry + "px";
+      rx += (cx-rx)*0.18;
+      ry += (cy-ry)*0.18;
+      ring.style.left=rx+"px";
+      ring.style.top=ry+"px";
       requestAnimationFrame(animateRing);
     }
     animateRing();
 
-    // Hover detection
-    document.addEventListener("mouseover", (e) => {
-      const t = e.target;
-      if(t && (t.tagName === "BUTTON" || t.tagName === "INPUT" || t.tagName === "SELECT" || t.tagName === "TEXTAREA")){
-        document.body.classList.add("cursorHover");
-      } else {
-        document.body.classList.remove("cursorHover");
-      }
+    document.addEventListener("mouseover",(e)=>{
+      const t=e.target;
+      if(t && ["BUTTON","INPUT","SELECT","TEXTAREA"].includes(t.tagName)) document.body.classList.add("cursorHover");
+      else document.body.classList.remove("cursorHover");
     });
 
-    // =======================
-    // Events
-    // =======================
+    // ===== wire events =====
     $("addBtn").addEventListener("click", openAdd);
     $("closeAdd").addEventListener("click", closeAdd);
     $("cancelAdd").addEventListener("click", closeAdd);
     $("postAdd").addEventListener("click", postSetup);
 
-    $("addModal").addEventListener("click", (e) => { if(e.target.id === "addModal") closeAdd(); });
+    $("addModal").addEventListener("click",(e)=>{ if(e.target.id==="addModal") closeAdd(); });
 
     $("closeView").addEventListener("click", closeView);
-    $("viewModal").addEventListener("click", (e) => { if(e.target.id === "viewModal") closeView(); });
+    $("viewModal").addEventListener("click",(e)=>{ if(e.target.id==="viewModal") closeView(); });
 
-    $("reloadBtn").addEventListener("click", async () => { await loadSetups(); viewOrder = []; render(); });
+    $("reloadBtn").addEventListener("click", async ()=>{ await loadSetups(); viewOrder=[]; render(); });
 
     $("shuffleBtn").addEventListener("click", shuffleNow);
     $("surpriseBtn").addEventListener("click", surprise);
 
     $("musicBtn").addEventListener("click", toggleMusic);
 
-    $("q").addEventListener("input", () => { viewOrder = []; render(); });
+    $("q").addEventListener("input", ()=>{ viewOrder=[]; render(); });
 
     $("styleFilter").addEventListener("change", onStyleFilterChange);
 
     $("lang").addEventListener("change", applyLang);
 
     $("menuBtn").addEventListener("click", toggleMenu);
-    $("closeMenuBtn").addEventListener("click", () => $("menuPanel").style.display = "none");
-    $("resetLikesBtn").addEventListener("click", () => {
+    $("closeMenuBtn").addEventListener("click", ()=> $("menuPanel").style.display="none");
+
+    $("resetLikesBtn").addEventListener("click", ()=>{
       if(!confirm("Reset local likes on this device?")) return;
-      localLikes = {};
-      localStorage.setItem(LIKES_KEY, "{}");
+      localLikes={};
+      localStorage.setItem(LIKES_KEY,"{}");
       render();
       toast("OK");
     });
 
-    document.addEventListener("keydown", (e) => {
-      if(e.key === "Escape"){
+    document.addEventListener("keydown",(e)=>{
+      if(e.key==="Escape"){
         closeAdd();
         closeView();
-        $("menuPanel").style.display = "none";
+        $("menuPanel").style.display="none";
       }
     });
 
     wireDropzone();
 
-    // =======================
-    // Init
-    // =======================
+    // ===== init =====
     (async function init(){
-      // default language
-      $("lang").value = "en";
+      $("lang").value="en";
       applyLang();
 
-      // default: all styles -> white bg + no blobs
-      $("styleFilter").value = "all";
-      applyTheme("all");
+      $("styleFilter").value="all";
+      applyTheme("all"); // all => white bg
 
       await loadSetups();
-
-      // default order: newest
-      viewOrder = [];
+      viewOrder=[];
       render();
     })();
   </script>
