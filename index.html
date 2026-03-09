@@ -9,37 +9,22 @@
     :root{
       --bg0:#f6f7fb;
       --bg1:#edf0f6;
-
       --ink:#0e1116;
-      --mut:rgba(14,17,22,.62);
+      --mut:rgba(14,17,22,0.62);
 
-      --panel: rgba(255,255,255,0.88);
-      --panel2: rgba(255,255,255,0.78);
-
+      --panel: rgba(255,255,255,0.82);
+      --panel2: rgba(255,255,255,0.70);
       --line: rgba(14,17,22,0.12);
       --line2: rgba(14,17,22,0.18);
-
       --shadow: 0 18px 55px rgba(14,17,22,0.12);
 
-      --accent:#1b8bff;
+      --waveOpacity: 0.16;
+      --vignette: 0.35;
+      --radius: 18px;
 
-      --waveOpacity: .16;
-      --vignette: .22;
-
-      /* circles / blobs */
-      --blobsOpacity: 1;
-
-      --radius:18px;
-      --gap:14px;
-
-      --titleWeight: 900;
-      --uiWeight: 800;
-      --bodyWeight: 600;
-
-      --cardBg: rgba(255,255,255,.92);
-      --cardText: #0e1116;
-      --cardSub: rgba(14,17,22,.72);
-      --cardBorder: rgba(14,17,22,.12);
+      --accent: #1b8bff;
+      --btnBg: rgba(255,255,255,0.92);
+      --btnBd: rgba(14,17,22,0.18);
     }
 
     *{ box-sizing:border-box; }
@@ -51,16 +36,27 @@
       color:var(--ink);
       background: linear-gradient(180deg, var(--bg0), var(--bg1));
       overflow-x:hidden;
-      transition: background 240ms ease;
       cursor:none;
-      font-weight: var(--bodyWeight);
+      transition: background 260ms ease;
     }
 
-    /* ===== topo waves ===== */
+    /* Mandarin: make text less thick */
+    body.lang-zh{
+      font-weight: 500;
+    }
+    body.lang-zh .btn,
+    body.lang-zh .select,
+    body.lang-zh .input,
+    body.lang-zh .chip,
+    body.lang-zh .ptitle{
+      font-weight: 700; /* still strong but not “fat” */
+    }
+
+    /* topo waves */
     .topo{
       position:fixed;
       inset:-10vh -10vw;
-      z-index:-4;
+      z-index:-3;
       pointer-events:none;
       opacity: var(--waveOpacity);
       background-size: 1100px 650px;
@@ -81,44 +77,15 @@
     <path d='M-60 430 C 150 490, 350 540, 620 520 S 920 490, 1200 580'/>\
     <path d='M-60 470 C 120 540, 350 590, 610 570 S 920 540, 1200 620'/>\
   </g>\
-  <g fill='none' stroke='%230e1116' stroke-opacity='0.16' stroke-width='1' stroke-dasharray='5 6'>\
-    <path d='M-60 95 C 180 25, 330 160, 590 100 S 920 25, 1200 125'/>\
-    <path d='M-60 175 C 140 155, 350 260, 630 205 S 920 165, 1200 255'/>\
-    <path d='M-60 255 C 150 260, 350 340, 630 295 S 920 265, 1200 355'/>\
-    <path d='M-60 335 C 120 375, 350 440, 620 395 S 920 375, 1200 465'/>\
-    <path d='M-60 415 C 140 485, 350 520, 640 485 S 920 465, 1200 545'/>\
-  </g>\
 </svg>");
-      -webkit-mask-image: radial-gradient(circle at 50% 35%, rgba(0,0,0,1) 0%, rgba(0,0,0,.85) 45%, rgba(0,0,0,0) 78%);
-      mask-image: radial-gradient(circle at 50% 35%, rgba(0,0,0,1) 0%, rgba(0,0,0,.85) 45%, rgba(0,0,0,0) 78%);
-      animation: topoDrift 18s ease-in-out infinite alternate;
+      -webkit-mask-image: radial-gradient(circle at 50% 35%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 45%, rgba(0,0,0,0) 78%);
+      mask-image: radial-gradient(circle at 50% 35%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 45%, rgba(0,0,0,0) 78%);
+      animation: topoDrift 22s ease-in-out infinite alternate;
+      filter: blur(0.2px);
     }
     @keyframes topoDrift{
       0%{ transform: translate3d(-10px,-6px,0); }
       100%{ transform: translate3d(12px,10px,0); }
-    }
-
-    /* ===== circles / blobs ===== */
-    .blobs{
-      position:fixed;
-      inset:-12vh -12vw;
-      z-index:-3;
-      pointer-events:none;
-      opacity: var(--blobsOpacity);
-      transition: opacity 220ms ease;
-      filter: blur(2px);
-      background:
-        radial-gradient(520px circle at 18% 30%, rgba(27,139,255,.18), transparent 62%),
-        radial-gradient(560px circle at 78% 36%, rgba(255,75,216,.18), transparent 62%),
-        radial-gradient(480px circle at 60% 78%, rgba(27,139,255,.14), transparent 64%),
-        radial-gradient(460px circle at 30% 86%, rgba(255,75,216,.14), transparent 64%);
-      -webkit-mask-image: radial-gradient(circle at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,.85) 55%, rgba(0,0,0,0) 88%);
-      mask-image: radial-gradient(circle at 50% 40%, rgba(0,0,0,1) 0%, rgba(0,0,0,.85) 55%, rgba(0,0,0,0) 88%);
-      animation: blobDrift 14s ease-in-out infinite alternate;
-    }
-    @keyframes blobDrift{
-      0%{ transform: translate3d(-8px,-8px,0) scale(1.02); }
-      100%{ transform: translate3d(10px,10px,0) scale(1.00); }
     }
 
     .vignette{
@@ -128,69 +95,58 @@
       pointer-events:none;
       opacity: var(--vignette);
       background:
-        radial-gradient(900px circle at 50% 10%, rgba(255,255,255,.65), transparent 55%),
-        radial-gradient(1200px circle at 50% 60%, rgba(0,0,0,.05), transparent 70%);
+        radial-gradient(900px circle at 50% 10%, rgba(255,255,255,0.55), transparent 55%),
+        radial-gradient(1200px circle at 50% 60%, rgba(0,0,0,0.06), transparent 70%);
     }
 
-    /* ===== cursor ===== */
-    #cursor{
+    /* cursor */
+    #cursorDot{
       position:fixed;
-      width:10px; height:10px;
+      width:9px;height:9px;
       border-radius:50%;
-      background: rgba(0,0,0,.75);
+      background: rgba(0,0,0,0.78);
       transform: translate(-50%,-50%);
-      z-index:100;
+      z-index:200;
       pointer-events:none;
-      mix-blend-mode:multiply;
     }
     #cursorRing{
       position:fixed;
-      width:46px; height:46px;
+      width:44px;height:44px;
       border-radius:50%;
-      border:2px solid rgba(27,211,255,.35);
-      background: rgba(27,211,255,.10);
+      border:2px solid rgba(27,139,255,0.36);
+      background: rgba(27,139,255,0.10);
       transform: translate(-50%,-50%);
-      z-index:99;
+      z-index:199;
       pointer-events:none;
       transition: width .12s ease, height .12s ease, background .12s ease, border-color .12s ease;
     }
     body.cursorHover #cursorRing{
-      width:58px; height:58px;
-      background: rgba(27,211,255,.14);
-      border-color: rgba(27,211,255,.45);
+      width:58px;height:58px;
+      background: rgba(27,139,255,0.14);
+      border-color: rgba(27,139,255,0.50);
     }
 
-    .wrap{
-      width:min(1240px, 94vw);
-      margin: 18px auto 70px;
-    }
+    /* tighter vertical spacing */
+    .wrap{ width:min(1240px, 94vw); margin: 14px auto 44px; }
 
-    /* topbar stays clean (but not removing blobs globally) */
     .topbar{
       display:flex;
       justify-content:space-between;
       align-items:center;
-      gap:14px;
-      padding:14px 14px;
+      gap:12px;
+      padding:12px 12px;
       border-radius:var(--radius);
       border:1px solid var(--line);
-      background: rgba(255,255,255,.90);
+      background: var(--panel);
+      backdrop-filter: blur(14px);
       box-shadow: var(--shadow);
-      position:sticky;
-      top:14px;
-      z-index:10;
-      backdrop-filter: blur(12px);
+      flex-wrap:wrap;
     }
 
-    .brand{
-      display:flex;
-      flex-direction:column;
-      gap:4px;
-      min-width:220px;
-    }
+    .brand{ display:flex; flex-direction:column; gap:3px; min-width:220px; }
     .brand .title{
-      font-weight: var(--titleWeight);
-      letter-spacing:.7px;
+      font-weight:900;
+      letter-spacing:0.7px;
       text-transform:uppercase;
       font-size:14px;
     }
@@ -199,7 +155,6 @@
       font-size:12px;
       line-height:1.25;
       max-width: 560px;
-      font-weight: 650;
     }
 
     .controls{
@@ -210,244 +165,233 @@
       gap:10px;
     }
 
-    .input, .select{
-      background: rgba(255,255,255,.92);
-      border:2px solid var(--line2);
-      color: var(--ink);
-      padding:10px 12px;
-      border-radius:14px;
-      outline:none;
-      font-weight:700;
-    }
-    .input{ width:min(340px, 62vw); }
-    .select{ cursor:pointer; }
-    option{ color:#000; }
-
     .btn{
       cursor:pointer;
-      border:2px solid var(--line2);
-      background: rgba(255,255,255,.92);
+      border:2px solid var(--btnBd);
+      background: var(--btnBg);
       color: var(--ink);
-      padding:10px 12px;
-      border-radius:14px;
-      font-weight: var(--uiWeight);
-      letter-spacing:.35px;
+      padding:10px 14px;
+      border-radius:16px;
+      font-weight:900;
+      letter-spacing:0.35px;
       text-transform:uppercase;
-      transition: transform .08s ease, box-shadow .2s ease, border-color .2s ease;
       white-space:nowrap;
-      position:relative;
-      overflow:hidden;
+      transition: transform .08s ease, background .2s ease, border-color .2s ease;
     }
-    .btn:hover{
-      border-color: rgba(14,17,22,.26);
-      box-shadow: 0 14px 32px rgba(14,17,22,.10);
-    }
-    .btn:active{ transform: scale(.99); }
+    .btn:hover{ background: rgba(255,255,255,0.98); border-color: rgba(14,17,22,0.26); }
+    .btn:active{ transform: scale(0.99); }
 
-    .btn.primary{
-      border-color: rgba(27,139,255,.35);
-      box-shadow: 0 10px 28px rgba(27,139,255,.10);
+    .select, .input{
+      background: rgba(255,255,255,0.92);
+      border:2px solid rgba(14,17,22,0.18);
+      color: var(--ink);
+      padding:10px 14px;
+      border-radius:16px;
+      outline:none;
+      font-weight:800;
     }
+    .input{ width:min(320px, 62vw); }
+
+    /* prettier select arrow */
+    .select{
+      cursor:pointer;
+      appearance:none;
+      -webkit-appearance:none;
+      padding-right:44px;
+      background-image:
+        linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.92)),
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 24 24'><path fill='%230e1116' d='M7 10l5 5 5-5z'/></svg>");
+      background-repeat:no-repeat,no-repeat;
+      background-position: 0 0, calc(100% - 14px) 50%;
+      background-size: 100% 100%, 18px 18px;
+    }
+    .langSelect{ min-width: 170px; width: 170px; }
 
     .note{
-      margin-top:12px;
-      padding:12px 14px;
+      margin-top:10px;
+      padding:10px 14px;
       border-radius:var(--radius);
       border:1px solid var(--line);
-      background: rgba(255,255,255,.82);
+      background: var(--panel2);
       color: var(--mut);
       font-size:12px;
       line-height:1.4;
-      box-shadow: 0 10px 34px rgba(14,17,22,.08);
-      backdrop-filter: blur(10px);
     }
     .note b{ color: var(--ink); }
 
-    /* masonry */
-    .masonry{
-      margin-top: 14px;
-      column-count: 4;
-      column-gap: var(--gap);
+    /* GRID - centered when few items */
+    .grid{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 290px));
+      gap:14px;
+      justify-content:center;   /* center cards */
+      align-items:start;
     }
-    @media (max-width: 1200px){ .masonry{ column-count:3; } }
-    @media (max-width: 820px){ .masonry{ column-count:2; } }
-    @media (max-width: 520px){ .masonry{ column-count:1; } }
 
     .pin{
-      break-inside: avoid;
-      width:100%;
-      display:inline-block;
-      margin: 0 0 var(--gap);
       border-radius: 18px;
       overflow:hidden;
-      border:1px solid var(--cardBorder);
-      background: var(--cardBg);
-      box-shadow: 0 18px 55px rgba(14,17,22,.10);
+      border:1px solid rgba(14,17,22,0.12);
+      background: rgba(255,255,255,0.82);
+      box-shadow: 0 18px 55px rgba(14,17,22,0.10);
       transition: transform .18s ease;
+      position: relative;
+      isolation: isolate;
     }
     .pin:hover{ transform: translateY(-2px); }
 
-    .imgWrap{ position:relative; width:100%; background: rgba(0,0,0,.04); }
+    /* stacking fixes */
+    .imgWrap{
+      position:relative;
+      z-index:1;
+      transform: translateZ(0);
+      width:100%;
+      background: rgba(0,0,0,0.04);
+    }
     .pin img{ width:100%; height:auto; display:block; }
 
-    /* style badge - FIX DISAPPEAR */
     .styleBadge{
       position:absolute;
       top:12px; left:12px;
-      display:inline-flex;
+      padding:8px 10px;
+      border-radius:999px;
+      border:2px solid rgba(14,17,22,0.18);
+      background: rgba(255,255,255,0.88);
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:0.4px;
+      text-transform:uppercase;
+      display:flex;
       align-items:center;
       gap:8px;
-      padding:7px 10px;
-      border-radius:999px;
-      border:2px solid rgba(14,17,22,.16);
-      background: rgba(255,255,255,.88);
-      color: rgba(14,17,22,.86);
-      font-size:11px;
-      font-weight: 900;
-      letter-spacing:.45px;
-      text-transform:uppercase;
       backdrop-filter: blur(10px);
-      pointer-events:none; /* IMPORTANT */
-      user-select:none;
+      z-index: 10;
+      pointer-events:none;
+      transform: translateZ(0);
     }
-    .dot{
-      width:9px; height:9px;
-      border-radius:50%;
-      background: var(--accent);
-      box-shadow: 0 0 0 3px rgba(27,139,255,.12);
-    }
+    .dot{ width:10px; height:10px; border-radius:50%; background: var(--accent); box-shadow: 0 0 0 3px rgba(255,255,255,0.55); }
 
-    .pinBody{
+    .body{
       padding:14px 14px 14px;
-      background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.86));
+      background: linear-gradient(180deg, rgba(255,255,255,0.86), rgba(255,255,255,0.75));
       display:flex;
       flex-direction:column;
       gap:10px;
-      color: var(--cardText);
     }
-    .pinTitle{
-      font-weight: var(--titleWeight);
-      font-size:20px;
-      letter-spacing:.2px;
-      line-height:1.1;
-      color: var(--cardText);
-    }
-
+    .ptitle{ font-weight:900; font-size:20px; letter-spacing:0.2px; line-height:1.1; }
     .chips{ display:flex; gap:10px; flex-wrap:wrap; }
     .chip{
       padding:10px 14px;
       border-radius:999px;
-      border:2px solid rgba(14,17,22,.14);
-      background: rgba(255,255,255,.80);
-      color: rgba(14,17,22,.74);
+      border:2px solid rgba(14,17,22,0.14);
+      background: rgba(255,255,255,0.72);
+      color: rgba(14,17,22,0.72);
       font-weight:800;
       font-size:13px;
     }
-
     .metaRow{
-      margin-top:4px;
+      margin-top:6px;
       display:flex;
       justify-content:space-between;
       align-items:center;
       gap:12px;
     }
-
     .viewBtn{
       cursor:pointer;
-      border:2px solid rgba(27,211,255,.35);
+      border:2px solid rgba(27,211,255,0.35);
       border-radius: 16px;
       padding:12px 18px;
-      background: rgba(27,211,255,.18);
-      color: rgba(0,60,78,.88);
+      background: rgba(27,211,255,0.18);
+      color: rgba(0,60,78,0.88);
       font-weight:900;
-      font-size:15px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      min-width: 92px;
-      transition: transform .08s ease, background .2s ease, border-color .2s ease;
+      font-size:14px;
     }
-    .viewBtn:hover{ background: rgba(27,211,255,.24); border-color: rgba(27,211,255,.45); }
-    .viewBtn:active{ transform: scale(.99); }
-
     .likeBtn{
       cursor:pointer;
-      border:2px solid rgba(14,17,22,.14);
-      background: rgba(255,255,255,.86);
-      color: rgba(14,17,22,.86);
-      border-radius: 14px;
-      padding:10px 12px;
+      border:2px solid rgba(14,17,22,0.16);
+      border-radius: 16px;
+      padding:10px 14px;
+      background: rgba(255,255,255,0.80);
+      color: rgba(14,17,22,0.82);
       font-weight:900;
       display:flex;
       align-items:center;
-      gap:8px;
-      min-width:64px;
-      justify-content:center;
+      gap:10px;
+      user-select:none;
+      white-space:nowrap;
     }
     .likeBtn.liked{
-      border-color: rgba(27,211,255,.32);
-      background: rgba(27,211,255,.12);
-      color: rgba(0,60,78,.88);
+      border-color: rgba(255,63,182,0.35);
+      background: rgba(255,63,182,0.12);
+      color: rgba(130,0,78,0.86);
     }
 
-    .delBtn{
-      cursor:pointer;
-      border:2px solid rgba(14,17,22,.14);
-      background: rgba(255,255,255,.86);
-      color: rgba(14,17,22,.78);
-      border-radius: 14px;
-      padding:10px 12px;
-      font-weight:900;
-      min-width:64px;
-      display:none;
-      justify-content:center;
+    /* DARK MODE fixes (cards + text) */
+    body.dark .note{ background: rgba(10,14,18,0.55); color: rgba(243,246,251,0.72); border-color: rgba(255,255,255,0.10); }
+    body.dark .brand .sub{ color: rgba(243,246,251,0.70); }
+    body.dark .pin{
+      background: rgba(10,14,18,0.68);
+      border-color: rgba(255,255,255,0.10);
+      box-shadow: 0 22px 70px rgba(0,0,0,0.55);
     }
-    .pin.own .delBtn{ display:flex; }
+    body.dark .body{
+      background: linear-gradient(180deg, rgba(10,14,18,0.62), rgba(10,14,18,0.52));
+    }
+    body.dark .ptitle{ color: rgba(243,246,251,0.92); }
+    body.dark .chip{
+      border-color: rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+      color: rgba(243,246,251,0.72);
+    }
+    body.dark .styleBadge{
+      border-color: rgba(255,255,255,0.16);
+      background: rgba(10,14,18,0.70);
+      color: rgba(243,246,251,0.88);
+    }
+    body.dark .likeBtn{
+      border-color: rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.06);
+      color: rgba(243,246,251,0.82);
+    }
+    body.dark .viewBtn{
+      border-color: rgba(27,211,255,0.40);
+      background: rgba(27,211,255,0.14);
+      color: rgba(210,248,255,0.92);
+    }
 
-    /* modals */
+    /* Modal */
     .modal{
       position:fixed; inset:0;
       display:none;
       align-items:center;
       justify-content:center;
-      background: rgba(14,17,22,.42);
+      background: rgba(14,17,22,0.42);
       backdrop-filter: blur(6px);
-      z-index:50;
+      z-index:90;
       padding:18px;
     }
     .modalBox{
-      width:min(920px, 96vw);
+      width:min(980px, 96vw);
       border-radius: 18px;
-      border:1px solid rgba(14,17,22,.14);
-      background: rgba(255,255,255,.92);
-      box-shadow: 0 24px 70px rgba(14,17,22,.18);
+      border:1px solid rgba(14,17,22,0.14);
+      background: rgba(255,255,255,0.94);
+      box-shadow: 0 24px 70px rgba(14,17,22,0.18);
       overflow:hidden;
     }
     .modalTop{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      padding:14px 16px;
-      border-bottom:1px solid rgba(14,17,22,.10);
-      background: rgba(255,255,255,.98);
+      display:flex; justify-content:space-between; align-items:center;
+      padding:14px 16px; border-bottom:1px solid rgba(14,17,22,0.10);
     }
-    .modalTop .mtitle{
-      font-weight:900;
-      text-transform:uppercase;
-      letter-spacing:.6px;
-      font-size:13px;
-      color: var(--ink);
-    }
+    .mtitle{ font-weight:900; text-transform:uppercase; letter-spacing:0.6px; font-size:13px; }
     .xbtn{
       cursor:pointer;
-      border:2px solid rgba(14,17,22,.14);
-      background: rgba(255,255,255,.96);
-      color: var(--ink);
+      border:2px solid rgba(14,17,22,0.14);
+      background: rgba(255,255,255,0.85);
       padding:8px 10px;
       border-radius:14px;
       font-weight:900;
     }
-
     .modalBody{
       padding:16px;
       display:grid;
@@ -459,87 +403,91 @@
     .field label{
       display:block;
       font-size:11px;
-      color: rgba(14,17,22,.65);
+      color: rgba(14,17,22,0.65);
       margin: 0 0 6px;
       text-transform:uppercase;
-      letter-spacing:.4px;
+      letter-spacing:0.4px;
       font-weight:900;
     }
     .field input, .field textarea, .field select{
       width:100%;
-      background: rgba(255,255,255,.98);
-      border:2px solid rgba(14,17,22,.14);
+      background: rgba(255,255,255,0.97);
+      border:2px solid rgba(14,17,22,0.14);
       border-radius: 14px;
       padding:10px 12px;
       outline:none;
       color: var(--ink);
       font-family: inherit;
-      font-weight: 700;
     }
     textarea{ min-height:120px; resize:vertical; line-height:1.35; }
 
     .drop{
-      border:2px dashed rgba(14,17,22,.20);
+      border:2px dashed rgba(14,17,22,0.20);
+      background: rgba(255,255,255,0.78);
       border-radius: 16px;
       padding:14px;
-      background: rgba(255,255,255,.88);
       display:flex;
       gap:12px;
       align-items:center;
       justify-content:space-between;
+      transition: border-color .15s ease, background .15s ease;
+      min-height: 92px;
     }
-    .dropLeft{ display:flex; flex-direction:column; gap:6px; }
-    .dropTitle{ font-weight:900; letter-spacing:.3px; }
-    .dropHint{ color: rgba(14,17,22,.62); font-size:12px; }
-    .dropPreview{
-      width:86px; height:58px;
-      border-radius:12px;
-      background: rgba(0,0,0,.06);
-      border:1px solid rgba(14,17,22,.12);
-      overflow:hidden;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      flex:0 0 auto;
+    .drop.drag{
+      border-color: rgba(27,139,255,0.55);
+      background: rgba(27,139,255,0.10);
     }
-    .dropPreview img{ width:100%; height:100%; object-fit:cover; display:block; }
-    .dropActions{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end; }
-    .smallBtn{
-      cursor:pointer;
-      border:2px solid rgba(14,17,22,.14);
-      background: rgba(255,255,255,.96);
-      border-radius: 14px;
+    .dropTitle{ font-weight:900; }
+    .dropSub{ font-size:12px; color: rgba(14,17,22,0.62); line-height:1.3; }
+    .dropBtn{
+      border:2px solid rgba(14,17,22,0.16);
+      background: rgba(255,255,255,0.92);
       padding:10px 12px;
+      border-radius: 14px;
       font-weight:900;
+      cursor:pointer;
+      white-space:nowrap;
     }
+
+    .previewRow{
+      display:flex; gap:12px; align-items:center; margin-top:10px;
+    }
+    .preview{
+      width:110px; height:78px;
+      border-radius:14px;
+      border:1px solid rgba(14,17,22,0.12);
+      background: rgba(0,0,0,0.04);
+      overflow:hidden;
+      display:flex; align-items:center; justify-content:center;
+      font-size:12px; color: rgba(14,17,22,0.55);
+    }
+    .preview img{ width:100%; height:100%; object-fit:cover; display:block; }
+
     .progress{
-      width:100%;
+      flex:1;
       height:10px;
       border-radius:999px;
-      border:1px solid rgba(14,17,22,.14);
-      background: rgba(0,0,0,.04);
+      background: rgba(14,17,22,0.08);
       overflow:hidden;
-      margin-top:10px;
-      display:none;
+      border:1px solid rgba(14,17,22,0.10);
     }
     .bar{
       height:100%;
       width:0%;
-      background: linear-gradient(90deg, rgba(27,139,255,.65), rgba(255,75,216,.55));
-      transition: width .2s ease;
+      background: linear-gradient(90deg, rgba(27,139,255,0.85), rgba(255,63,182,0.75));
+      transition: width .15s ease;
     }
 
     .modalFoot{
       padding:14px 16px;
-      border-top:1px solid rgba(14,17,22,.10);
+      border-top:1px solid rgba(14,17,22,0.10);
       display:flex;
       justify-content:space-between;
       align-items:center;
       gap:10px;
       flex-wrap:wrap;
-      background: rgba(255,255,255,.98);
     }
-    .status{ font-size:12px; color: rgba(14,17,22,.62); line-height:1.35; max-width: 560px; }
+    .status{ font-size:12px; color: rgba(14,17,22,0.62); line-height:1.35; max-width: 520px; }
     .rightBtns{ display:flex; gap:10px; }
 
     .toast{
@@ -547,81 +495,48 @@
       bottom:18px;
       left:50%;
       transform: translateX(-50%);
-      background: rgba(255,255,255,.92);
-      border:1px solid rgba(14,17,22,.14);
-      color: rgba(14,17,22,.80);
+      background: rgba(255,255,255,0.90);
+      border:1px solid rgba(14,17,22,0.14);
+      color: rgba(14,17,22,0.80);
       padding:10px 12px;
       border-radius: 14px;
       backdrop-filter: blur(12px);
-      box-shadow: 0 16px 50px rgba(14,17,22,.12);
-      z-index:80;
+      box-shadow: 0 16px 50px rgba(14,17,22,0.12);
+      z-index:120;
       display:none;
       font-weight:800;
       font-size:12px;
     }
-
-    /* Mandarin weight fix */
-    body.lang-zh{
-      --titleWeight: 820;
-      --uiWeight: 760;
-      --bodyWeight: 520;
-      letter-spacing: 0;
-    }
-
-    /* menu panel (no blobs) */
-    .menuPanel{
-      position:fixed;
-      right:18px;
-      top:86px;
-      width:min(360px, 92vw);
-      border-radius:18px;
-      border:1px solid rgba(14,17,22,.12);
-      background: rgba(255,255,255,.98);
-      box-shadow: 0 24px 70px rgba(14,17,22,.16);
-      z-index:40;
-      padding:14px;
-      display:none;
-    }
-    .menuPanel h3{
-      margin:0 0 8px;
-      font-size:13px;
-      text-transform:uppercase;
-      letter-spacing:.6px;
-      font-weight:900;
-    }
-    .menuPanel .row{
-      display:flex; gap:10px; flex-wrap:wrap;
-    }
-    .menuPanel .mut{
-      color: rgba(14,17,22,.62);
-      font-size:12px;
-      line-height:1.4;
-      margin: 6px 0 10px;
-      font-weight:650;
+    body.dark .toast{
+      background: rgba(10,14,18,0.78);
+      border-color: rgba(255,255,255,0.12);
+      color: rgba(243,246,251,0.85);
     }
   </style>
 </head>
 
 <body>
   <div class="topo"></div>
-  <div class="blobs" id="blobs"></div>
   <div class="vignette"></div>
-
   <div id="cursorRing"></div>
-  <div id="cursor"></div>
+  <div id="cursorDot"></div>
   <div class="toast" id="toast"></div>
+
+  <audio id="bgMusic" preload="auto" loop>
+    <source src="music.mp3" type="audio/mpeg">
+  </audio>
 
   <div class="wrap">
     <div class="topbar">
       <div class="brand">
-        <div class="title" id="uiTitle">SETUP GALLERY</div>
-        <div class="sub" id="uiSub">Select a style — background changes automatically.</div>
+        <div class="title" id="tTitle">Setup Gallery</div>
+        <div class="sub" id="tSub">Select a style — background changes automatically.</div>
       </div>
 
       <div class="controls">
         <input id="q" class="input" type="search" placeholder="Search..." />
 
-        <select id="styleFilter" class="select" title="Style filter">
+        <select id="styleFilter" class="select">
           <option value="all">All styles</option>
           <option value="wood">Wood</option>
           <option value="cyber">Cyber</option>
@@ -635,61 +550,51 @@
 
         <button id="shuffleBtn" class="btn">Shuffle</button>
         <button id="surpriseBtn" class="btn">Surprise</button>
+
         <button id="musicBtn" class="btn">Music: Off</button>
 
-        <button id="addBtn" class="btn primary">Add setup</button>
+        <button id="addBtn" class="btn">Add setup</button>
         <button id="reloadBtn" class="btn">Reload</button>
 
-        <select id="lang" class="select" title="Language">
+        <select id="langSelect" class="select langSelect" title="Language">
           <option value="en">English</option>
+          <option value="ru">Русский</option>
           <option value="es">Español</option>
           <option value="fr">Français</option>
-          <option value="ru">Русский</option>
-          <option value="zh">Mandarin (中文)</option>
+          <option value="zh">普通话</option>
         </select>
-
-        <button id="menuBtn" class="btn">Menu</button>
       </div>
     </div>
 
-    <div class="note" id="likesNote"><b>Likes:</b> enabled (local per browser).</div>
+    <div class="note" id="tLikesNote">
+      <b>Likes:</b> enabled (local per browser).
+    </div>
 
-    <div id="masonry" class="masonry"></div>
+    <div id="grid" class="grid"></div>
   </div>
 
-  <div class="menuPanel" id="menuPanel">
-    <h3 id="menuTitle">Menu</h3>
-    <div class="mut" id="menuText">
-      Posts are online (Supabase). Likes are local for now.
-    </div>
-    <div class="row">
-      <button class="btn" id="resetLikesBtn">Reset likes (local)</button>
-      <button class="btn" id="closeMenuBtn">Close</button>
-    </div>
-  </div>
-
-  <!-- ADD -->
+  <!-- Add modal -->
   <div class="modal" id="addModal">
     <div class="modalBox">
       <div class="modalTop">
-        <div class="mtitle" id="addTitle">ADD SETUP</div>
+        <div class="mtitle" id="tAddSetup">Add setup</div>
         <button class="xbtn" id="closeAdd">✕</button>
       </div>
 
       <div class="modalBody">
         <div class="field">
-          <label id="lblTitle">Title</label>
-          <input id="fTitle" type="text" placeholder="Calm Productivity Workspace" />
+          <label id="tTitleLbl">Title</label>
+          <input id="fTitle" type="text" placeholder="My setup" />
         </div>
 
         <div class="field">
-          <label id="lblStyle">Style</label>
+          <label id="tStyleLbl">Style</label>
           <select id="fStyle">
             <option value="wood">Wood</option>
             <option value="cyber">Cyber</option>
             <option value="pink">Pink</option>
             <option value="black">Black</option>
-            <option value="white">White</option>
+            <option value="white" selected>White</option>
             <option value="anime">Anime</option>
             <option value="meme">Meme</option>
             <option value="lightblue">Light Blue</option>
@@ -697,52 +602,32 @@
         </div>
 
         <div class="field" style="grid-column:1 / -1;">
-          <label id="lblTags">Tags (comma separated)</label>
-          <input id="fTags" type="text" placeholder="workspace, minimal, dual monitor" />
+          <label id="tTagsLbl">Tags (comma separated)</label>
+          <input id="fTags" type="text" placeholder="workspace, minimal, dual" />
         </div>
 
         <div class="field" style="grid-column:1 / -1;">
-          <label id="lblImage">Image</label>
-          <div class="drop" id="dropzone">
-            <div class="dropLeft">
-              <div class="dropTitle" id="dropTitle">Drop your image here</div>
-              <div class="dropHint" id="dropHint">or click “Choose file” (jpg / png / webp)</div>
-            </div>
+          <label id="tImageLbl">Image</label>
 
-            <div class="dropPreview" id="dropPreview">
-              <span style="opacity:.45;font-weight:900;">IMG</span>
+          <div class="drop" id="drop">
+            <div>
+              <div class="dropTitle" id="tDropTitle">Drop your image here</div>
+              <div class="dropSub" id="tDropSub">Or click “Choose file”. (jpg / png / webp)</div>
             </div>
-
-            <div class="dropActions">
-              <input id="fFile" type="file" accept="image/*" hidden />
-              <button class="smallBtn" id="chooseBtn">Choose file</button>
-              <button class="smallBtn" id="clearImgBtn">Clear</button>
-            </div>
+            <button class="dropBtn" id="chooseBtn" type="button">Choose file</button>
           </div>
-          <div class="progress" id="progress"><div class="bar" id="bar"></div></div>
+
+          <input id="fileInput" type="file" accept="image/*" style="display:none" />
+
+          <div class="previewRow">
+            <div class="preview" id="preview">No image</div>
+            <div class="progress"><div class="bar" id="bar"></div></div>
+          </div>
         </div>
 
         <div class="field" style="grid-column:1 / -1;">
-          <label id="lblDesc">Description</label>
-          <textarea id="fDesc" placeholder="Short description (gear, colors, vibes, etc.)"></textarea>
-        </div>
-
-        <div class="field" style="grid-column:1 / -1;">
-          <label id="lblI18n">Translations (optional)</label>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-            <input id="t_en" placeholder="Title (English)" />
-            <input id="t_ru" placeholder="Title (Русский)" />
-            <input id="t_es" placeholder="Title (Español)" />
-            <input id="t_fr" placeholder="Title (Français)" />
-            <input id="t_zh" placeholder="Title (中文)" />
-          </div>
-          <div style="display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px;">
-            <textarea id="d_en" placeholder="Description (English)"></textarea>
-            <textarea id="d_ru" placeholder="Описание (Русский)"></textarea>
-            <textarea id="d_es" placeholder="Descripción (Español)"></textarea>
-            <textarea id="d_fr" placeholder="Description (Français)"></textarea>
-            <textarea id="d_zh" placeholder="描述 (中文)"></textarea>
-          </div>
+          <label id="tDescLbl">Description</label>
+          <textarea id="fDesc" placeholder="Short description..."></textarea>
         </div>
       </div>
 
@@ -750,728 +635,605 @@
         <div class="status" id="addStatus">Ready.</div>
         <div class="rightBtns">
           <button class="btn" id="cancelAdd">Cancel</button>
-          <button class="btn primary" id="postAdd">Post</button>
+          <button class="btn" id="saveAdd">Post</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- VIEW -->
+  <!-- View modal -->
   <div class="modal" id="viewModal">
     <div class="modalBox">
       <div class="modalTop">
-        <div class="mtitle" id="viewTopTitle">VIEW</div>
+        <div class="mtitle" id="viewTitle">View</div>
         <button class="xbtn" id="closeView">✕</button>
       </div>
       <div style="padding:0;">
         <img id="viewImg" src="" alt="setup" style="width:100%;display:block;max-height:72vh;object-fit:cover;">
       </div>
-      <div style="padding:14px 16px;border-top:1px solid rgba(14,17,22,.10);color:rgba(14,17,22,.72);">
+      <div style="padding:14px 16px;border-top:1px solid rgba(14,17,22,0.10);color:rgba(14,17,22,0.72);">
         <div id="viewDesc" style="line-height:1.4;"></div>
       </div>
     </div>
   </div>
 
   <script>
-    // ====== SUPABASE ======
+    // ===== SUPABASE =====
     const SUPABASE_URL = "https://wnbyvospvvnyqfkjyzhp.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_Z_xU69R3fsnQrpfPSgkAWw_DZL_glCr";
-    const STORAGE_BUCKET = "setup-images"; // bucket name (must match)
-    const $ = (id) => document.getElementById(id);
-    const esc = (s) => String(s ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;").replaceAll("'","&#039;");
-    const uid = () => "p_" + Math.random().toString(16).slice(2) + "_" + Date.now().toString(16);
+    const SUPABASE_KEY = "sb_publishable_Z_xU69R3fsnQrpfPSgkAWw_DZL_glCr";
+    const BUCKET = "Setup-images";
 
-    // ===== toast =====
+    // styles -> backgrounds
+    const STYLE_THEMES = {
+      white:     { bg0:"#f6f7fb", bg1:"#edf0f6", ink:"#0e1116", wave:"0.16", vignette:"0.35", dark:false },
+      pink:      { bg0:"#ffd6ea", bg1:"#ffc3e0", ink:"#0e1116", wave:"0.14", vignette:"0.18", dark:false },
+      wood:      { bg0:"#efe6dc", bg1:"#e4d3c2", ink:"#0e1116", wave:"0.14", vignette:"0.20", dark:false },
+      cyber:     { bg0:"#eafcff", bg1:"#d7f6ff", ink:"#0e1116", wave:"0.14", vignette:"0.20", dark:false },
+      anime:     { bg0:"#e9eaff", bg1:"#dde0ff", ink:"#0e1116", wave:"0.14", vignette:"0.20", dark:false },
+      meme:      { bg0:"#f0ffe8", bg1:"#e2ffd6", ink:"#0e1116", wave:"0.14", vignette:"0.20", dark:false },
+      lightblue: { bg0:"#d7f1ff", bg1:"#c5e8ff", ink:"#0e1116", wave:"0.14", vignette:"0.22", dark:false },
+      black:     { bg0:"#101216", bg1:"#0b0e12", ink:"#f3f6fb", wave:"0.18", vignette:"0.92", dark:true }
+    };
+    const STYLE_COLORS = {
+      wood: "#b67a3c", cyber: "#00c8d6", pink: "#ff3fb6",
+      black: "#111318", white: "#e9eef6", anime: "#7a7dff",
+      meme: "#33cc66", lightblue: "#1b8bff",
+    };
+
+    const AUTO_BG_KEY = "setup_gallery_auto_bg_style_v4";
+    function applyStyleBackground(styleKey){
+      const t = STYLE_THEMES[styleKey] || STYLE_THEMES.white;
+      document.documentElement.style.setProperty("--bg0", t.bg0);
+      document.documentElement.style.setProperty("--bg1", t.bg1);
+      document.documentElement.style.setProperty("--ink", t.ink);
+      document.documentElement.style.setProperty("--waveOpacity", t.wave);
+      document.documentElement.style.setProperty("--vignette", t.vignette);
+
+      document.body.classList.toggle("dark", !!t.dark);
+
+      if(t.dark){
+        document.documentElement.style.setProperty("--panel", "rgba(10,14,18,0.62)");
+        document.documentElement.style.setProperty("--panel2", "rgba(10,14,18,0.52)");
+        document.documentElement.style.setProperty("--line", "rgba(255,255,255,0.10)");
+        document.documentElement.style.setProperty("--line2", "rgba(255,255,255,0.18)");
+        document.documentElement.style.setProperty("--btnBg", "rgba(10,14,18,0.72)");
+        document.documentElement.style.setProperty("--btnBd", "rgba(255,255,255,0.18)");
+        document.getElementById("cursorDot").style.background = "rgba(255,255,255,0.85)";
+      } else {
+        document.documentElement.style.setProperty("--panel", "rgba(255,255,255,0.82)");
+        document.documentElement.style.setProperty("--panel2", "rgba(255,255,255,0.70)");
+        document.documentElement.style.setProperty("--line", "rgba(14,17,22,0.12)");
+        document.documentElement.style.setProperty("--line2", "rgba(14,17,22,0.18)");
+        document.documentElement.style.setProperty("--btnBg", "rgba(255,255,255,0.92)");
+        document.documentElement.style.setProperty("--btnBd", "rgba(14,17,22,0.18)");
+        document.getElementById("cursorDot").style.background = "rgba(0,0,0,0.78)";
+      }
+      localStorage.setItem(AUTO_BG_KEY, styleKey);
+    }
+
+    // language
+    const LANG_KEY = "setup_gallery_lang_v4";
+    const I18N = {
+      en: { sub:"Select a style — background changes automatically.",
+            search:"Search...", allStyles:"All styles", addSetup:"Add setup", reload:"Reload",
+            shuffle:"Shuffle", surprise:"Surprise", musicOff:"Music: Off", musicOn:"Music: On",
+            likesNote:"<b>Likes:</b> enabled (local per browser).",
+            addTitle:"Add setup", titleLbl:"Title", styleLbl:"Style", tagsLbl:"Tags (comma separated)",
+            imageLbl:"Image", dropTitle:"Drop your image here", dropSub:"Or click “Choose file”. (jpg / png / webp)",
+            chooseFile:"Choose file", descLbl:"Description", cancel:"Cancel", post:"Post", ready:"Ready.",
+            noImage:"No image", noPosts:"No posts. Add one or change filters.", view:"View"
+      },
+      ru: { sub:"Выбери стиль — фон меняется автоматически.",
+            search:"Поиск...", allStyles:"Все стили", addSetup:"Добавить", reload:"Обновить",
+            shuffle:"Перемешать", surprise:"Сюрприз", musicOff:"Музыка: выкл", musicOn:"Музыка: вкл",
+            likesNote:"<b>Лайки:</b> работают (локально).",
+            addTitle:"Добавить сетап", titleLbl:"Название", styleLbl:"Стиль", tagsLbl:"Теги (через запятую)",
+            imageLbl:"Картинка", dropTitle:"Перетащи картинку сюда", dropSub:"Или нажми “Выбрать файл”. (jpg / png / webp)",
+            chooseFile:"Выбрать файл", descLbl:"Описание", cancel:"Отмена", post:"Опубликовать", ready:"Готово.",
+            noImage:"Нет картинки", noPosts:"Постов нет. Добавь или поменяй фильтры.", view:"Открыть"
+      },
+      es: { sub:"Elige un estilo — el fondo cambia automáticamente.",
+            search:"Buscar...", allStyles:"Todos", addSetup:"Añadir", reload:"Recargar",
+            shuffle:"Mezclar", surprise:"Sorpresa", musicOff:"Música: Off", musicOn:"Música: On",
+            likesNote:"<b>Me gusta:</b> activo (local).",
+            addTitle:"Añadir setup", titleLbl:"Título", styleLbl:"Estilo", tagsLbl:"Tags (coma)",
+            imageLbl:"Imagen", dropTitle:"Suelta tu imagen aquí", dropSub:"O “Elegir archivo”. (jpg / png / webp)",
+            chooseFile:"Elegir archivo", descLbl:"Descripción", cancel:"Cancelar", post:"Publicar", ready:"Listo.",
+            noImage:"Sin imagen", noPosts:"No hay posts. Añade uno o cambia filtros.", view:"Ver"
+      },
+      fr: { sub:"Choisis un style — le fond change automatiquement.",
+            search:"Rechercher...", allStyles:"Tous", addSetup:"Ajouter", reload:"Recharger",
+            shuffle:"Mélanger", surprise:"Surprise", musicOff:"Musique: Off", musicOn:"Musique: On",
+            likesNote:"<b>Likes :</b> activés (local).",
+            addTitle:"Ajouter setup", titleLbl:"Titre", styleLbl:"Style", tagsLbl:"Tags (virgule)",
+            imageLbl:"Image", dropTitle:"Dépose ton image ici", dropSub:"Ou “Choisir”. (jpg / png / webp)",
+            chooseFile:"Choisir", descLbl:"Description", cancel:"Annuler", post:"Publier", ready:"Prêt.",
+            noImage:"Pas d'image", noPosts:"Aucun post. Ajoute-en un ou change les filtres.", view:"Voir"
+      },
+      zh: { sub:"选择风格——背景会自动改变。",
+            search:"搜索...", allStyles:"全部风格", addSetup:"添加", reload:"刷新",
+            shuffle:"打乱", surprise:"惊喜", musicOff:"音乐：关", musicOn:"音乐：开",
+            likesNote:"<b>点赞：</b>已启用（本地）。",
+            addTitle:"添加桌面", titleLbl:"标题", styleLbl:"风格", tagsLbl:"标签（逗号）",
+            imageLbl:"图片", dropTitle:"把图片拖到这里", dropSub:"或点“选择文件”。(jpg / png / webp)",
+            chooseFile:"选择文件", descLbl:"描述", cancel:"取消", post:"发布", ready:"就绪。",
+            noImage:"没有图片", noPosts:"还没有内容。添加一个或更改筛选。", view:"查看"
+      }
+    };
+
+    let currentLang = localStorage.getItem(LANG_KEY) || "en";
+    const t = (k) => (I18N[currentLang] && I18N[currentLang][k]) || I18N.en[k] || k;
+
+    // music
+    const MUSIC_KEY = "setup_gallery_music_on_v2";
+    const musicEl = document.getElementById("bgMusic");
+    let musicOn = localStorage.getItem(MUSIC_KEY) === "1";
+    function updateMusicBtnText(){
+      document.getElementById("musicBtn").textContent = musicOn ? t("musicOn") : t("musicOff");
+    }
+    async function setMusic(on){
+      musicOn = on;
+      localStorage.setItem(MUSIC_KEY, on ? "1" : "0");
+      updateMusicBtnText();
+      try{
+        if(on){
+          musicEl.volume = 0.25;
+          await musicEl.play();
+        } else {
+          musicEl.pause();
+        }
+      }catch(e){
+        musicOn = false;
+        localStorage.setItem(MUSIC_KEY, "0");
+        updateMusicBtnText();
+        toast("Add music.mp3 to repo root");
+      }
+    }
+
+    // likes (local)
+    const LIKES_KEY = "setup_gallery_likes_counts_v2";
+    const LIKED_KEY = "setup_gallery_likes_liked_v2";
+    let likesCounts = JSON.parse(localStorage.getItem(LIKES_KEY) || "{}");
+    let likedFlags  = JSON.parse(localStorage.getItem(LIKED_KEY) || "{}");
+    function getLikes(id){ return Number(likesCounts[id] || 0); }
+    function isLiked(id){ return !!likedFlags[id]; }
+    function toggleLike(id){
+      if(isLiked(id)){
+        likedFlags[id] = false;
+        likesCounts[id] = Math.max(0, getLikes(id)-1);
+      } else {
+        likedFlags[id] = true;
+        likesCounts[id] = getLikes(id)+1;
+      }
+      localStorage.setItem(LIKES_KEY, JSON.stringify(likesCounts));
+      localStorage.setItem(LIKED_KEY, JSON.stringify(likedFlags));
+      render();
+    }
+
+    // helpers
+    const $ = (id) => document.getElementById(id);
+    function uid(){ return "p_" + Math.random().toString(16).slice(2) + "_" + Date.now().toString(16); }
+    function esc(s){
+      return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+                      .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+    }
+    function normTag(x){ return String(x||"").trim().toLowerCase().replace(/\s+/g," "); }
+    function parseTags(s){ return (s||"").split(",").map(x => normTag(x)).filter(Boolean).slice(0, 8); }
+    function prettyTag(x){ return x.split(" ").map(w => w ? (w[0].toUpperCase()+w.slice(1)) : "").join(" "); }
+
     function toast(msg){
       const el = $("toast");
       el.textContent = msg;
       el.style.display = "block";
       clearTimeout(window.__toastT);
-      window.__toastT = setTimeout(()=> el.style.display="none", 1200);
+      window.__toastT = setTimeout(()=> el.style.display="none", 900);
     }
 
-    // ===== i18n =====
-    const LANGS = {
-      en:{name:"English", title:"SETUP GALLERY", sub:"Select a style — background changes automatically.",
-        likes:"Likes: enabled (local per browser).",
-        menu:"Menu", menuText:"Posts are online (Supabase). Likes are local for now.",
-        resetLikes:"Reset likes (local)", close:"Close",
-        shuffle:"Shuffle", surprise:"Surprise",
-        musicOn:"Music: On", musicOff:"Music: Off",
-        add:"Add setup", reload:"Reload",
-        search:"Search...", all:"All styles",
-        addTitle:"ADD SETUP", lblTitle:"Title", lblStyle:"Style", lblTags:"Tags (comma separated)",
-        lblImage:"Image", lblDesc:"Description", lblI18n:"Translations (optional)",
-        dropTitle:"Drop your image here", dropHint:"or click “Choose file” (jpg / png / webp)",
-        choose:"Choose file", clear:"Clear", cancel:"Cancel", post:"Post", view:"View",
-        errTitle:"Title required.", errDesc:"Description required.", errTags:"Add at least 1 tag.", errImg:"Choose an image file.",
-        posting:"Posting...", uploaded:"Uploaded!", loaded:"Loaded", failed:"Failed. Check console."
-      },
-      ru:{name:"Русский", title:"ГАЛЕРЕЯ СЕТАПОВ", sub:"Выбери стиль — фон меняется автоматически.",
-        likes:"Лайки: включены (локально в браузере).",
-        menu:"Меню", menuText:"Посты онлайн (Supabase). Лайки пока локальные.",
-        resetLikes:"Сброс лайков (локально)", close:"Закрыть",
-        shuffle:"Перемешать", surprise:"Сюрприз",
-        musicOn:"Музыка: Вкл", musicOff:"Музыка: Выкл",
-        add:"Добавить сетап", reload:"Обновить",
-        search:"Поиск...", all:"Все стили",
-        addTitle:"ДОБАВИТЬ СЕТАП", lblTitle:"Название", lblStyle:"Стиль", lblTags:"Теги (через запятую)",
-        lblImage:"Картинка", lblDesc:"Описание", lblI18n:"Переводы (необязательно)",
-        dropTitle:"Перетащи картинку сюда", dropHint:"или нажми “Выбрать файл” (jpg / png / webp)",
-        choose:"Выбрать файл", clear:"Очистить", cancel:"Отмена", post:"Опубликовать", view:"Открыть",
-        errTitle:"Нужно название.", errDesc:"Нужно описание.", errTags:"Добавь хотя бы 1 тег.", errImg:"Выбери картинку.",
-        posting:"Публикую...", uploaded:"Готово!", loaded:"Загружено", failed:"Ошибка. Смотри консоль."
-      },
-      es:{name:"Español", title:"GALERÍA DE SETUPS", sub:"Elige un estilo — el fondo cambia automáticamente.",
-        likes:"Likes: activados (local por navegador).",
-        menu:"Menú", menuText:"Los posts son online (Supabase). Likes locales por ahora.",
-        resetLikes:"Reiniciar likes (local)", close:"Cerrar",
-        shuffle:"Mezclar", surprise:"Sorpresa",
-        musicOn:"Música: On", musicOff:"Música: Off",
-        add:"Añadir setup", reload:"Recargar",
-        search:"Buscar...", all:"Todos los estilos",
-        addTitle:"AÑADIR SETUP", lblTitle:"Título", lblStyle:"Estilo", lblTags:"Tags (coma)",
-        lblImage:"Imagen", lblDesc:"Descripción", lblI18n:"Traducciones (opcional)",
-        dropTitle:"Suelta tu imagen aquí", dropHint:"o pulsa “Elegir archivo” (jpg / png / webp)",
-        choose:"Elegir archivo", clear:"Borrar", cancel:"Cancelar", post:"Publicar", view:"Ver",
-        errTitle:"Título obligatorio.", errDesc:"Descripción obligatoria.", errTags:"Añade 1 tag.", errImg:"Elige una imagen.",
-        posting:"Publicando...", uploaded:"¡Subido!", loaded:"Cargado", failed:"Falló. Mira consola."
-      },
-      fr:{name:"Français", title:"GALERIE SETUP", sub:"Choisis un style — le fond change automatiquement.",
-        likes:"Likes : activés (local).",
-        menu:"Menu", menuText:"Posts en ligne (Supabase). Likes locaux pour l’instant.",
-        resetLikes:"Reset likes (local)", close:"Fermer",
-        shuffle:"Mélanger", surprise:"Surprise",
-        musicOn:"Musique : On", musicOff:"Musique : Off",
-        add:"Ajouter setup", reload:"Recharger",
-        search:"Rechercher...", all:"Tous les styles",
-        addTitle:"AJOUTER SETUP", lblTitle:"Titre", lblStyle:"Style", lblTags:"Tags (virgule)",
-        lblImage:"Image", lblDesc:"Description", lblI18n:"Traductions (optionnel)",
-        dropTitle:"Dépose ton image ici", dropHint:"ou “Choisir fichier” (jpg / png / webp)",
-        choose:"Choisir fichier", clear:"Effacer", cancel:"Annuler", post:"Publier", view:"Voir",
-        errTitle:"Titre requis.", errDesc:"Description requise.", errTags:"Ajoute 1 tag.", errImg:"Choisis une image.",
-        posting:"Publication...", uploaded:"Upload OK !", loaded:"Chargé", failed:"Erreur. Console."
-      },
-      zh:{name:"Mandarin (中文)", title:"设备桌面图库", sub:"选择风格 — 背景会自动变化。",
-        likes:"点赞：已启用（仅本地）。",
-        menu:"菜单", menuText:"帖子在线（Supabase）。点赞暂时本地。",
-        resetLikes:"重置点赞（本地）", close:"关闭",
-        shuffle:"随机排列", surprise:"惊喜",
-        musicOn:"音乐：开", musicOff:"音乐：关",
-        add:"添加桌面", reload:"刷新",
-        search:"搜索…", all:"全部风格",
-        addTitle:"添加桌面", lblTitle:"标题", lblStyle:"风格", lblTags:"标签（逗号）",
-        lblImage:"图片", lblDesc:"描述", lblI18n:"翻译（可选）",
-        dropTitle:"把图片拖到这里", dropHint:"或点击“选择文件”(jpg / png / webp)",
-        choose:"选择文件", clear:"清除", cancel:"取消", post:"发布", view:"查看",
-        errTitle:"需要标题。", errDesc:"需要描述。", errTags:"至少 1 个标签。", errImg:"请选择图片。",
-        posting:"发布中…", uploaded:"已上传！", loaded:"已加载", failed:"失败了。请看控制台。"
-      },
-    };
+    function applyLanguage(){
+      document.body.classList.toggle("lang-zh", currentLang === "zh");
 
-    function getLang(){ return $("lang").value; }
-    function ui(){ return LANGS[getLang()] || LANGS.en; }
+      $("tSub").textContent = t("sub");
+      $("q").placeholder = t("search");
+      $("styleFilter").options[0].text = t("allStyles");
+      $("shuffleBtn").textContent = t("shuffle");
+      $("surpriseBtn").textContent = t("surprise");
+      updateMusicBtnText();
+      $("addBtn").textContent = t("addSetup");
+      $("reloadBtn").textContent = t("reload");
+      $("tLikesNote").innerHTML = t("likesNote");
 
-    function applyLang(){
-      const L = ui();
-      document.body.classList.toggle("lang-zh", getLang()==="zh");
-
-      $("uiTitle").textContent = L.title;
-      $("uiSub").textContent = L.sub;
-      $("likesNote").innerHTML = `<b>${esc(L.likes.split(":")[0]+":")}</b> ${esc(L.likes.split(":").slice(1).join(":").trim())}`;
-
-      $("shuffleBtn").textContent = L.shuffle;
-      $("surpriseBtn").textContent = L.surprise;
-      $("addBtn").textContent = L.add;
-      $("reloadBtn").textContent = L.reload;
-      $("musicBtn").textContent = musicOn ? L.musicOn : L.musicOff;
-      $("menuBtn").textContent = L.menu;
-
-      $("q").placeholder = L.search;
-      const allOpt = $("styleFilter").querySelector('option[value="all"]');
-      if(allOpt) allOpt.textContent = L.all;
-
-      $("menuTitle").textContent = L.menu;
-      $("menuText").textContent = L.menuText;
-      $("resetLikesBtn").textContent = L.resetLikes;
-      $("closeMenuBtn").textContent = L.close;
-
-      $("addTitle").textContent = L.addTitle;
-      $("lblTitle").textContent = L.lblTitle;
-      $("lblStyle").textContent = L.lblStyle;
-      $("lblTags").textContent = L.lblTags;
-      $("lblImage").textContent = L.lblImage;
-      $("lblDesc").textContent = L.lblDesc;
-      $("lblI18n").textContent = L.lblI18n;
-
-      $("dropTitle").textContent = L.dropTitle;
-      $("dropHint").textContent = L.dropHint;
-      $("chooseBtn").textContent = L.choose;
-      $("clearImgBtn").textContent = L.clear;
-
-      $("cancelAdd").textContent = L.cancel;
-      $("postAdd").textContent = L.post;
-
+      $("tAddSetup").textContent = t("addTitle");
+      $("tTitleLbl").textContent = t("titleLbl");
+      $("tStyleLbl").textContent = t("styleLbl");
+      $("tTagsLbl").textContent = t("tagsLbl");
+      $("tImageLbl").textContent = t("imageLbl");
+      $("tDropTitle").textContent = t("dropTitle");
+      $("tDropSub").textContent = t("dropSub");
+      $("chooseBtn").textContent = t("chooseFile");
+      $("tDescLbl").textContent = t("descLbl");
+      $("cancelAdd").textContent = t("cancel");
+      $("saveAdd").textContent = t("post");
       render();
     }
 
-    // ===== themes =====
-    const THEMES = {
-      all:{ vars:{ "--bg0":"#f6f7fb","--bg1":"#edf0f6","--ink":"#0e1116","--mut":"rgba(14,17,22,.62)",
-        "--cardBg":"rgba(255,255,255,.92)","--cardText":"#0e1116","--cardSub":"rgba(14,17,22,.72)","--cardBorder":"rgba(14,17,22,.12)",
-        "--blobsOpacity":"0" } },
-      wood:{ vars:{ "--bg0":"#efe6dc","--bg1":"#e4d3c2","--accent":"#ffb86b",
-        "--cardBg":"rgba(255,255,255,.92)","--cardText":"#0e1116","--cardBorder":"rgba(14,17,22,.12)",
-        "--blobsOpacity":"0" } },
-      cyber:{ vars:{ "--bg0":"#eafcff","--bg1":"#d7f6ff","--accent":"#00c8d6",
-        "--blobsOpacity":"1" } },
-      pink:{ vars:{ "--bg0":"#ffd6ea","--bg1":"#ffc3e0","--accent":"#ff3fb6",
-        "--blobsOpacity":"1" } },
-      white:{ vars:{ "--bg0":"#f6f7fb","--bg1":"#edf0f6","--accent":"#1b8bff",
-        "--blobsOpacity":"1" } },
-      anime:{ vars:{ "--bg0":"#e9eaff","--bg1":"#dde0ff","--accent":"#7a7dff",
-        "--blobsOpacity":"1" } },
-      meme:{ vars:{ "--bg0":"#f0ffe8","--bg1":"#e2ffd6","--accent":"#33cc66",
-        "--blobsOpacity":"1" } },
-      lightblue:{ vars:{ "--bg0":"#d7f1ff","--bg1":"#c5e8ff","--accent":"#1b8bff",
-        "--blobsOpacity":"1" } },
-      black:{ vars:{
-        "--bg0":"#0f1218","--bg1":"#0b0e12",
-        "--ink":"#f3f6fb","--mut":"rgba(243,246,251,.72)",
-        /* Keep cards readable (NOT black cards) */
-        "--cardBg":"rgba(255,255,255,.92)","--cardText":"#0e1116","--cardSub":"rgba(14,17,22,.72)","--cardBorder":"rgba(255,255,255,.18)",
-        "--waveOpacity":".14","--vignette":".90",
-        "--blobsOpacity":"0"
-      }},
-    };
-
-    function setCSSVars(vars){
-      for(const [k,v] of Object.entries(vars)) document.documentElement.style.setProperty(k, v);
-    }
-    function applyTheme(style){
-      const t = THEMES[style] || THEMES.all;
-      setCSSVars(t.vars);
+    // Supabase REST
+    async function sbFetch(path, opts = {}) {
+      const url = `${SUPABASE_URL}${path}`;
+      const headers = { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}`, ...(opts.headers || {}) };
+      const res = await fetch(url, { ...opts, headers });
+      if (!res.ok) {
+        const txt = await res.text().catch(() => "");
+        throw new Error(`${res.status} ${txt}`);
+      }
+      return res;
     }
 
-    // ===== dot color =====
-    function getDotColor(style){
-      const map = { wood:"#b0793c", cyber:"#00c8d6", pink:"#ff3fb6", black:"#111111", white:"#9aa3b2", anime:"#7a7dff", meme:"#33cc66", lightblue:"#1b8bff" };
-      return map[style] || "#1b8bff";
-    }
+    // storage upload
+    async function uploadToStorage(file){
+      const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+      const safeExt = ["jpg","jpeg","png","webp","gif"].includes(ext) ? ext : "jpg";
+      const path = `setup_${Date.now()}_${Math.random().toString(16).slice(2)}.${safeExt}`;
 
-    // ===== supabase =====
-    async function sbFetch(pathWithQuery, options = {}){
-      const url = `${SUPABASE_URL}${pathWithQuery}`;
-      const headers = {
-        "apikey": SUPABASE_ANON_KEY,
-        "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
-        ...(options.headers || {})
-      };
-      return await fetch(url, { ...options, headers });
-    }
+      const bar = $("bar");
+      bar.style.width = "12%";
+      const tmr = setInterval(() => {
+        const w = parseFloat(bar.style.width) || 0;
+        if(w < 78) bar.style.width = (w + 6) + "%";
+      }, 120);
 
-    async function uploadToStorage(file, onProgress){
-      const ext = (file.name.split(".").pop() || "png").toLowerCase().replace(/[^a-z0-9]/g,"");
-      const safe = `${Date.now()}_${Math.random().toString(16).slice(2)}.${ext}`;
-      const path = `public/${safe}`;
-
-      const url = `${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${path}`;
-
-      onProgress?.(18);
+      const url = `${SUPABASE_URL}/storage/v1/object/${BUCKET}/${path}`;
       const res = await fetch(url, {
-        method:"POST",
-        headers:{
-          "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
-          "apikey": SUPABASE_ANON_KEY,
+        method: "POST",
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`,
           "Content-Type": file.type || "application/octet-stream",
-          "x-upsert": "true"
+          "x-upsert": "true",
         },
         body: file
       });
-      onProgress?.(70);
+
+      clearInterval(tmr);
 
       if(!res.ok){
-        const t = await res.text().catch(()=> "");
-        throw new Error("Storage upload failed: " + res.status + " " + t);
+        const txt = await res.text().catch(()=> "");
+        bar.style.width = "0%";
+        throw new Error(`Upload failed: ${res.status} ${txt}`);
       }
 
-      onProgress?.(92);
-      const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${path}`;
-      return { publicUrl, storagePath: path };
+      bar.style.width = "100%";
+      setTimeout(()=> bar.style.width = "0%", 600);
+
+      return {
+        publicUrl: `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${path}`,
+        storageFile: path
+      };
     }
 
-    // ===== owner + likes (local) =====
-    const OWNER_KEY = "setup_gallery_owner_v1";
-    const LIKES_KEY = "setup_gallery_likes_local_v1";
-
-    const ownerId = localStorage.getItem(OWNER_KEY) || (localStorage.setItem(OWNER_KEY, uid()), localStorage.getItem(OWNER_KEY));
-
-    let localLikes = (() => { try{ return JSON.parse(localStorage.getItem(LIKES_KEY) || "{}"); }catch(e){ return {}; } })();
-    function setLiked(id, val){
-      if(val) localLikes[id] = true;
-      else delete localLikes[id];
-      localStorage.setItem(LIKES_KEY, JSON.stringify(localLikes));
-    }
-    function isLiked(id){ return !!localLikes[id]; }
-
-    // ===== data =====
-    let allSetups = [];
-    let viewOrder = [];
-    let lastSurpriseId = null;
-
-    function parseTags(s){
-      return (s||"").split(",").map(x => x.trim().toLowerCase()).filter(Boolean).slice(0, 6);
-    }
-    function prettyTag(t){
-      return String(t||"").trim().split(/\s+/).map(w => w ? (w[0].toUpperCase()+w.slice(1)) : "").join(" ");
+    // posts
+    async function loadPosts() {
+      const res = await sbFetch(`/rest/v1/setups?select=id,title,description,tags,image_url,style,storage_file,created_at`, { method: "GET" });
+      const rows = await res.json();
+      return rows.map(r => ({
+        id: r.id,
+        title: r.title,
+        desc: r.description,
+        tags: r.tags || [],
+        img: r.image_url,
+        style: r.style || "white",
+        storage_file: r.storage_file || null,
+        createdAt: new Date(r.created_at).getTime(),
+      }));
     }
 
-    function pickText(obj, key){
-      const lang = getLang();
-      const mapKey = key === "title" ? "title_i18n" : "desc_i18n";
-      const fallback = key === "title" ? (obj.title || "") : (obj.description || "");
-      const map = obj[mapKey] || {};
-      return map[lang] || map.en || fallback;
+    async function addPost(post) {
+      await sbFetch(`/rest/v1/setups`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify([{
+          id: post.id,
+          title: post.title,
+          description: post.desc,
+          tags: post.tags,
+          image_url: post.img,
+          style: post.style,
+          storage_file: post.storage_file,
+          created_at: new Date(post.createdAt).toISOString(),
+        }]),
+      });
     }
 
-    function currentFiltered(){
+    // state
+    let posts = [];
+    let selectedFile = null;
+
+    // NEW: keep shuffle order without being overwritten by "newest sort"
+    let currentOrder = "new"; // "new" | "shuffle"
+    let lastSurprise = localStorage.getItem("setup_gallery_last_surprise_v1") || "";
+
+    function applyFilters(list){
       const q = $("q").value.trim().toLowerCase();
-      const style = $("styleFilter").value;
+      const styleF = $("styleFilter").value;
 
-      let list = [...allSetups];
-      if(style !== "all") list = list.filter(x => (x.style || "").toLowerCase() === style);
-
+      let out = list;
+      if(styleF !== "all") out = out.filter(p => (p.style || "white") === styleF);
       if(q){
-        list = list.filter(x => {
-          const title = (pickText(x,"title")||"").toLowerCase();
-          const desc  = (pickText(x,"desc")||"").toLowerCase();
-          const tags  = (x.tags || []).join(" ").toLowerCase();
-          return title.includes(q) || desc.includes(q) || tags.includes(q);
-        });
+        out = out.filter(p =>
+          (p.title||"").toLowerCase().includes(q) ||
+          (p.desc||"").toLowerCase().includes(q) ||
+          (p.tags||[]).some(tg => tg.includes(q))
+        );
       }
-
-      list.sort((a,b) => new Date(b.created_at||0) - new Date(a.created_at||0));
-      return list;
+      if(currentOrder === "new"){
+        out = [...out].sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+      }
+      // if shuffle: keep current array order
+      return out;
     }
 
     function render(){
-      const root = $("masonry");
-      const list = currentFiltered();
-
-      const idToObj = new Map(list.map(x => [x.id, x]));
-      let ordered = [];
-      if(viewOrder.length){
-        for(const id of viewOrder) if(idToObj.has(id)) ordered.push(idToObj.get(id));
-        for(const x of list) if(!viewOrder.includes(x.id)) ordered.push(x);
-      } else ordered = list;
-
+      const root = $("grid");
+      const list = applyFilters(posts);
       root.innerHTML = "";
-      if(ordered.length === 0){
-        root.innerHTML = `<div class="note"><b>No posts yet.</b> Click <b>${esc(ui().add)}</b> and add your first image.</div>`;
+
+      if(list.length === 0){
+        root.innerHTML = `<div class="note" style="grid-column:1 / -1;">${t("noPosts")}</div>`;
+        wireHover();
         return;
       }
 
-      for(const p of ordered){
-        const title = pickText(p,"title");
-        const desc  = pickText(p,"desc");
-        const tags = (p.tags || []).slice(0, 2);
-        const style = (p.style || "all").toLowerCase();
-        const liked = isLiked(p.id);
-        const own = (p.owner_id || "") === ownerId;
+      for(const p of list){
+        const tags = (p.tags||[]).slice(0,3);
+        const styleName = (p.style || "white").toUpperCase();
+        const dotColor = STYLE_COLORS[p.style] || "#1b8bff";
 
-        const pin = document.createElement("div");
-        pin.className = "pin" + (own ? " own" : "");
-        pin.innerHTML = `
+        const card = document.createElement("div");
+        card.className = "pin";
+        card.innerHTML = `
           <div class="imgWrap">
-            <img src="${esc(p.image_url || "")}" alt="${esc(title || "setup")}" loading="lazy"/>
-            <div class="styleBadge"><span class="dot" style="background:${esc(getDotColor(style))}"></span>${esc(style)}</div>
+            <img src="${esc(p.img||"")}" alt="${esc(p.title||"setup")}" loading="lazy"/>
+            <div class="styleBadge">
+              <span class="dot" style="background:${esc(dotColor)}"></span>
+              ${esc(styleName)}
+            </div>
           </div>
-          <div class="pinBody">
-            <div class="pinTitle">${esc(title || "Untitled")}</div>
+          <div class="body">
+            <div class="ptitle">${esc(p.title||"Untitled")}</div>
             <div class="chips">
-              ${tags.map(t => `<div class="chip">${esc(prettyTag(t))}</div>`).join("")}
+              ${tags.map(tg => `<div class="chip">${esc(prettyTag(tg))}</div>`).join("")}
             </div>
             <div class="metaRow">
-              <button class="likeBtn ${liked ? "liked" : ""}" data-like="${esc(p.id)}">
-                ${liked ? "♥" : "♡"} <span>${liked ? 1 : 0}</span>
+              <button class="likeBtn ${isLiked(p.id) ? "liked" : ""}" data-like="${esc(p.id)}">
+                ${isLiked(p.id) ? "♥" : "♡"} <span>${getLikes(p.id)}</span>
               </button>
-              <button class="delBtn" data-del="${esc(p.id)}">Del</button>
-              <button class="viewBtn" data-view="${esc(p.id)}">${esc(ui().view)}</button>
+              <button class="viewBtn" data-view="${esc(p.id)}">${t("view")}</button>
             </div>
           </div>
         `;
-        root.appendChild(pin);
+        root.appendChild(card);
       }
 
-      root.querySelectorAll("[data-view]").forEach(b => b.addEventListener("click", () => openView(b.dataset.view)));
-      root.querySelectorAll("[data-like]").forEach(b => b.addEventListener("click", () => {
-        const id = b.dataset.like;
-        setLiked(id, !isLiked(id));
-        render();
-      }));
-      root.querySelectorAll("[data-del]").forEach(b => b.addEventListener("click", () => {
-        const id = b.dataset.del;
-        const p = allSetups.find(x => x.id === id);
-        if(!p) return;
-        if((p.owner_id || "") !== ownerId) return;
-        if(!confirm("Delete this post?")) return;
-        deleteSetup(id).catch(console.log);
-      }));
+      root.querySelectorAll("[data-view]").forEach(btn => btn.addEventListener("click", () => openView(btn.dataset.view)));
+      root.querySelectorAll("[data-like]").forEach(btn => btn.addEventListener("click", () => toggleLike(btn.dataset.like)));
+      wireHover();
+    }
 
-      root.querySelectorAll("button, a, select, input, textarea").forEach(el => {
+    function wireHover(){
+      document.querySelectorAll("button, a, input, select, textarea, .drop").forEach(el => {
         el.addEventListener("mouseenter", () => document.body.classList.add("cursorHover"));
         el.addEventListener("mouseleave", () => document.body.classList.remove("cursorHover"));
       });
     }
 
-    // ===== view =====
-    function openView(id){
-      const p = allSetups.find(x => x.id === id);
-      if(!p) return;
-      $("viewTopTitle").textContent = (pickText(p,"title") || ui().view).toUpperCase();
-      $("viewImg").src = p.image_url || "";
-      $("viewDesc").textContent = pickText(p,"desc") || "";
-      $("viewModal").style.display = "flex";
-    }
-    function closeView(){ $("viewModal").style.display = "none"; }
-
-    // ===== shuffle + surprise =====
-    function shuffleNow(){
-      const list = currentFiltered();
-      const ids = list.map(x => x.id);
-      for(let i=ids.length-1;i>0;i--){
-        const j = Math.floor(Math.random()*(i+1));
-        [ids[i], ids[j]] = [ids[j], ids[i]];
-      }
-      viewOrder = ids;
-      render();
-      toast(ui().shuffle);
-    }
-
-    function surprise(){
-      const list = currentFiltered();
-      if(list.length === 0) return;
-      let pick = null;
-      if(list.length === 1) pick = list[0];
-      else{
-        for(let k=0;k<12;k++){
-          const cand = list[Math.floor(Math.random()*list.length)];
-          if(cand.id !== lastSurpriseId){ pick = cand; break; }
-        }
-        if(!pick) pick = list.find(x => x.id !== lastSurpriseId) || list[0];
-      }
-      lastSurpriseId = pick.id;
-      openView(pick.id);
-    }
-
-    // ===== add modal =====
-    let pickedFile = null;
-    let pickedPreviewUrl = null;
-
+    // modal
     function openAdd(){
       $("addModal").style.display = "flex";
-      $("addStatus").textContent = "Ready.";
+      $("addStatus").textContent = t("ready");
+      $("preview").textContent = t("noImage");
+      $("bar").style.width = "0%";
+      selectedFile = null;
+      wireHover();
     }
     function closeAdd(){
       $("addModal").style.display = "none";
       $("fTitle").value = "";
       $("fTags").value = "";
       $("fDesc").value = "";
-      $("fStyle").value = "wood";
-      pickedFile = null;
-      if(pickedPreviewUrl) URL.revokeObjectURL(pickedPreviewUrl);
-      pickedPreviewUrl = null;
-      $("dropPreview").innerHTML = `<span style="opacity:.45;font-weight:900;">IMG</span>`;
-      $("progress").style.display = "none";
+      $("fStyle").value = "white";
+      $("fileInput").value = "";
+      $("preview").textContent = t("noImage");
       $("bar").style.width = "0%";
-      ["en","ru","es","fr","zh"].forEach(l => { $("t_"+l).value=""; $("d_"+l).value=""; });
+      selectedFile = null;
     }
-
-    function setPreviewFromFile(file){
-      pickedFile = file;
-      if(pickedPreviewUrl) URL.revokeObjectURL(pickedPreviewUrl);
-      pickedPreviewUrl = URL.createObjectURL(file);
-      $("dropPreview").innerHTML = `<img src="${esc(pickedPreviewUrl)}" alt="preview">`;
-    }
-
-    function clearImage(){
-      pickedFile = null;
-      if(pickedPreviewUrl) URL.revokeObjectURL(pickedPreviewUrl);
-      pickedPreviewUrl = null;
-      $("dropPreview").innerHTML = `<span style="opacity:.45;font-weight:900;">IMG</span>`;
-      $("progress").style.display = "none";
-      $("bar").style.width = "0%";
-    }
-
-    function setProgress(p){
-      $("progress").style.display = "block";
-      $("bar").style.width = Math.max(0, Math.min(100, p)) + "%";
-    }
-
-    async function postSetup(){
-      const L = ui();
+    async function saveAdd(){
       const title = $("fTitle").value.trim();
       const desc  = $("fDesc").value.trim();
       const tags  = parseTags($("fTags").value);
       const style = $("fStyle").value;
 
-      if(!title){ $("addStatus").textContent = L.errTitle; return; }
-      if(!desc){ $("addStatus").textContent = L.errDesc; return; }
-      if(tags.length === 0){ $("addStatus").textContent = L.errTags; return; }
-      if(!pickedFile){ $("addStatus").textContent = L.errImg; return; }
-
-      const title_i18n = { en:$("t_en").value.trim(), ru:$("t_ru").value.trim(), es:$("t_es").value.trim(), fr:$("t_fr").value.trim(), zh:$("t_zh").value.trim() };
-      const desc_i18n  = { en:$("d_en").value.trim(), ru:$("d_ru").value.trim(), es:$("d_es").value.trim(), fr:$("d_fr").value.trim(), zh:$("d_zh").value.trim() };
-      for(const k of Object.keys(title_i18n)) if(!title_i18n[k]) delete title_i18n[k];
-      for(const k of Object.keys(desc_i18n)) if(!desc_i18n[k]) delete desc_i18n[k];
-
-      $("addStatus").textContent = L.posting;
+      if(!title){ $("addStatus").textContent = "Title required."; return; }
+      if(!desc){ $("addStatus").textContent = "Description required."; return; }
+      if(tags.length === 0){ $("addStatus").textContent = "Add at least 1 tag."; return; }
+      if(!selectedFile){ $("addStatus").textContent = "Drop an image first."; return; }
 
       try{
-        setProgress(8);
-        const { publicUrl, storagePath } = await uploadToStorage(pickedFile, setProgress);
-        setProgress(96);
+        $("addStatus").textContent = "Uploading...";
+        const up = await uploadToStorage(selectedFile);
 
-        const payload = {
+        $("addStatus").textContent = "Posting...";
+        const post = {
           id: uid(),
-          title,
-          description: desc,
-          tags,
+          title, desc, tags,
+          img: up.publicUrl,
+          storage_file: up.storageFile,
           style,
-          image_url: publicUrl,
-          storage_file: storagePath,
-          owner_id: ownerId,
-          title_i18n,
-          desc_i18n
+          createdAt: Date.now()
         };
 
-        const res = await sbFetch(`/rest/v1/setups`, {
-          method:"POST",
-          headers:{ "Content-Type":"application/json", "Prefer":"return=representation" },
-          body: JSON.stringify(payload)
-        });
-
-        if(!res.ok){
-          const t = await res.text().catch(()=> "");
-          console.log("POST setups error:", res.status, t);
-          $("addStatus").textContent = L.failed;
-          return;
-        }
-
-        setProgress(100);
-        toast(L.uploaded);
+        await addPost(post);
         closeAdd();
-        await loadSetups();
-        viewOrder = [];
+        posts = await loadPosts();
+        currentOrder = "new";
         render();
-
+        toast("Posted!");
       } catch(e){
         console.log(e);
-        $("addStatus").textContent = L.failed;
+        $("addStatus").textContent = "Upload/post failed.";
+        alert(String(e));
       }
     }
 
-    function wireDropzone(){
-      const dz = $("dropzone");
-      const prevent = (e)=>{ e.preventDefault(); e.stopPropagation(); };
+    function openView(id){
+      const p = posts.find(x => x.id === id);
+      if(!p) return;
+      $("viewTitle").textContent = p.title || "View";
+      $("viewImg").src = p.img || "";
+      $("viewDesc").textContent = p.desc || "";
+      $("viewModal").style.display = "flex";
+      wireHover();
+    }
+    function closeView(){ $("viewModal").style.display = "none"; }
 
-      dz.addEventListener("dragenter", prevent);
-      dz.addEventListener("dragover", (e)=>{ prevent(e); dz.style.borderColor="rgba(27,139,255,.55)"; });
-      dz.addEventListener("dragleave", (e)=>{ prevent(e); dz.style.borderColor="rgba(14,17,22,.20)"; });
-      dz.addEventListener("drop", (e)=>{
-        prevent(e);
-        dz.style.borderColor="rgba(14,17,22,.20)";
-        const file = e.dataTransfer.files && e.dataTransfer.files[0];
-        if(file && file.type.startsWith("image/")) setPreviewFromFile(file);
-      });
-
-      $("chooseBtn").addEventListener("click", ()=> $("fFile").click());
-      $("fFile").addEventListener("change", ()=>{
-        const file = $("fFile").files && $("fFile").files[0];
-        if(file && file.type.startsWith("image/")) setPreviewFromFile(file);
-      });
-      $("clearImgBtn").addEventListener("click", clearImage);
+    async function reload(){
+      posts = await loadPosts();
+      currentOrder = "new";
+      render();
+      toast("Reloaded");
     }
 
-    // ===== online load/delete =====
-    async function loadSetups(){
-      const res = await sbFetch(`/rest/v1/setups?select=id,title,description,tags,style,image_url,storage_file,created_at,owner_id,title_i18n,desc_i18n`, { method:"GET" });
-      if(!res.ok){
-        const t = await res.text().catch(()=> "");
-        console.log("loadSetups error:", res.status, t);
+    // file selection
+    function setFile(file){
+      if(!file) return;
+      if(!file.type.startsWith("image/")){
+        $("addStatus").textContent = "Only images please.";
         return;
       }
-      const arr = await res.json();
-      allSetups = Array.isArray(arr) ? arr : [];
-      for(const x of allSetups){
-        x.tags = Array.isArray(x.tags) ? x.tags : [];
-        x.style = (x.style || "all").toLowerCase();
-        x.title_i18n = x.title_i18n || {};
-        x.desc_i18n = x.desc_i18n || {};
-      }
-      toast(ui().loaded);
+      selectedFile = file;
+      $("addStatus").textContent = `Selected: ${file.name}`;
+      const url = URL.createObjectURL(file);
+      $("preview").innerHTML = `<img src="${url}" alt="preview">`;
     }
 
-    async function deleteSetup(id){
-      const res = await sbFetch(`/rest/v1/setups?id=eq.${encodeURIComponent(id)}`, { method:"DELETE" });
-      if(!res.ok){
-        const t = await res.text().catch(()=> "");
-        console.log("deleteSetup error:", res.status, t);
-        toast("Delete failed");
-        return;
-      }
-      setLiked(id, false);
-      await loadSetups();
-      render();
-      toast("Deleted");
-    }
+    const drop = $("drop");
+    drop.addEventListener("dragover", (e) => { e.preventDefault(); drop.classList.add("drag"); });
+    drop.addEventListener("dragleave", () => drop.classList.remove("drag"));
+    drop.addEventListener("drop", (e) => {
+      e.preventDefault();
+      drop.classList.remove("drag");
+      const file = e.dataTransfer.files && e.dataTransfer.files[0];
+      setFile(file);
+    });
 
-    // ===== style filter => background changes =====
-    function onStyleFilterChange(){
-      const style = $("styleFilter").value;
-      applyTheme(style);          // <<<<<<<<<< this is what you wanted
-      viewOrder = [];
-      render();
-    }
+    $("chooseBtn").addEventListener("click", () => $("fileInput").click());
+    $("fileInput").addEventListener("change", (e) => {
+      const file = e.target.files && e.target.files[0];
+      setFile(file);
+    });
 
-    // ===== music (soft) =====
-    let audioCtx=null, musicOn=false, nodes=[];
-    function stopMusic(){
-      try{ nodes.forEach(n=>{ try{ n.stop?.(); }catch(e){} try{ n.disconnect?.(); }catch(e){} }); }catch(e){}
-      nodes=[];
-      if(audioCtx){ try{ audioCtx.close(); }catch(e){} audioCtx=null; }
-      musicOn=false;
-      $("musicBtn").textContent = ui().musicOff;
-    }
-    function startMusic(){
-      audioCtx = new (window.AudioContext||window.webkitAudioContext)();
-      const now = audioCtx.currentTime;
-
-      const master = audioCtx.createGain();
-      master.gain.value = 0.045;   // low volume
-      master.connect(audioCtx.destination);
-
-      const lp = audioCtx.createBiquadFilter();
-      lp.type="lowpass"; lp.frequency.value=900; lp.Q.value=0.6;
-      lp.connect(master);
-
-      const trem = audioCtx.createOscillator();
-      trem.type="sine"; trem.frequency.value=0.12;
-      const tremGain = audioCtx.createGain();
-      tremGain.gain.value=0.35;
-      trem.connect(tremGain);
-
-      const gain = audioCtx.createGain();
-      gain.gain.value=1.0;
-      tremGain.connect(gain.gain);
-      gain.connect(lp);
-
-      const freqs=[220,277.18,329.63];
-      freqs.forEach((f,i)=>{
-        const o=audioCtx.createOscillator();
-        o.type="sine"; o.frequency.value=f;
-        const g=audioCtx.createGain();
-        g.gain.value=0.28/(i+1);
-        o.connect(g); g.connect(gain);
-        o.start(now);
-        nodes.push(o,g);
-      });
-
-      trem.start(now);
-      nodes.push(trem,tremGain,gain,lp,master);
-
-      musicOn=true;
-      $("musicBtn").textContent = ui().musicOn;
-    }
-    function toggleMusic(){ musicOn ? stopMusic() : startMusic(); }
-
-    // ===== menu =====
-    function toggleMenu(){
-      const p = $("menuPanel");
-      p.style.display = (p.style.display==="block") ? "none" : "block";
-    }
-
-    // ===== cursor =====
-    const cur = $("cursor");
+    // cursor follow
+    const dot = $("cursorDot");
     const ring = $("cursorRing");
     let cx=0, cy=0, rx=0, ry=0;
-    window.addEventListener("mousemove",(e)=>{
-      cx=e.clientX; cy=e.clientY;
-      cur.style.left=cx+"px";
-      cur.style.top=cy+"px";
+    window.addEventListener("mousemove", (e) => {
+      cx = e.clientX; cy = e.clientY;
+      dot.style.left = cx + "px";
+      dot.style.top  = cy + "px";
     });
-    function animateRing(){
-      rx += (cx-rx)*0.18;
-      ry += (cy-ry)*0.18;
-      ring.style.left=rx+"px";
-      ring.style.top=ry+"px";
+    (function animateRing(){
+      rx += (cx - rx) * 0.18;
+      ry += (cy - ry) * 0.18;
+      ring.style.left = rx + "px";
+      ring.style.top  = ry + "px";
       requestAnimationFrame(animateRing);
+    })();
+
+    // shuffle (fixed)
+    function shuffleFeed(){
+      currentOrder = "shuffle";
+      posts = [...posts].sort(() => Math.random() - 0.5);
+      render();
+      toast("Shuffle!");
     }
-    animateRing();
 
-    document.addEventListener("mouseover",(e)=>{
-      const t=e.target;
-      if(t && ["BUTTON","INPUT","SELECT","TEXTAREA"].includes(t.tagName)) document.body.classList.add("cursorHover");
-      else document.body.classList.remove("cursorHover");
-    });
+    // surprise (no immediate repeat)
+    function surpriseVibe(){
+      const keys = ["white","pink","wood","cyber","anime","meme","lightblue","black"];
+      let k = keys[Math.floor(Math.random()*keys.length)];
+      if(keys.length > 1){
+        let tries = 0;
+        while(k === lastSurprise && tries < 10){
+          k = keys[Math.floor(Math.random()*keys.length)];
+          tries++;
+        }
+      }
+      lastSurprise = k;
+      localStorage.setItem("setup_gallery_last_surprise_v1", lastSurprise);
 
-    // ===== wire events =====
+      $("styleFilter").value = k;
+      applyStyleBackground(k);
+      currentOrder = "new";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      render();
+      toast("Surprise!");
+    }
+
+    // events
     $("addBtn").addEventListener("click", openAdd);
     $("closeAdd").addEventListener("click", closeAdd);
     $("cancelAdd").addEventListener("click", closeAdd);
-    $("postAdd").addEventListener("click", postSetup);
+    $("saveAdd").addEventListener("click", saveAdd);
 
-    $("addModal").addEventListener("click",(e)=>{ if(e.target.id==="addModal") closeAdd(); });
+    $("reloadBtn").addEventListener("click", reload);
+    $("shuffleBtn").addEventListener("click", shuffleFeed);
+    $("surpriseBtn").addEventListener("click", surpriseVibe);
 
-    $("closeView").addEventListener("click", closeView);
-    $("viewModal").addEventListener("click",(e)=>{ if(e.target.id==="viewModal") closeView(); });
+    $("musicBtn").addEventListener("click", () => setMusic(!musicOn));
+    $("q").addEventListener("input", render);
 
-    $("reloadBtn").addEventListener("click", async ()=>{ await loadSetups(); viewOrder=[]; render(); });
-
-    $("shuffleBtn").addEventListener("click", shuffleNow);
-    $("surpriseBtn").addEventListener("click", surprise);
-
-    $("musicBtn").addEventListener("click", toggleMusic);
-
-    $("q").addEventListener("input", ()=>{ viewOrder=[]; render(); });
-
-    $("styleFilter").addEventListener("change", onStyleFilterChange);
-
-    $("lang").addEventListener("change", applyLang);
-
-    $("menuBtn").addEventListener("click", toggleMenu);
-    $("closeMenuBtn").addEventListener("click", ()=> $("menuPanel").style.display="none");
-
-    $("resetLikesBtn").addEventListener("click", ()=>{
-      if(!confirm("Reset local likes on this device?")) return;
-      localLikes={};
-      localStorage.setItem(LIKES_KEY,"{}");
-      render();
-      toast("OK");
-    });
-
-    document.addEventListener("keydown",(e)=>{
-      if(e.key==="Escape"){
-        closeAdd();
-        closeView();
-        $("menuPanel").style.display="none";
+    $("styleFilter").addEventListener("change", (e) => {
+      const v = e.target.value;
+      if(v === "all"){
+        const saved = localStorage.getItem(AUTO_BG_KEY) || "white";
+        applyStyleBackground(saved);
+      } else {
+        applyStyleBackground(v);
       }
+      currentOrder = "new";
+      render();
     });
 
-    wireDropzone();
+    $("fStyle").addEventListener("change", (e) => applyStyleBackground(e.target.value));
 
-    // ===== init =====
+    $("langSelect").addEventListener("change", (e) => {
+      currentLang = e.target.value;
+      localStorage.setItem(LANG_KEY, currentLang);
+      applyLanguage();
+    });
+
+    $("addModal").addEventListener("click", (e) => { if(e.target.id === "addModal") closeAdd(); });
+    $("viewModal").addEventListener("click", (e) => { if(e.target.id === "viewModal") closeView(); });
+    $("closeView").addEventListener("click", closeView);
+
+    // init
     (async function init(){
-      $("lang").value="en";
-      applyLang();
+      $("langSelect").value = currentLang;
+      applyLanguage();
 
-      $("styleFilter").value="all";
-      applyTheme("all"); // all => white bg
+      const savedStyle = localStorage.getItem(AUTO_BG_KEY) || "white";
+      applyStyleBackground(savedStyle);
 
-      await loadSetups();
-      viewOrder=[];
-      render();
+      try{
+        posts = await loadPosts();
+        currentOrder = "new";
+        render();
+      } catch(e){
+        console.log(e);
+        alert("Cannot load posts from Supabase. Check RLS policies for setups table.");
+      }
+
+      wireHover();
+      updateMusicBtnText();
+      if(musicOn) setMusic(true);
     })();
   </script>
 </body>
